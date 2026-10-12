@@ -18,7 +18,7 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '17' # Disarankan menggunakan Java 17 yang lebih stabil untuk Android build
+          java-version: '21' # Capacitor 8 membutuhkan Java 21
 
       - name: Setup Android SDK Path
         run: |
