@@ -18,9 +18,11 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21'
+          java-version: '17' # Disarankan menggunakan Java 17 yang lebih stabil untuk Android build
 
-      - uses: android-actions/setup-android@v3
+      - name: Setup Android SDK Path
+        run: |
+          echo "ANDROID_HOME=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
 
       - run: npm ci
       - run: npm run build
