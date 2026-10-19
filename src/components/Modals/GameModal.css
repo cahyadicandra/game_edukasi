@@ -1,0 +1,157 @@
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(10, 20, 38, 0.7);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-card {
+  width: 100%;
+  max-width: 360px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 4px solid #38bdf8;
+  box-shadow: 
+    0 10px 0 #0284c7,
+    0 20px 30px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  background: linear-gradient(180deg, #38bdf8, #0284c7);
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 2px solid #0369a1;
+}
+
+.modal-title {
+  font-family: var(--font-game-title);
+  font-size: 18px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close-btn {
+  background: #ef4444;
+  border: 2px solid #ffffff;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 0 #991b1b;
+  transition: transform 0.1s ease;
+}
+
+.modal-close-btn:active {
+  transform: scale(0.9);
+}
+
+.modal-body {
+  padding: 18px 16px;
+  font-family: var(--font-game-body);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+/* Shape card styles for "Kenali Bangun Datar" */
+.shape-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.shape-item {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s ease, border-color 0.15s;
+}
+
+.shape-item:hover {
+  transform: translateY(-2px);
+  border-color: #38bdf8;
+}
+
+.shape-name {
+  font-family: var(--font-game-title);
+  font-size: 13px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.shape-desc {
+  font-size: 10px;
+  color: #64748b;
+  line-height: 1.2;
+}
+
+/* Modal action buttons */
+.modal-footer {
+  padding: 12px 16px;
+  background: #f1f5f9;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-action-btn {
+  background: linear-gradient(180deg, #ffdf00, #f59e0b);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 0 #b45309;
+  padding: 10px 24px;
+  border-radius: 9999px;
+  font-family: var(--font-game-title);
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e293b;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.1s;
+}
+
+.modal-action-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b45309;
+}

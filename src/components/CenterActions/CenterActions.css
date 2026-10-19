@@ -1,0 +1,142 @@
+.center-actions-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: 0 16px;
+  box-sizing: border-box;
+  margin-top: 10px;
+  position: relative;
+  z-index: 20;
+}
+
+/* Play Button */
+.play-btn-adventure {
+  width: 100%;
+  max-width: 270px;
+  background: linear-gradient(180deg, #ffdf00 0%, #f59e0b 80%, #d97706 100%);
+  border: 3.5px solid #ffffff;
+  border-radius: 9999px;
+  padding: 8px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+  box-shadow: 
+    0 7px 0 #b45309,
+    0 12px 20px rgba(0, 0, 0, 0.35);
+  transform: translateY(0);
+  transition: all 0.12s ease;
+  outline: none;
+}
+
+.play-btn-adventure:hover {
+  filter: brightness(1.06);
+}
+
+.play-btn-adventure:active {
+  transform: translateY(5px);
+  box-shadow: 
+    0 2px 0 #b45309,
+    0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.play-icon-bubble {
+  width: 34px;
+  height: 34px;
+  background: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 -2px 4px rgba(0, 0, 0, 0.15), 0 2px 4px rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+  padding-left: 3px;
+}
+
+.play-icon-triangle {
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 14px solid #0f172a;
+  border-radius: 2px;
+}
+
+.play-btn-text {
+  font-family: var(--font-game-title);
+  font-size: 17px;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  white-space: nowrap;
+}
+
+/* Wooden Signboard on the left, positioned EXACTLY over the wooden board in background */
+.signboard-wrapper {
+  position: absolute;
+  left: 9px;
+  bottom: 33.5%;
+  width: 122px;
+  height: 64px;
+  z-index: 25;
+}
+
+.wooden-signboard {
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  border: none;
+  border-radius: 12px;
+  padding: 6px 12px;
+  box-sizing: border-box;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  transition: transform 0.12s ease, filter 0.15s ease;
+  outline: none;
+}
+
+.wooden-signboard:hover {
+  filter: brightness(1.15) drop-shadow(0 2px 8px rgba(254, 240, 138, 0.5));
+  transform: scale(1.02);
+}
+
+.wooden-signboard:active {
+  transform: scale(0.95) rotate(-1deg);
+}
+
+.signboard-text-top {
+  font-family: var(--font-game-title);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  text-shadow: 
+    -1px -1px 0 #451a03,
+     1px -1px 0 #451a03,
+    -1px  1px 0 #451a03,
+     1px  1px 0 #451a03,
+     0px  2px 4px rgba(0, 0, 0, 0.9);
+}
+
+.signboard-text-bottom {
+  font-family: var(--font-game-title);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1.2;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  text-shadow: 
+    -1px -1px 0 #451a03,
+     1px -1px 0 #451a03,
+    -1px  1px 0 #451a03,
+     1px  1px 0 #451a03,
+     0px  2px 4px rgba(0, 0, 0, 0.9);
+}

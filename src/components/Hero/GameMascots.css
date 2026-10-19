@@ -1,0 +1,111 @@
+.mascots-container {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 12;
+}
+
+/* Main Yellow Triangle Mascot walking in the center of the sandy path */
+.main-mascot-wrapper {
+  position: absolute;
+  bottom: 12%;
+  left: 27%;
+  width: 215px;
+  height: auto;
+  animation: mascotStep 1.8s ease-in-out infinite alternate;
+  filter: drop-shadow(0 14px 18px rgba(15, 23, 42, 0.45));
+}
+
+.main-mascot-img {
+  width: 100%;
+  height: auto;
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* Foot shadow on the dirt path */
+.mascot-ground-shadow {
+  position: absolute;
+  bottom: -4px;
+  left: 15%;
+  width: 75%;
+  height: 14px;
+  background: radial-gradient(ellipse at center, rgba(30, 41, 59, 0.45) 0%, rgba(30, 41, 59, 0) 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: shadowPulse 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes mascotStep {
+  0% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  100% {
+    transform: translateY(-6px) rotate(1.2deg);
+  }
+}
+
+@keyframes shadowPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.35;
+  }
+}
+
+/* Secondary shape friends near the stream */
+.secondary-mascots {
+  position: absolute;
+  bottom: 23%;
+  right: 5%;
+  display: flex;
+  align-items: flex-end;
+  gap: 5px;
+  z-index: 11;
+}
+
+.friend-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #f87171, #dc2626);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: friendBounce 2s ease-in-out infinite;
+}
+
+.friend-square {
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  background: radial-gradient(circle at 35% 35%, #38bdf8, #0284c7);
+  border: 2px solid #ffffff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: friendBounce 2.3s ease-in-out infinite 0.3s;
+}
+
+.friend-purple {
+  width: 30px;
+  height: 34px;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  animation: friendBounce 2.1s ease-in-out infinite 0.6s;
+}
+
+@keyframes friendBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}

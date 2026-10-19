@@ -1,0 +1,135 @@
+/* Game Edukasi Theme Styles */
+
+:root {
+  --font-game-title: 'Fredoka', cursive, system-ui, sans-serif;
+  --font-game-body: 'Nunito', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  --color-game-yellow: #fecb10;
+  --color-game-yellow-dark: #d97706;
+  --color-game-yellow-shadow: #b45309;
+  --color-game-blue-dark: #1e3a5f;
+  --color-game-blue-card: rgba(22, 48, 86, 0.85);
+  --color-game-green: #22c55e;
+  --color-game-green-dark: #15803d;
+  --color-game-star: #eab308;
+  --color-game-diamond: #38bdf8;
+  --color-game-wood: #854d0e;
+  --color-game-wood-light: #b45309;
+  
+  --radius-pill: 9999px;
+  --radius-card: 18px;
+  --radius-nav: 24px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #0b1528;
+  font-family: var(--font-game-body);
+  color: #1e293b;
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Frame Wrapper (looks great on desktop and mobile) */
+.game-viewport {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  max-width: 440px;
+  max-height: 920px;
+  background-color: #0b1528;
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 480px) {
+  .game-viewport {
+    height: 94vh;
+    border-radius: 36px;
+    border: 4px solid #334155;
+  }
+}
+
+/* Background Scene */
+.game-scene-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.game-bg-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  z-index: 1;
+}
+
+.game-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+}
+
+.game-overlay * {
+  pointer-events: auto;
+}
+
+/* Animations */
+@keyframes bounceSlight {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    filter: drop-shadow(0 4px 12px rgba(254, 203, 16, 0.45));
+  }
+  50% {
+    filter: drop-shadow(0 6px 20px rgba(254, 203, 16, 0.75));
+  }
+}
+
+.animate-bounce-slight {
+  animation: bounceSlight 2.5s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 2s ease-in-out infinite;
+}

@@ -1,0 +1,28 @@
+.game-logo-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 15;
+  margin-top: 2px;
+  width: 100%;
+  animation: logoFloat 3.2s ease-in-out infinite;
+}
+
+.game-logo-img {
+  width: 76%;
+  max-width: 275px;
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 18px rgba(15, 23, 42, 0.4));
+  pointer-events: none;
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}

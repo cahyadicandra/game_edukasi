@@ -1,0 +1,110 @@
+.daily-mission-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 12px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.daily-mission-card {
+  width: 175px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.85);
+  border-radius: 14px;
+  padding: 6px 8px;
+  box-shadow: 0 6px 16px -2px rgba(15, 30, 60, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.daily-mission-card:active {
+  transform: scale(0.97);
+}
+
+.mission-top-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+
+.mission-icon-container {
+  width: 30px;
+  height: 30px;
+  background: #f0fdf4;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #dcfce7;
+}
+
+.mission-text-container {
+  flex: 1;
+  min-width: 0;
+}
+
+.mission-header-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mission-title {
+  font-family: var(--font-game-title);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.2;
+}
+
+.mission-arrow {
+  color: #64748b;
+  display: flex;
+  align-items: center;
+}
+
+.mission-desc {
+  font-size: 9px;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.2;
+  margin-top: 2px;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.mission-progress-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding-left: 37px;
+}
+
+.mission-progress-bar {
+  flex: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.mission-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.mission-progress-text {
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #475569;
+  font-family: var(--font-game-title);
+}
