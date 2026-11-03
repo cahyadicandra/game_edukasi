@@ -1,66 +1,105 @@
 import React from 'react';
-import { Star, Lock, CheckCircle2, Play } from 'lucide-react';
-import './ScreenCommon.css';
+import type { PlayerProfile } from '../../types/game';
+import { TopHeader } from '../Header/TopHeader';
+import type { LevelNodeData, WorldData } from '../../data/worlds';
+import { LevelNodeButton } from './LevelNodeButton';
+import { IslandPathLine } from './IslandPathLine';
+import { WorldBanner } from './WorldBanner';
+import { ShapeCollectionCard } from './ShapeCollectionCard';
+import { MapTitleBanner } from './MapTitleBanner';
+import './MapScreen.css';
 
 interface MapScreenProps {
-  onSelectLevel: (levelNum: number) => void;
+  player: PlayerProfile;
+  worlds: WorldData[];
+  onOpenProfile: () => void;
+  onAddStars: () => void;
+  onAddDiamonds: () => void;
+  onOpenSettings: () => void;
+  onSelectLevel: (level: LevelNodeData, world: WorldData) => void;
+  onOpenCollection: () => void;
 }
 
-export const MapScreen: React.FC<MapScreenProps> = ({ onSelectLevel }) => {
-  const levels = [
-    { num: 1, name: 'Lembah Segitiga', stars: 3, unlocked: true, completed: true },
-    { num: 2, name: 'Hutan Persegi', stars: 3, unlocked: true, completed: true },
-    { num: 3, name: 'Danau Lingkaran', stars: 2, unlocked: true, completed: false },
-    { num: 4, name: 'Benteng Persegi Panjang', stars: 0, unlocked: false, completed: false },
-    { num: 5, name: 'Puncak Jajar Genjang', stars: 0, unlocked: false, completed: false },
-    { num: 6, name: 'Kastil Trapesium', stars: 0, unlocked: false, completed: false },
-  ];
-
+export const MapScreen: React.FC<MapScreenProps> = ({
+  player,
+  worlds,
+  onOpenProfile,
+  onAddStars,
+  onAddDiamonds,
+  onOpenSettings,
+  onSelectLevel,
+  onOpenCollection,
+}) => {
   return (
-    <div className="sub-screen-container">
-      <div className="sub-screen-header">
-        <h1 className="sub-screen-title">🗺️ Peta Petualangan</h1>
-        <p className="sub-screen-subtitle">Pilih pulau bangun datar untuk dijelajahi</p>
+    <div className="map-screen">
+      {/* Langit biru cerah dengan gradien petualangan */}
+      <div className="map-sky">
+        <div className="map-cloud cloud-1" />
+        <div className="map-cloud cloud-2" />
+        <div className="map-cloud cloud-3" />
       </div>
 
-      <div className="level-list">
-        {levels.map((lvl) => (
-          <div
-            key={lvl.num}
-            className={`level-card ${lvl.unlocked ? 'unlocked' : 'locked'}`}
-            onClick={() => lvl.unlocked && onSelectLevel(lvl.num)}
-          >
-            <div className="level-badge">
-              {lvl.completed ? (
-                <CheckCircle2 size={24} color="#22c55e" />
-              ) : lvl.unlocked ? (
-                <div className="level-num">{lvl.num}</div>
-              ) : (
-                <Lock size={20} color="#94a3b8" />
-              )}
-            </div>
+      {/* Header atas: profil + koin + pengaturan */}
+      <header className="map-header">
+        <TopHeader
+          player={player}
+          onOpenProfile={onOpenProfile}
+          onAddStars={onAddStars}
+          onAddDiamonds={onAddDiamonds}
+          onOpenSettings={onOpenSettings}
+        />
+      </header>
 
-            <div className="level-info">
-              <span className="level-name">Level {lvl.num}: {lvl.name}</span>
-              <div className="level-stars">
-                {[1, 2, 3].map((s) => (
-                  <Star
-                    key={s}
-                    size={15}
-                    fill={s <= lvl.stars ? '#facc15' : '#cbd5e1'}
-                    color={s <= lvl.stars ? '#eab308' : '#94a3b8'}
+      {/* Area gulir pulau-pulau 3D */}
+      <div className="map-islands-scroll">
+        {/* Spanduk Vektor Peta Petualangan terpusat di bagian atas */}
+        <div className="map-title-row">
+          <MapTitleBanner />
+        </div>
+
+        <div className="map-islands-stack">
+          {worlds.map((world) => (
+            <div key={world.id} className={`world-item align-${world.align}`}>
+              {/* Spanduk nama dunia vektor murni */}
+              <div className="world-banner-wrap">
+                <WorldBanner
+                  worldNumber={world.number}
+                  worldName={world.name}
+                  subtitle={world.subtitle}
+                />
+              </div>
+
+              {/* Wadah gambar pulau 3D dari castle + garis jalur + tombol level */}
+              <div className="world-image-wrap">
+                <img
+                  src={world.image}
+                  alt={`Pulau ${world.name}`}
+                  className="world-island-img"
+                  draggable={false}
+                />
+
+                {/* Garis jalur putus-putus penghubung antar level */}
+                <IslandPathLine levels={world.levels} />
+
+                {/* Tombol-tombol level interaktif */}
+                {world.levels.map((lvl) => (
+                  <LevelNodeButton
+                    key={lvl.num}
+                    level={lvl}
+                    onSelect={() => onSelectLevel(lvl, world)}
                   />
                 ))}
               </div>
             </div>
+          ))}
 
-            {lvl.unlocked && (
-              <button className="level-play-btn">
-                <Play size={14} fill="#ffffff" color="#ffffff" />
-              </button>
-            )}
-          </div>
-        ))}
+          {/* Kartu koleksi bentuk vektor & dinamis di akhir peta */}
+          <ShapeCollectionCard
+            collected={player.inventory?.collectedCards?.length || 0}
+            total={13}
+            onClick={onOpenCollection}
+          />
+        </div>
       </div>
     </div>
   );

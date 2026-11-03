@@ -8,54 +8,104 @@
 /* Main Yellow Triangle Mascot walking in the center of the sandy path */
 .main-mascot-wrapper {
   position: absolute;
-  bottom: 12%;
+  bottom: 11%;
   left: 27%;
-  width: 215px;
+  width: 220px;
   height: auto;
-  animation: mascotStep 1.8s ease-in-out infinite alternate;
-  filter: drop-shadow(0 14px 18px rgba(15, 23, 42, 0.45));
+  pointer-events: auto;
+  filter: drop-shadow(0 14px 20px rgba(15, 23, 42, 0.45));
+  transition: transform 0.15s ease;
 }
 
-.main-mascot-img {
+.main-mascot-wrapper.jumping-hero {
+  animation: mascotHomeJump 0.85s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+@keyframes mascotHomeJump {
+  0% {
+    transform: translateY(0) scale(1, 1);
+  }
+  20% {
+    transform: translateY(4px) scale(1.08, 0.92); /* Ancang-ancang */
+  }
+  50% {
+    transform: translateY(-85px) scale(0.96, 1.06); /* Melayang tinggi di udara */
+  }
+  80% {
+    transform: translateY(-20px) scale(1, 1);
+  }
+  92% {
+    transform: translateY(6px) scale(1.12, 0.88); /* Mendarat squash */
+  }
+  100% {
+    transform: translateY(0) scale(1, 1);
+  }
+}
+
+.mascot-interactive-box {
+  cursor: pointer;
   width: 100%;
-  height: auto;
-  display: block;
-  user-select: none;
-  -webkit-user-drag: none;
+  aspect-ratio: 1 / 1;
+  transition: transform 0.15s ease;
 }
 
-/* Foot shadow on the dirt path */
-.mascot-ground-shadow {
+.mascot-interactive-box:hover {
+  transform: scale(1.03);
+}
+
+.mascot-interactive-box:active {
+  transform: scale(0.97);
+}
+
+/* Balon ucapan maskot */
+.mascot-speech-bubble {
   position: absolute;
-  bottom: -4px;
-  left: 15%;
-  width: 75%;
-  height: 14px;
-  background: radial-gradient(ellipse at center, rgba(30, 41, 59, 0.45) 0%, rgba(30, 41, 59, 0) 70%);
-  border-radius: 50%;
-  z-index: -1;
-  animation: shadowPulse 1.8s ease-in-out infinite alternate;
+  top: -34px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #ffffff;
+  color: #0f172a;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  z-index: 20;
+  animation: popBubble 0.25s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-@keyframes mascotStep {
+.mascot-speech-bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px 6px 0;
+  border-style: solid;
+  border-color: #ffffff transparent;
+  display: block;
+  width: 0;
+}
+
+.bubble-icon {
+  color: #f59e0b;
+}
+
+@keyframes popBubble {
   0% {
-    transform: translateY(0) rotate(-1deg);
+    transform: translateX(-50%) scale(0.6);
+    opacity: 0;
   }
   100% {
-    transform: translateY(-6px) rotate(1.2deg);
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
   }
 }
 
-@keyframes shadowPulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.55;
-  }
-  100% {
-    transform: scale(0.85);
-    opacity: 0.35;
-  }
-}
 
 /* Secondary shape friends near the stream */
 .secondary-mascots {
@@ -106,6 +156,6 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-3px);
+    transform: translateY(-8px);
   }
 }

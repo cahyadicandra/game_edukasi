@@ -1,0 +1,219 @@
+/* ===== Map Screen — Peta Petualangan Bangun Datar 3D ===== */
+
+.map-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Langit cerah dengan awan bergerak */
+.map-sky {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 35%, #bae6fd 70%, #e0f2fe 100%);
+  z-index: 1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.map-cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 9999px;
+  filter: blur(8px);
+}
+
+.cloud-1 {
+  width: 220px;
+  height: 60px;
+  top: 15%;
+  left: -40px;
+  animation: floatCloud 28s linear infinite;
+}
+
+.cloud-2 {
+  width: 280px;
+  height: 75px;
+  top: 45%;
+  right: -50px;
+  animation: floatCloudReverse 35s linear infinite;
+}
+
+.cloud-3 {
+  width: 200px;
+  height: 50px;
+  top: 75%;
+  left: 20px;
+  animation: floatCloud 32s linear infinite;
+}
+
+@keyframes floatCloud {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(60px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes floatCloudReverse {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-60px); }
+  100% { transform: translateX(0); }
+}
+
+/* Header atas: profil + koin + pengaturan (mengambang di atas peta dengan gradien langit halus) */
+.map-header {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 30;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(56, 189, 248, 1) 0%,
+    rgba(56, 189, 248, 0.95) 50%,
+    rgba(56, 189, 248, 0.65) 80%,
+    rgba(56, 189, 248, 0) 100%
+  );
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: 24px;
+}
+
+.map-header * {
+  pointer-events: auto;
+}
+
+.map-title-row {
+  position: relative;
+  z-index: 25;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ===== Area Gulir Pulau: Memenuhi layar dengan fade halus ke langit di bagian atas ===== */
+
+.map-islands-scroll {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  /* Ruang atas untuk top-header agar konten awal tidak tertutup */
+  padding-top: calc(env(safe-area-inset-top, 0px) + 72px);
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 96px);
+
+  /* Masking gradien halus agar saat digulir ke atas, elemen perlahan memudar ke langit tanpa garis terpotong tajam */
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent calc(env(safe-area-inset-top, 0px) + 8px),
+    rgba(0, 0, 0, 0.35) calc(env(safe-area-inset-top, 0px) + 32px),
+    rgba(0, 0, 0, 0.85) calc(env(safe-area-inset-top, 0px) + 54px),
+    black calc(env(safe-area-inset-top, 0px) + 72px),
+    black 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent calc(env(safe-area-inset-top, 0px) + 8px),
+    rgba(0, 0, 0, 0.35) calc(env(safe-area-inset-top, 0px) + 32px),
+    rgba(0, 0, 0, 0.85) calc(env(safe-area-inset-top, 0px) + 54px),
+    black calc(env(safe-area-inset-top, 0px) + 72px),
+    black 100%
+  );
+}
+
+.map-islands-scroll::-webkit-scrollbar { display: none; }
+
+.map-islands-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+  padding: 4px 10px 24px;
+}
+
+/* Item Pulau */
+.world-item {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.world-item.align-left {
+  align-items: flex-start;
+}
+
+.world-item.align-right {
+  align-items: flex-end;
+}
+
+.world-item.align-center {
+  align-items: center;
+}
+
+/* Spanduk Nama Dunia Vektor */
+.world-banner-wrap {
+  position: relative;
+  z-index: 22;
+  margin-bottom: -24px;
+}
+
+.world-item.align-left .world-banner-wrap {
+  margin-left: 10px;
+}
+
+.world-item.align-right .world-banner-wrap {
+  margin-right: 10px;
+}
+
+.world-item.align-center .world-banner-wrap {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Wadah Gambar Pulau 3D */
+.world-image-wrap {
+  position: relative;
+  width: 90%;
+  max-width: 375px;
+  aspect-ratio: 1330 / 1180;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.world-island-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 16px 22px rgba(15, 35, 75, 0.4));
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: islandBob 4s ease-in-out infinite;
+}
+
+.world-item:nth-child(even) .world-island-img {
+  animation-delay: -2s;
+}
+
+@keyframes islandBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@media (max-width: 380px) {
+  .map-mission-mini { width: 145px; }
+  .map-title-banner { max-width: 52%; }
+}

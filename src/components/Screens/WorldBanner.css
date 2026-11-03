@@ -1,0 +1,168 @@
+/* ===== World Banner — Desain Vektor Papan Kayu & Lencana Heksagon ===== */
+
+.vector-world-banner {
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+  max-width: 95%;
+  user-select: none;
+  filter: drop-shadow(0 6px 10px rgba(15, 25, 50, 0.35));
+  animation: bannerSlightBob 3.5s ease-in-out infinite;
+}
+
+@keyframes bannerSlightBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 1. Lencana Heksagon di Sisi Kiri */
+.banner-hexagon-badge {
+  position: relative;
+  z-index: 10;
+  width: 66px;
+  height: 66px;
+  flex-shrink: 0;
+  margin-right: -16px; /* Tumpang tindih alami dengan papan kayu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.35));
+}
+
+.badge-hex-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* Teks angka dalam heksagon */
+.hex-badge-number-shadow {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 28px;
+  font-weight: 900;
+  fill: #064e3b;
+  stroke: #064e3b;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  dominant-baseline: middle;
+}
+
+.hex-badge-number-text {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 28px;
+  font-weight: 900;
+  fill: #ffffff;
+  dominant-baseline: middle;
+}
+
+/* 2. Papan Kayu Vektor */
+.banner-wood-plank {
+  position: relative;
+  z-index: 5;
+  background: linear-gradient(
+    180deg,
+    #cf7c2b 0%,
+    #b46118 20%,
+    #984b0d 65%,
+    #7a3705 100%
+  );
+  border-radius: 8px 16px 16px 8px;
+  border-top: 2.5px solid #f9bb76;
+  border-right: 2.5px solid #94480c;
+  border-bottom: 3.5px solid #4a1d02;
+  border-left: 1.5px solid #b46118;
+  box-shadow:
+    0 5px 0 #3d1702,
+    0 8px 16px rgba(15, 23, 42, 0.4);
+  padding: 6px 18px 6px 24px;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Tekstur Guratan Serat Kayu Halus */
+.wood-grain-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0px,
+    rgba(255, 255, 255, 0.08) 1.5px,
+    transparent 1.5px,
+    transparent 8px
+  );
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Konten Teks */
+.wood-text-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: left;
+}
+
+.banner-world-title {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 16.5px;
+  font-weight: 900;
+  color: #ffffff;
+  margin: 0;
+  padding: 0;
+  line-height: 1.15;
+  letter-spacing: 0.2px;
+  text-shadow:
+    -1px -1px 0 rgba(60, 20, 5, 0.8),
+     1px -1px 0 rgba(60, 20, 5, 0.8),
+    -1px  1px 0 rgba(60, 20, 5, 0.8),
+     1px  1px 0 rgba(60, 20, 5, 0.8),
+     0 2px 3px rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
+}
+
+.banner-world-subtitle {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #fef08a;
+  margin: 2px 0 0 0;
+  padding: 0;
+  line-height: 1.15;
+  text-shadow:
+    -0.5px -0.5px 0 rgba(60, 20, 5, 0.7),
+     0.5px -0.5px 0 rgba(60, 20, 5, 0.7),
+    -0.5px  0.5px 0 rgba(60, 20, 5, 0.7),
+     0.5px  0.5px 0 rgba(60, 20, 5, 0.7),
+     0 1.5px 2px rgba(0, 0, 0, 0.75);
+  white-space: nowrap;
+}
+
+@media (max-width: 380px) {
+  .banner-hexagon-badge {
+    width: 58px;
+    height: 58px;
+    margin-right: -13px;
+  }
+  .hex-badge-number-shadow,
+  .hex-badge-number-text {
+    font-size: 24px;
+  }
+  .banner-wood-plank {
+    padding: 5px 14px 5px 20px;
+  }
+  .banner-world-title {
+    font-size: 14.5px;
+  }
+  .banner-world-subtitle {
+    font-size: 10.5px;
+  }
+}

@@ -1,0 +1,238 @@
+/* ==========================================================================
+   PLAYABLE MASCOT - CONTROLLER & ARENA STYLING
+   Mobile-friendly on-screen D-Pad, Jump button, dust particles, and track
+   ========================================================================== */
+
+.playable-mascot-arena {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+
+/* Badge Status & Petunjuk Kontrol */
+.mascot-status-badge {
+  position: absolute;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  padding: 6px 16px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+  z-index: 25;
+  pointer-events: none;
+}
+
+.mascot-badge-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #f8fafc;
+}
+
+.mascot-badge-icon {
+  color: #fbbf24;
+}
+
+.mascot-badge-hint {
+  font-size: 11px;
+  color: #cbd5e1;
+  opacity: 0.9;
+}
+
+/* Lintasan Gerak Maskot */
+.playable-mascot-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  z-index: 15;
+  pointer-events: none;
+}
+
+/* Entitas Maskot Terpaut Koordinat X & Y */
+.playable-mascot-entity {
+  position: absolute;
+  bottom: 0;
+  will-change: left, transform;
+  pointer-events: auto;
+  cursor: pointer;
+  filter: drop-shadow(0 12px 16px rgba(15, 23, 42, 0.45));
+}
+
+/* Partikel Debu saat Mendarat */
+.dust-particle {
+  position: absolute;
+  bottom: 4px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fde047 0%, rgba(245, 158, 11, 0.8) 50%, rgba(217, 119, 6, 0) 80%);
+  transform: translate(-50%, 0) scale(0.6);
+  opacity: 0.85;
+  animation: dustPuff 0.45s cubic-bezier(0.2, 0.8, 0.4, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes dustPuff {
+  0% {
+    transform: translate(-50%, 0) scale(0.5);
+    opacity: 0.9;
+  }
+  50% {
+    transform: translate(calc(-50% + (var(--particle-dir, 1) * 24px)), -18px) scale(1.3);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(calc(-50% + (var(--particle-dir, 1) * 40px)), -26px) scale(0.2);
+    opacity: 0;
+  }
+}
+
+/* Virtual Controller Overlay (Mobile & Touch) */
+.virtual-controller-overlay {
+  position: absolute;
+  inset: auto 16px 16px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* D-Pad Kiri & Kanan */
+.virtual-dpad {
+  display: flex;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+/* Tombol Aksi */
+.virtual-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  pointer-events: auto;
+}
+
+/* Gaya Umum Tombol Kontrol */
+.ctrl-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.75);
+  color: #ffffff;
+  cursor: pointer;
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  transition: transform 0.08s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Tombol Arah (Kiri & Kanan) */
+.ctrl-btn.btn-left,
+.ctrl-btn.btn-right {
+  width: 64px;
+  height: 64px;
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 6px 14px rgba(2, 132, 199, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.3);
+}
+
+.ctrl-btn.btn-left:active,
+.ctrl-btn.btn-right:active,
+.ctrl-btn.btn-left.active,
+.ctrl-btn.btn-right.active {
+  transform: scale(0.92);
+  background: linear-gradient(135deg, #0369a1 0%, #075985 100%);
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.45);
+}
+
+.btn-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-top: -2px;
+}
+
+/* Tombol Reset Posisi */
+.ctrl-btn.btn-reset {
+  width: 48px;
+  height: 48px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.ctrl-btn.btn-reset:active {
+  transform: scale(0.9);
+}
+
+/* Tombol Loncat Besar */
+.ctrl-btn.btn-jump {
+  width: 76px;
+  height: 76px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 8px 18px rgba(217, 119, 6, 0.5), inset 0 3px 6px rgba(255, 255, 255, 0.4);
+}
+
+.ctrl-btn.btn-jump:active {
+  transform: scale(0.92);
+  background: linear-gradient(135deg, #d97706 0%, #b45309 100%);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.5);
+}
+
+.btn-jump-text {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin-top: -3px;
+}
+
+/* Responsif untuk layar kecil / smartphone */
+@media (max-width: 480px) {
+  .virtual-controller-overlay {
+    inset: auto 8px 12px 8px;
+  }
+
+  .ctrl-btn.btn-left,
+  .ctrl-btn.btn-right {
+    width: 58px;
+    height: 58px;
+  }
+
+  .ctrl-btn.btn-jump {
+    width: 68px;
+    height: 68px;
+  }
+
+  .ctrl-btn.btn-reset {
+    width: 42px;
+    height: 42px;
+  }
+
+  .mascot-status-badge {
+    top: 8px;
+    padding: 4px 12px;
+  }
+
+  .mascot-badge-hint {
+    display: none; /* Hemat ruang di mobile */
+  }
+}

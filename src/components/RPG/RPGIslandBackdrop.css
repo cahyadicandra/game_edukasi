@@ -1,0 +1,274 @@
+/* ==========================================================================
+   RPG ISLAND THEME BACKDROPS (Tema Latar Khusus Setiap Pulau)
+   ========================================================================== */
+
+.rpg-island-backdrop {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.backdrop-layer-group {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   1. TEMA PULAU BENTUK: Lembah Hijau Tropis
+   ========================================================================== */
+.sun-corona {
+  position: absolute;
+  top: 15px;
+  left: 35px;
+  width: 90px;
+  height: 90px;
+  background: radial-gradient(circle, #fef08a 0%, #facc15 45%, transparent 75%);
+  border-radius: 50%;
+  filter: drop-shadow(0 0 25px rgba(250, 204, 21, 0.7));
+  animation: sunPulse 4s ease-in-out infinite alternate;
+}
+
+@keyframes sunPulse {
+  0% { transform: scale(0.95); opacity: 0.85; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+
+.parallax-far-hills,
+.parallax-mid-hills {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 320px;
+  will-change: transform;
+}
+
+.hills-svg {
+  width: 100%;
+  height: 100%;
+}
+
+/* ==========================================================================
+   2. TEMA HUTAN SEGI EMPAT: Kanopi Hutan Rimba & Kunang-kunang
+   ========================================================================== */
+.forest-mist-glow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+}
+
+.parallax-forest-trees {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 340px;
+  will-change: transform;
+}
+
+.trees-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.forest-fireflies-container {
+  position: absolute;
+  inset: 0;
+}
+
+.firefly {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #a3e635;
+  box-shadow: 0 0 12px #bef264, 0 0 24px #a3e635;
+  animation: fireflyFloat 3.5s ease-in-out infinite alternate;
+}
+
+.ff-1 { top: 28%; left: 18%; animation-delay: 0s; }
+.ff-2 { top: 45%; left: 38%; animation-delay: -1.2s; }
+.ff-3 { top: 22%; left: 62%; animation-delay: -2.4s; }
+.ff-4 { top: 52%; left: 78%; animation-delay: -0.8s; }
+.ff-5 { top: 35%; left: 88%; animation-delay: -1.8s; }
+.ff-6 { top: 15%; left: 48%; animation-delay: -2.8s; }
+
+@keyframes fireflyFloat {
+  0% { transform: translate(0, 0) scale(0.7); opacity: 0.3; }
+  50% { transform: translate(12px, -18px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-10px, -30px) scale(0.85); opacity: 0.5; }
+}
+
+/* ==========================================================================
+   3. TEMA PEGUNUNGAN SEGITIGA: Puncak Salju Alpine & Hujan Salju
+   ========================================================================== */
+.mountain-aurora-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(99, 102, 241, 0.3) 0%, transparent 75%);
+}
+
+.parallax-mountains {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 340px;
+  will-change: transform;
+}
+
+.mountains-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.snowfall-container {
+  position: absolute;
+  inset: 0;
+}
+
+.snowflake {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 8px #e0e7ff;
+  opacity: 0.85;
+  animation: snowDrift 4s linear infinite;
+}
+
+.sf-1 { top: -10px; left: 15%; animation-duration: 3.5s; animation-delay: 0s; }
+.sf-2 { top: -10px; left: 32%; animation-duration: 4.8s; animation-delay: -1.5s; }
+.sf-3 { top: -10px; left: 54%; animation-duration: 4.2s; animation-delay: -2.8s; }
+.sf-4 { top: -10px; left: 72%; animation-duration: 3.8s; animation-delay: -0.6s; }
+.sf-5 { top: -10px; left: 88%; animation-duration: 4.5s; animation-delay: -2.2s; }
+.sf-6 { top: -10px; left: 42%; animation-duration: 3.9s; animation-delay: -3.1s; }
+
+@keyframes snowDrift {
+  0% { transform: translateY(0) translateX(0); opacity: 0; }
+  15% { opacity: 0.9; }
+  90% { opacity: 0.9; }
+  100% { transform: translateY(680px) translateX(45px); opacity: 0; }
+}
+
+/* ==========================================================================
+   4. TEMA DANAU LINGKARAN: Air Toska Senja Magis & Gelembung Air
+   ========================================================================== */
+.lake-sunset-glow {
+  position: absolute;
+  top: 10%;
+  left: 20%;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(254, 240, 138, 0.5) 0%, rgba(20, 184, 166, 0.2) 60%, transparent 80%);
+  filter: blur(20px);
+}
+
+.parallax-lake-water {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 250px;
+  will-change: transform;
+}
+
+.lake-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.lake-bubbles-container {
+  position: absolute;
+  inset: 0;
+}
+
+.aqua-bubble {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #ffffff 0%, #2dd4bf 55%, rgba(13, 148, 136, 0.4) 100%);
+  box-shadow: 0 0 10px rgba(45, 212, 191, 0.6);
+  animation: bubbleRise 4.5s ease-in-out infinite;
+}
+
+.ab-1 { bottom: 10px; left: 22%; animation-duration: 4.2s; animation-delay: 0s; }
+.ab-2 { bottom: 10px; left: 44%; animation-duration: 5.1s; animation-delay: -1.8s; width: 14px; height: 14px; }
+.ab-3 { bottom: 10px; left: 65%; animation-duration: 3.9s; animation-delay: -0.9s; width: 8px; height: 8px; }
+.ab-4 { bottom: 10px; left: 82%; animation-duration: 4.8s; animation-delay: -2.5s; width: 12px; height: 12px; }
+.ab-5 { bottom: 10px; left: 35%; animation-duration: 4.4s; animation-delay: -3.2s; width: 9px; height: 9px; }
+
+@keyframes bubbleRise {
+  0% { transform: translateY(0) translateX(0) scale(0.8); opacity: 0; }
+  15% { opacity: 0.85; }
+  90% { opacity: 0.85; }
+  100% { transform: translateY(-580px) translateX(25px) scale(1.2); opacity: 0; }
+}
+
+/* ==========================================================================
+   5. TEMA KASTIL GEOMETRI: Benteng Kosmik Ungu & Taburan Bintang
+   ========================================================================== */
+.cosmic-nebula-glow {
+  position: absolute;
+  top: 5%;
+  right: 15%;
+  width: 320px;
+  height: 240px;
+  background: radial-gradient(ellipse, rgba(217, 70, 239, 0.35) 0%, rgba(126, 34, 206, 0.2) 50%, transparent 80%);
+  filter: blur(35px);
+  animation: nebulaBreathe 6s ease-in-out infinite alternate;
+}
+
+@keyframes nebulaBreathe {
+  0% { transform: scale(0.9); opacity: 0.7; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.parallax-castle-citadel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 380px;
+  will-change: transform;
+}
+
+.castle-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.cosmic-stars-container {
+  position: absolute;
+  inset: 0;
+}
+
+.c-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 8px #f0abfc, 0 0 16px #c084fc;
+  animation: starTwinkle 2.5s ease-in-out infinite alternate;
+}
+
+.st-1 { top: 12%; left: 14%; width: 3px; height: 3px; animation-delay: 0s; }
+.st-2 { top: 24%; left: 34%; width: 5px; height: 5px; animation-delay: -0.7s; }
+.st-3 { top: 18%; left: 52%; width: 4px; height: 4px; animation-delay: -1.4s; }
+.st-4 { top: 28%; left: 68%; width: 3px; height: 3px; animation-delay: -2.1s; }
+.st-5 { top: 15%; left: 85%; width: 5px; height: 5px; animation-delay: -1.1s; }
+.st-6 { top: 38%; left: 22%; width: 3px; height: 3px; animation-delay: -1.8s; }
+.st-7 { top: 42%; left: 79%; width: 4px; height: 4px; animation-delay: -0.4s; }
+.st-8 { top: 8%; left: 45%; width: 6px; height: 6px; animation-delay: -2.3s; box-shadow: 0 0 12px #facc15; }
+
+@keyframes starTwinkle {
+  0% { transform: scale(0.6); opacity: 0.3; }
+  50% { transform: scale(1.3); opacity: 1; }
+  100% { transform: scale(0.8); opacity: 0.5; }
+}

@@ -1,371 +1,1142 @@
+/* ===== ScreenCommon.css — Tema Terpadu Game Petualangan Bangun Datar 3D ===== */
+/* Digunakan oleh: AchievementScreen, MaterialScreen, ProfileScreen */
+
+/* Kontainer Utama Sub-Screen */
 .sub-screen-container {
+  position: relative;
   width: 100%;
   height: 100%;
-  padding: 20px 16px;
   box-sizing: border-box;
   overflow-y: auto;
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
-  color: #ffffff;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  background: linear-gradient(180deg, #38bdf8 0%, #7dd3fc 35%, #bae6fd 70%, #e0f2fe 100%);
+  color: #0f2942;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  padding: calc(env(safe-area-inset-top, 0px) + 14px) 14px calc(env(safe-area-inset-bottom, 0px) + 96px) 14px;
 }
 
-.sub-screen-header {
-  text-align: center;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+.sub-screen-container::-webkit-scrollbar {
+  display: none;
 }
 
-.sub-screen-title {
-  font-family: var(--font-game-title);
-  font-size: 22px;
-  font-weight: 800;
-  color: #38bdf8;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+/* Latar Belakang Langit & Awan Animasi */
+.sub-screen-sky {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
 }
 
-.sub-screen-subtitle {
-  font-size: 12px;
-  color: #94a3b8;
-  margin: 4px 0 0 0;
+.sub-screen-cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.45);
+  border-radius: 9999px;
+  filter: blur(8px);
 }
 
-/* Map Screen styles */
-.level-list {
+.sub-screen-cloud.cloud-1 {
+  width: 200px;
+  height: 55px;
+  top: 12%;
+  left: -30px;
+  animation: floatCloudSub 26s linear infinite;
+}
+
+.sub-screen-cloud.cloud-2 {
+  width: 260px;
+  height: 70px;
+  top: 48%;
+  right: -40px;
+  animation: floatCloudSubReverse 32s linear infinite;
+}
+
+.sub-screen-cloud.cloud-3 {
+  width: 180px;
+  height: 48px;
+  top: 78%;
+  left: 20px;
+  animation: floatCloudSub 28s linear infinite;
+}
+
+@keyframes floatCloudSub {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(50px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes floatCloudSubReverse {
+  0% { transform: translateX(0); }
+  50% { transform: translateX(-50px); }
+  100% { transform: translateX(0); }
+}
+
+/* Konten Sub-Screen */
+.sub-screen-content {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-}
-
-.level-card {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  border-radius: 16px;
-  background: rgba(30, 41, 59, 0.8);
-  border: 1.5px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-}
-
-.level-card.unlocked {
-  cursor: pointer;
-  border-color: rgba(56, 189, 248, 0.4);
-}
-
-.level-card.unlocked:hover {
-  background: rgba(56, 189, 248, 0.15);
-  transform: translateX(4px);
-}
-
-.level-card.locked {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.level-badge {
-  width: 38px;
-  height: 38px;
-  border-radius: 12px;
-  background: #0f172a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-game-title);
-  font-size: 16px;
-  font-weight: 800;
-  color: #38bdf8;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.level-info {
-  flex: 1;
-}
-
-.level-name {
-  font-family: var(--font-game-title);
-  font-size: 14px;
-  font-weight: 700;
-  color: #f1f5f9;
-  display: block;
-}
-
-.level-stars {
-  display: flex;
-  gap: 3px;
-  margin-top: 4px;
-}
-
-.level-play-btn {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #22c55e, #16a34a);
-  border: 1.5px solid #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-/* Material Screen */
-.shape-spotlight-card {
-  background: rgba(30, 41, 59, 0.8);
-  border: 2px solid #38bdf8;
-  border-radius: 20px;
-  padding: 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 12px;
-}
-
-.spotlight-visual {
-  width: 120px;
-  height: 120px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
-}
-
-.shape-preview-svg {
+  gap: 14px;
   width: 100%;
-  height: 100%;
+  max-width: 420px;
+  margin: 0 auto;
 }
 
-.spotlight-title {
-  font-family: var(--font-game-title);
-  font-size: 20px;
-  font-weight: 800;
-  color: #facc15;
-  margin: 0;
+/* ==========================================================================
+   1. HALAMAN PRESTASI (AchievementScreen)
+   ========================================================================== */
+
+/* Hero Ringkasan Kemajuan */
+.summary-hero-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
+  padding: 14px 16px;
+  box-shadow: 
+    0 8px 22px rgba(15, 35, 75, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
 }
 
-.spotlight-desc {
-  font-size: 12px;
-  color: #cbd5e1;
-  line-height: 1.4;
-  margin: 0;
+.trophy-badge-wrapper {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: 2.5px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 
+    0 4px 12px rgba(217, 119, 6, 0.4),
+    inset 0 2px 2px rgba(255, 255, 255, 0.8);
+  flex-shrink: 0;
+  animation: gentleBob 3s ease-in-out infinite;
 }
 
-.formula-pill {
+@keyframes gentleBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+
+.summary-hero-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.summary-hero-label-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #0f172a;
-  padding: 6px 12px;
-  border-radius: 8px;
+  gap: 6px;
+}
+
+.summary-hero-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0284c7;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+.ready-claim-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 800;
+  color: #ffffff;
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  padding: 2px 8px;
+  border-radius: 9999px;
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4);
+}
+
+.pulse-badge {
+  animation: pulseBadge 1.8s ease-in-out infinite;
+}
+
+@keyframes pulseBadge {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.06); }
+}
+
+.summary-hero-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.summary-hero-count {
+  font-family: var(--font-game-title);
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #0f2942;
+}
+
+.summary-hero-count strong {
+  font-size: 18px;
+  font-weight: 900;
+  color: #d97706;
+}
+
+.summary-hero-percent {
+  font-family: var(--font-game-title);
+  font-size: 15px;
+  font-weight: 900;
+  color: #16a34a;
+}
+
+.summary-progress-bar {
   width: 100%;
-  box-sizing: border-box;
-  font-size: 12px;
-  margin-top: 4px;
+  height: 9px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  margin-top: 2px;
 }
 
-.formula-label {
-  font-weight: 700;
-  color: #38bdf8;
+.summary-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+  border-radius: 9999px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
-.formula-val {
-  font-family: monospace;
-  font-weight: 700;
-  color: #4ade80;
-}
-
-.shape-tab-selector {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.summary-sub-stats {
+  display: flex;
+  align-items: center;
   gap: 8px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 3px;
 }
 
-.shape-selector-btn {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 10px;
-  color: #cbd5e1;
+/* Floating Claim Toast Notification */
+.achievement-toast-float {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: #ffffff;
+  padding: 10px 18px;
+  border-radius: 9999px;
+  box-shadow: 0 10px 25px rgba(5, 150, 105, 0.4);
+  border: 2px solid #a7f3d0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-family: var(--font-game-title);
   font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.15s ease;
+  font-weight: 800;
+  animation: floatToastIn 0.35s cubic-bezier(0.18, 0.89, 0.32, 1.28);
 }
 
-.shape-selector-btn.active {
+@keyframes floatToastIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+}
+
+.toast-icon {
+  font-size: 18px;
+}
+
+.toast-text {
+  white-space: nowrap;
+}
+
+/* Tab Filter Status & Kategori */
+.achievement-tabs-wrap {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.achievement-tabs-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.achievement-tab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-game-title);
+  font-size: 12px;
+  font-weight: 800;
+  padding: 8px 12px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(8px);
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(15, 35, 75, 0.05);
+}
+
+.achievement-tab-btn.active {
   background: #0284c7;
   color: #ffffff;
   border-color: #38bdf8;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
 }
 
-/* Achievement Screen */
+.achievement-tab-btn.has-claims {
+  background: #fef08a;
+  border-color: #facc15;
+  color: #854d0e;
+}
+
+.achievement-tab-btn.active.alert-ready {
+  background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+  color: #ffffff;
+  border-color: #fde047;
+}
+
+.tab-pill-counter {
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  border: 1px solid #ffffff;
+}
+
+/* Pills Kategori Mini */
+.achievement-cat-pills {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 2px 0;
+  scrollbar-width: none;
+}
+
+.achievement-cat-pills::-webkit-scrollbar {
+  display: none;
+}
+
+.cat-pill-btn {
+  font-family: var(--font-game-title);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 5px 10px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  background: rgba(255, 255, 255, 0.6);
+  color: #64748b;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.cat-pill-btn.active {
+  background: #0f2942;
+  color: #ffffff;
+  border-color: #0f2942;
+}
+
+/* Daftar Kartu Prestasi */
 .achievement-list {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
 
+.achievement-empty-state {
+  text-align: center;
+  padding: 36px 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 20px;
+  border: 2px dashed #cbd5e1;
+}
+
+.empty-icon-wrap {
+  font-size: 40px;
+  margin-bottom: 8px;
+}
+
+.empty-title {
+  font-family: var(--font-game-title);
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f2942;
+  margin: 0 0 4px 0;
+}
+
+.empty-desc {
+  font-size: 12px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.4;
+}
+
 .achievement-card {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 12px;
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 18px;
+  box-shadow: 
+    0 5px 16px rgba(15, 35, 75, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.achievement-card.can-claim {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 249, 195, 0.9) 100%);
+  border-color: #facc15;
+  box-shadow: 0 6px 18px rgba(234, 179, 8, 0.25);
+}
+
+.achievement-card.claimed {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(241, 245, 249, 0.85) 100%);
+  border-color: #e2e8f0;
+  opacity: 0.88;
+}
+
+.achievement-card:active {
+  transform: scale(0.99);
 }
 
 .achievement-icon-wrapper {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: #0f172a;
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: #f1f5f9;
+  border: 1.5px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
+.achievement-icon-check {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.2));
+}
+
+.achievement-icon-sparkle {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: spinSlow 3s linear infinite;
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 .achievement-info {
   flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.achievement-category-tag {
+  font-size: 9.5px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  color: #64748b;
+}
+
+.achievement-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
 }
 
 .achievement-title {
   font-family: var(--font-game-title);
   font-size: 13.5px;
-  font-weight: 700;
-  color: #ffffff;
+  font-weight: 800;
+  color: #0f2942;
+  line-height: 1.2;
+}
+
+.achievement-title.muted {
+  color: #475569;
+}
+
+.achievement-reward-pill {
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 9999px;
+  flex-shrink: 0;
+}
+
+.achievement-reward-pill.star {
+  background: #fef3c7;
+  color: #b45309;
+  border: 1px solid #fde68a;
+}
+
+.achievement-reward-pill.gem {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.achievement-reward-pill.coin {
+  background: #ffedd5;
+  color: #c2410c;
+  border: 1px solid #fed7aa;
 }
 
 .achievement-desc {
   font-size: 11px;
-  color: #94a3b8;
-  margin: 2px 0 0 0;
-  line-height: 1.2;
+  color: #475569;
+  line-height: 1.3;
+  margin: 0;
 }
 
-.achievement-badge {
+.achievement-mini-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.mini-progress-track {
+  flex: 1;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.mini-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.mini-progress-text {
   font-size: 10px;
   font-weight: 800;
-  padding: 4px 8px;
-  border-radius: 9999px;
+  color: #0284c7;
   font-family: var(--font-game-title);
 }
 
+.achievement-status-area {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.achievement-badge {
+  font-family: var(--font-game-title);
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 5px 9px;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1;
+}
+
 .achievement-badge.done {
-  background: #14532d;
-  color: #4ade80;
-  border: 1px solid #22c55e;
+  background: #e2e8f0;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
 }
 
 .achievement-badge.ongoing {
-  background: #1e293b;
-  color: #cbd5e1;
-  border: 1px solid #475569;
+  background: #f1f5f9;
+  color: #0284c7;
+  border: 1px solid #bae6fd;
 }
 
-/* Profile Screen */
+/* Tombol Klaim Beranimasi */
+.achievement-btn-claim {
+  font-family: var(--font-game-title);
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #ffffff;
+  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  border: 1.5px solid #86efac;
+  border-radius: 9999px;
+  padding: 6px 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.achievement-btn-claim:active {
+  transform: scale(0.95);
+}
+
+.pulse-btn {
+  animation: claimPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes claimPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 4px 12px rgba(22, 163, 74, 0.4);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(22, 163, 74, 0.6);
+  }
+}
+
+/* ==========================================================================
+   2. HALAMAN MATERI (MaterialScreen)
+   ========================================================================== */
+
+/* Tab Selector Pemilih Bentuk */
+.shape-tab-scroll-wrap {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding-bottom: 2px;
+}
+
+.shape-tab-scroll-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+.shape-tab-selector {
+  display: flex;
+  gap: 8px;
+  padding: 2px 2px 6px 2px;
+}
+
+.shape-selector-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 14px;
+  padding: 8px 14px;
+  color: #1e293b;
+  font-family: var(--font-game-title);
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 
+    0 3px 0 #cbd5e1,
+    0 4px 8px rgba(15, 35, 75, 0.08);
+  transition: all 0.15s ease;
+}
+
+.shape-selector-btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #cbd5e1;
+}
+
+.shape-selector-btn.active {
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  color: #ffffff;
+  border-color: #38bdf8;
+  box-shadow: 
+    0 3.5px 0 #075985,
+    0 6px 14px rgba(2, 132, 199, 0.35);
+}
+
+.shape-selector-btn.active:active {
+  transform: translateY(2px);
+  box-shadow: 0 1.5px 0 #075985;
+}
+
+.shape-btn-icon {
+  display: flex;
+  align-items: center;
+}
+
+.shape-btn-name {
+  line-height: 1;
+}
+
+/* Kartu Utama Sorotan Bentuk */
+.shape-spotlight-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
+  padding: 18px 16px;
+  box-shadow: 
+    0 10px 26px rgba(15, 35, 75, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.spotlight-visual-wrap {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 0;
+}
+
+.spotlight-visual {
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: shapeFloat 4s ease-in-out infinite;
+}
+
+@keyframes shapeFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.shape-preview-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.spotlight-info {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.spotlight-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.spotlight-title {
+  font-family: var(--font-game-title);
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f2942;
+  margin: 0;
+}
+
+.shape-properties-row {
+  display: flex;
+  gap: 6px;
+}
+
+.property-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 9999px;
+  padding: 3px 9px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #166534;
+  font-family: var(--font-game-title);
+}
+
+.spotlight-desc {
+  font-size: 13px;
+  color: #334155;
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Grid Kartu Rumus */
+.formula-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.formula-pill {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  box-sizing: border-box;
+}
+
+.formula-pill.area-pill {
+  background: #fefce8;
+  border: 1.5px solid #fde047;
+}
+
+.formula-pill.perimeter-pill {
+  background: #f0fdf4;
+  border: 1.5px solid #bbf7d0;
+}
+
+.formula-pill-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.formula-icon {
+  font-size: 13px;
+}
+
+.formula-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: #713f12;
+  font-family: var(--font-game-title);
+}
+
+.formula-pill.perimeter-pill .formula-label {
+  color: #14532d;
+}
+
+.formula-val {
+  font-family: var(--font-game-title);
+  font-size: 12.5px;
+  font-weight: 900;
+  color: #0f2942;
+  line-height: 1.25;
+}
+
+/* Kotak Fakta Unik */
+.shape-fun-fact-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #eff6ff;
+  border: 1.5px dashed #93c5fd;
+  border-radius: 14px;
+  padding: 10px 12px;
+}
+
+.fact-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.fact-text {
+  font-size: 11.5px;
+  color: #1e40af;
+  margin: 0;
+  line-height: 1.35;
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   3. HALAMAN PROFIL (ProfileScreen)
+   ========================================================================== */
+
 .profile-hero-card {
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 22px;
   padding: 20px 16px;
+  box-shadow: 
+    0 10px 26px rgba(15, 35, 75, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: 6px;
+}
+
+.profile-avatar-outer {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 4px;
 }
 
 .profile-avatar-large {
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
-  border: 3px solid #38bdf8;
+  border: 3.5px solid #ffffff;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 
+    0 6px 16px rgba(15, 35, 75, 0.25),
+    0 0 0 2px #f59e0b;
+  background: linear-gradient(135deg, #a5f3fc, #38bdf8);
+  animation: gentleBob 3.5s ease-in-out infinite;
+}
+
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-level-badge {
+  position: absolute;
+  bottom: -4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+  border: 1.5px solid #ffffff;
+  border-radius: 9999px;
+  padding: 2px 7px;
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 900;
+  color: #78350f;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .profile-name-text {
   font-family: var(--font-game-title);
-  font-size: 20px;
-  font-weight: 800;
-  color: #ffffff;
-  margin: 10px 0 2px 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #0f2942;
+  margin: 2px 0 0 0;
+  line-height: 1.1;
 }
 
 .profile-role-badge {
+  font-family: var(--font-game-title);
   font-size: 11px;
-  color: #93c5fd;
-  background: rgba(2, 132, 199, 0.2);
-  padding: 2px 10px;
+  font-weight: 800;
+  color: #0369a1;
+  background: #e0f2fe;
+  padding: 3px 12px;
   border-radius: 9999px;
-  border: 1px solid rgba(56, 189, 248, 0.3);
+  border: 1px solid #bae6fd;
 }
 
+/* EXP Progress Card */
+.profile-exp-card {
+  width: 100%;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-sizing: border-box;
+  margin-top: 8px;
+}
+
+.profile-exp-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 5px;
+}
+
+.exp-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.exp-numbers {
+  font-family: var(--font-game-title);
+  font-size: 11.5px;
+  color: #0f2942;
+}
+
+.exp-numbers strong {
+  color: #16a34a;
+}
+
+.profile-exp-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.profile-exp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #4ade80, #22c55e);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+/* Grid Statistik 3D Mini */
 .profile-stats-grid {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
   width: 100%;
-  margin-top: 16px;
+  margin-top: 8px;
 }
 
 .profile-stat-box {
-  background: #0f172a;
-  border-radius: 12px;
+  border-radius: 14px;
   padding: 10px 6px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  box-shadow: 0 3px 8px rgba(15, 35, 75, 0.05);
 }
+
+.profile-stat-box.stat-level {
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+}
+
+.profile-stat-box.stat-stars {
+  background: #fefce8;
+  border: 1.5px solid #fef08a;
+}
+
+.profile-stat-box.stat-diamonds {
+  background: #ecfeff;
+  border: 1.5px solid #a5f3fc;
+}
+
+.stat-icon-wrap {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-icon-wrap.level { background: #dbeafe; }
+.stat-icon-wrap.stars { background: #fef9c3; }
+.stat-icon-wrap.diamonds { background: #cffafe; }
 
 .stat-num {
   font-family: var(--font-game-title);
-  font-size: 13px;
-  font-weight: 800;
-  color: #f8fafc;
+  font-size: 13.5px;
+  font-weight: 900;
+  color: #0f2942;
+  line-height: 1.1;
 }
 
 .stat-label {
-  font-size: 9.5px;
-  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
 }
 
+/* Ringkasan Statistik Pembelajaran */
 .profile-summary-card {
-  background: rgba(30, 41, 59, 0.8);
-  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  border-radius: 20px;
   padding: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 22px rgba(15, 35, 75, 0.1);
 }
 
 .card-heading {
   font-family: var(--font-game-title);
-  font-size: 14px;
-  font-weight: 700;
-  color: #38bdf8;
-  margin: 0 0 10px 0;
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f2942;
+  margin: 0 0 12px 0;
 }
 
-.summary-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.summary-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
 .summary-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
-  color: #cbd5e1;
+  gap: 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 10px 12px;
 }
 
-.summary-item strong {
-  margin-left: auto;
-  color: #ffffff;
+.summary-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.summary-icon.trophy { background: #fef3c7; }
+.summary-icon.book { background: #e0f2fe; }
+.summary-icon.target { background: #dcfce7; }
+.summary-icon.award { background: #f3e8ff; }
+
+.summary-item-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.summary-item-label {
+  font-size: 10.5px;
+  color: #64748b;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.summary-item-val {
+  font-family: var(--font-game-title);
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f2942;
+  line-height: 1.2;
 }

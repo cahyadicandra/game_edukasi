@@ -1,7 +1,73 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { AnimatedMascot, type MascotAnimationState, type MascotDirection } from '../Mascot/AnimatedMascot';
+import { Sparkles } from 'lucide-react';
+import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import './GameMascots.css';
 
-export const GameMascots: React.FC = () => {
+interface GameMascotsProps {
+  onOpenPlayground?: () => void;
+}
+
+export const GameMascots: React.FC<GameMascotsProps> = () => {
+  const [mascotState, setMascotState] = useState<MascotAnimationState>('idle');
+  const [direction, setDirection] = useState<MascotDirection>('right');
+  const [showBubble, setShowBubble] = useState(false);
+  const [bubbleText, setBubbleText] = useState('Ayo berpetualang! 🚀');
+  const [isJumpingAnim, setIsJumpingAnim] = useState(false);
+
+  // Memicu aksi lompat visual maskot di Home Screen
+  const triggerJump = () => {
+    if (isJumpingAnim) return;
+    setIsJumpingAnim(true);
+    setMascotState('jump');
+    setBubbleText('Yuhuu! Lompat! 🚀');
+    setShowBubble(true);
+
+    try {
+      Haptics.impact({ style: ImpactStyle.Medium });
+    } catch {
+      // Ignore
+    }
+
+    setTimeout(() => {
+      setMascotState('fall');
+    }, 400);
+
+    setTimeout(() => {
+      setMascotState('land');
+    }, 700);
+
+    setTimeout(() => {
+      setMascotState('idle');
+      setIsJumpingAnim(false);
+    }, 850);
+
+    setTimeout(() => {
+      setShowBubble(false);
+    }, 2400);
+  };
+
+  // Keyboard listener di Home Screen: Space / ArrowUp untuk loncat, ArrowLeft / Right untuk hadap
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.code === 'Space' || e.key === 'ArrowUp' || e.code === 'KeyW' || e.key === 'w' || e.key === 'W') {
+        e.preventDefault();
+        triggerJump();
+      } else if (e.key === 'ArrowLeft' || e.code === 'KeyA' || e.key === 'a') {
+        setDirection('left');
+        setMascotState('walk');
+        setTimeout(() => setMascotState('idle'), 400);
+      } else if (e.key === 'ArrowRight' || e.code === 'KeyD' || e.key === 'd') {
+        setDirection('right');
+        setMascotState('walk');
+        setTimeout(() => setMascotState('idle'), 400);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isJumpingAnim]);
+
   return (
     <div className="mascots-container">
       {/* Secondary Shapes in background cliffs */}
@@ -39,14 +105,27 @@ export const GameMascots: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Mascot: Yellow Triangle Adventurer from user asset */}
-      <div className="main-mascot-wrapper" title="Petualang Segitiga">
-        <img
-          src="/assets/mascot_triangle.png"
-          alt="Maskot Petualang Segitiga"
-          className="main-mascot-img"
-        />
-        <div className="mascot-ground-shadow" />
+      {/* Main Mascot: Yellow Triangle Adventurer dari mascot_assets */}
+      <div
+        className={`main-mascot-wrapper ${isJumpingAnim ? 'jumping-hero' : ''}`}
+        title="Ketuk atau tekan Spasi untuk loncat!"
+      >
+        {/* Balon Ucapan saat Maskot Diketuk / Loncat */}
+        {showBubble && (
+          <div className="mascot-speech-bubble">
+            <Sparkles size={14} className="bubble-icon" />
+            <span>{bubbleText}</span>
+          </div>
+        )}
+
+        <div className="mascot-interactive-box" onClick={triggerJump}>
+          <AnimatedMascot
+            state={mascotState}
+            direction={direction}
+            size="100%"
+            showShadow={true}
+          />
+        </div>
       </div>
     </div>
   );

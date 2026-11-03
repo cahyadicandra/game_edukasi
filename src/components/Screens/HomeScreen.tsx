@@ -15,8 +15,10 @@ interface HomeScreenProps {
   onAddDiamonds: () => void;
   onOpenSettings: () => void;
   onOpenMission: () => void;
+  onOpenGacha: () => void;
   onStartAdventure: () => void;
-  onExploreShapes: () => void;
+  onExploreShapes?: () => void;
+  onOpenMascotPlayground?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -27,8 +29,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onAddDiamonds,
   onOpenSettings,
   onOpenMission,
+  onOpenGacha,
   onStartAdventure,
-  onExploreShapes,
+  onOpenMascotPlayground,
 }) => {
   return (
     <div className="home-screen-layout">
@@ -40,7 +43,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       />
 
       {/* Animated Shape Mascots (Walking Triangle and friends) */}
-      <GameMascots />
+      <GameMascots onOpenPlayground={onOpenMascotPlayground} />
 
       {/* Interactive UI Overlays */}
       <div className="game-overlay">
@@ -53,19 +56,31 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             onAddDiamonds={onAddDiamonds}
             onOpenSettings={onOpenSettings}
           />
-          <DailyMissionCard
-            mission={mission}
-            onClick={onOpenMission}
-          />
+          <div className="header-cards-row">
+            <button
+              className="gacha-quick-banner"
+              onClick={onOpenGacha}
+              title="Buka Peti Misteri Geometri"
+            >
+              <span className="gacha-quick-icon">🎁</span>
+              <div className="gacha-quick-text">
+                <span className="gacha-quick-title">Peti Misteri</span>
+                <span className="gacha-quick-sub">Gacha Hadiah!</span>
+              </div>
+            </button>
+            <DailyMissionCard
+              mission={mission}
+              onClick={onOpenMission}
+            />
+          </div>
         </div>
 
         {/* 3D Game Title Logo with Crest and Ribbon */}
         <GameLogo />
 
-        {/* Play CTA Button and Wooden Signboard */}
+        {/* Play CTA Button */}
         <CenterActions
           onStartAdventure={onStartAdventure}
-          onExploreShapes={onExploreShapes}
         />
       </div>
     </div>

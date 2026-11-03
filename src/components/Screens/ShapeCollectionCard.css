@@ -1,0 +1,126 @@
+/* ===== Shape Collection Card — Kartu Vektor Dinamis ===== */
+
+.shape-collection-vector-card {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  border-radius: 24px;
+  box-shadow:
+    0 8px 18px rgba(15, 35, 75, 0.25),
+    0 2px 0 #cbd5e1;
+  padding: 8px 14px 8px 8px;
+  width: 90%;
+  max-width: 320px;
+  cursor: pointer;
+  outline: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  user-select: none;
+  gap: 12px;
+  box-sizing: border-box;
+}
+
+.shape-collection-vector-card:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 10px 22px rgba(15, 35, 75, 0.3),
+    0 2px 0 #94a3b8;
+}
+
+.shape-collection-vector-card:active {
+  transform: translateY(2px) scale(0.97);
+  box-shadow: 0 4px 10px rgba(15, 35, 75, 0.2);
+}
+
+/* 1. Ikon Peti Vektor */
+.chest-vector-wrapper {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.chest-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* 2. Informasi Tengah */
+.card-info-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+  gap: 5px;
+}
+
+.card-main-title {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 15.5px;
+  font-weight: 800;
+  color: #0f3e6d;
+  letter-spacing: 0.2px;
+  line-height: 1.15;
+}
+
+/* Progress bar dinamis */
+.dynamic-progress-container {
+  width: 100%;
+  max-width: 150px;
+}
+
+.dynamic-progress-track {
+  position: relative;
+  width: 100%;
+  height: 22px;
+  background: #dbeafe;
+  border-radius: 9999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.dynamic-progress-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+  border-radius: 9999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(2, 132, 199, 0.4);
+}
+
+.dynamic-progress-label {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 11.5px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  line-height: 1;
+  text-shadow: 0 1px 2px rgba(15, 23, 42, 0.7);
+}
+
+/* 3. Chevron Kanan */
+.card-chevron-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.shape-collection-vector-card:hover .card-chevron-wrap {
+  transform: translateX(3px);
+}

@@ -1,0 +1,176 @@
+{
+  "canvas": [
+    1024,
+    1024
+  ],
+  "order_back_to_front": [
+    "arm_fist",
+    "leg_back",
+    "boot_back",
+    "leg_front",
+    "boot_front",
+    "pack",
+    "body",
+    "strap",
+    "arm_strap"
+  ],
+  "layers": {
+    "arm_fist": {
+      "file": "01_arm_fist.png",
+      "z": 1,
+      "x": 778,
+      "y": 370,
+      "width": 171,
+      "height": 181,
+      "pivot": [
+        818,
+        500
+      ],
+      "pivot_local": [
+        40,
+        130
+      ]
+    },
+    "leg_back": {
+      "file": "02_leg_back.png",
+      "z": 2,
+      "x": 287,
+      "y": 657,
+      "width": 254,
+      "height": 170,
+      "pivot": [
+        509.4,
+        679.2
+      ],
+      "ankle": [
+        333.3,
+        778.7
+      ],
+      "pivot_local": [
+        222.4,
+        22.2
+      ]
+    },
+    "boot_back": {
+      "file": "03_boot_back.png",
+      "z": 3,
+      "x": 229,
+      "y": 714,
+      "width": 185,
+      "height": 243,
+      "pivot": [
+        333.3,
+        778.7
+      ],
+      "pivot_local": [
+        104.3,
+        64.7
+      ]
+    },
+    "leg_front": {
+      "file": "04_leg_front.png",
+      "z": 4,
+      "x": 458,
+      "y": 628,
+      "width": 279,
+      "height": 218,
+      "pivot": [
+        495.7,
+        658.5
+      ],
+      "ankle": [
+        683.0,
+        771.6
+      ],
+      "pivot_local": [
+        37.7,
+        30.5
+      ]
+    },
+    "boot_front": {
+      "file": "05_boot_front.png",
+      "z": 5,
+      "x": 601,
+      "y": 733,
+      "width": 295,
+      "height": 271,
+      "pivot": [
+        683.0,
+        771.6
+      ],
+      "pivot_local": [
+        82.0,
+        38.6
+      ]
+    },
+    "pack": {
+      "file": "06_pack.png",
+      "z": 6,
+      "x": 52,
+      "y": 179,
+      "width": 343,
+      "height": 528,
+      "pivot": [
+        545,
+        715
+      ],
+      "pivot_local": [
+        493,
+        536
+      ]
+    },
+    "body": {
+      "file": "07_body.png",
+      "z": 7,
+      "x": 204,
+      "y": 35,
+      "width": 672,
+      "height": 691,
+      "pivot": [
+        545,
+        715
+      ],
+      "pivot_local": [
+        341,
+        680
+      ]
+    },
+    "strap": {
+      "file": "08_strap.png",
+      "z": 8,
+      "x": 256,
+      "y": 376,
+      "width": 133,
+      "height": 255,
+      "pivot": [
+        545,
+        715
+      ],
+      "pivot_local": [
+        289,
+        339
+      ]
+    },
+    "arm_strap": {
+      "file": "09_arm_strap.png",
+      "z": 9,
+      "x": 144,
+      "y": 428,
+      "width": 191,
+      "height": 232,
+      "pivot": [
+        318,
+        482
+      ],
+      "pivot_local": [
+        174,
+        54
+      ]
+    }
+  },
+  "notes": {
+    "coordinates": "x,y = posisi pojok kiri-atas layer di kanvas asli 1024x1024; pivot = titik putar di kanvas asli; pivot_local = titik putar relatif ke layer",
+    "rest_pose": "susun semua layer sesuai order_back_to_front di (x,y) masing-masing = gambar asli",
+    "rig": "leg_back/boot_back berputar di pivot leg_back; leg_front/boot_front berputar di pivot leg_front; arm_fist di pivot arm_fist; pack, body, strap, arm_strap bergerak sebagai satu grup"
+  }
+}

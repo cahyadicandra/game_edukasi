@@ -1,0 +1,609 @@
+/* ===== Battle.css — Turn-Based Geometry RPG Battle ===== */
+
+.battle-screen {
+  position: absolute;
+  inset: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  overflow: hidden;
+  color: #ffffff;
+}
+
+/* Background Arena Petualangan */
+.battle-arena-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, #1e3a8a 0%, #0f172a 70%);
+  opacity: 0.9;
+  z-index: 1;
+}
+
+.battle-arena-grid {
+  position: absolute;
+  bottom: 0;
+  left: -20%;
+  right: -20%;
+  height: 55%;
+  background: 
+    linear-gradient(rgba(56, 189, 248, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  transform: perspective(300px) rotateX(60deg);
+  transform-origin: bottom center;
+  z-index: 2;
+}
+
+/* Header Topbar */
+.battle-topbar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(8px);
+  border-bottom: 1.5px solid rgba(56, 189, 248, 0.3);
+}
+
+.battle-world-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-game-title);
+  font-size: 13px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.battle-quit-btn {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1.5px solid rgba(239, 68, 68, 0.6);
+  color: #fca5a5;
+  border-radius: 9999px;
+  padding: 5px 12px;
+  font-family: var(--font-game-title);
+  font-size: 11.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.battle-quit-btn:active {
+  transform: scale(0.95);
+}
+
+/* Main Battle Stage */
+.battle-stage {
+  position: relative;
+  z-index: 10;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 10px 14px 12px 14px;
+  gap: 10px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.battle-stage::-webkit-scrollbar { display: none; }
+
+/* ---- Musuh / Monster Box ---- */
+.monster-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.monster-info-card {
+  width: 100%;
+  max-width: 330px;
+  background: rgba(30, 41, 59, 0.85);
+  border: 2px solid #475569;
+  border-radius: 16px;
+  padding: 8px 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.monster-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.monster-name-title {
+  display: flex;
+  flex-direction: column;
+}
+
+.monster-name {
+  font-family: var(--font-game-title);
+  font-size: 14px;
+  font-weight: 900;
+  color: #f8fafc;
+}
+
+.monster-sub {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.monster-badge-tag {
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+/* HP Bar Musuh */
+.monster-hp-bar-wrap {
+  position: relative;
+  width: 100%;
+  height: 12px;
+  background: #0f172a;
+  border-radius: 9999px;
+  border: 1.5px solid #64748b;
+  overflow: hidden;
+}
+
+.monster-hp-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444 0%, #f97316 100%);
+  border-radius: 9999px;
+  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.monster-hp-text {
+  font-size: 10px;
+  font-family: var(--font-game-title);
+  font-weight: 800;
+  color: #cbd5e1;
+  text-align: right;
+  display: block;
+  margin-top: 2px;
+}
+
+/* Monster Avatar Display */
+.monster-avatar-stage {
+  position: relative;
+  width: 130px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 4px 0;
+}
+
+.monster-aura {
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  filter: blur(18px);
+  opacity: 0.5;
+  animation: monsterAuraPulse 2s infinite alternate;
+}
+
+@keyframes monsterAuraPulse {
+  0% { transform: scale(0.85); opacity: 0.3; }
+  100% { transform: scale(1.15); opacity: 0.65; }
+}
+
+.monster-shape-art {
+  position: relative;
+  z-index: 2;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s ease;
+  animation: monsterFloat 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes monsterFloat {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-8px) rotate(1.5deg); }
+}
+
+.monster-shape-art.hit {
+  animation: monsterShake 0.4s ease-out;
+  filter: brightness(2) drop-shadow(0 0 16px #ef4444);
+}
+
+@keyframes monsterShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-12px); }
+  40%, 80% { transform: translateX(12px); }
+}
+
+.monster-ground-shadow {
+  position: absolute;
+  bottom: 6px;
+  width: 80px;
+  height: 10px;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.6) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Combat Log Toast */
+.battle-combat-log {
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid #38bdf8;
+  border-radius: 12px;
+  padding: 6px 12px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-align: center;
+  color: #bae6fd;
+  min-height: 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* ---- Player Status & Command Console ---- */
+.player-rpg-console {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 350px;
+  margin: 0 auto;
+}
+
+.player-status-row {
+  display: flex;
+  gap: 10px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1.5px solid #38bdf8;
+  border-radius: 16px;
+  padding: 8px 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.player-avatar-small {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid #38bdf8;
+  overflow: hidden;
+  background: #0284c7;
+  flex-shrink: 0;
+}
+
+.player-bars-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 4px;
+}
+
+.rpg-bar-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.rpg-bar-label {
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 900;
+  width: 22px;
+}
+
+.rpg-bar-label.hp { color: #f87171; }
+.rpg-bar-label.sp { color: #38bdf8; }
+
+.rpg-bar-track {
+  flex: 1;
+  height: 8px;
+  background: #0f172a;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.rpg-bar-fill.hp {
+  height: 100%;
+  background: linear-gradient(90deg, #ef4444 0%, #22c55e 100%);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.rpg-bar-fill.sp {
+  height: 100%;
+  background: linear-gradient(90deg, #0284c7 0%, #38bdf8 100%);
+  border-radius: 9999px;
+  transition: width 0.3s ease;
+}
+
+.rpg-bar-val {
+  font-family: var(--font-game-title);
+  font-size: 10px;
+  font-weight: 800;
+  color: #cbd5e1;
+  width: 50px;
+  text-align: right;
+}
+
+/* 4 Tombol Aksi Utama RPG */
+.battle-commands-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.battle-cmd-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  background: rgba(30, 41, 59, 0.95);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.15s ease;
+  text-align: left;
+}
+
+.battle-cmd-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+}
+
+.battle-cmd-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.battle-cmd-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  filter: grayscale(0.8);
+}
+
+.battle-cmd-btn.attack {
+  border-color: #ef4444;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.battle-cmd-btn.skill {
+  border-color: #38bdf8;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.battle-cmd-btn.defend {
+  border-color: #f59e0b;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.battle-cmd-btn.bag {
+  border-color: #10b981;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(30, 41, 59, 0.9) 100%);
+}
+
+.cmd-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.cmd-text-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.cmd-title {
+  font-family: var(--font-game-title);
+  font-size: 12.5px;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.cmd-desc {
+  font-size: 9.5px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Mode Soal Pertarungan (Combat Quiz Panel) */
+.battle-quiz-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid #38bdf8;
+  border-radius: 18px;
+  padding: 12px;
+  animation: panelSlideUp 0.2s ease-out;
+}
+
+@keyframes panelSlideUp {
+  from { transform: translateY(15px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.battle-quiz-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.battle-quiz-type {
+  font-family: var(--font-game-title);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #38bdf8;
+}
+
+.battle-cancel-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 11px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.battle-prompt-text {
+  font-family: var(--font-game-title);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+  text-align: center;
+}
+
+.battle-options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.battle-opt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 8px;
+  background: #1e293b;
+  border: 2px solid #475569;
+  border-radius: 12px;
+  color: #ffffff;
+  font-family: var(--font-game-title);
+  font-size: 12.5px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.battle-opt-btn:hover:not(:disabled) {
+  border-color: #38bdf8;
+  background: #0284c7;
+}
+
+.battle-opt-btn.correct {
+  background: #16a34a;
+  border-color: #4ade80;
+}
+
+.battle-opt-btn.wrong {
+  background: #dc2626;
+  border-color: #f87171;
+}
+
+.battle-opt-btn.eliminated {
+  opacity: 0.3;
+  pointer-events: none;
+  border-style: dashed;
+}
+
+/* Jurus Rumus Selection Panel */
+.skills-select-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  border: 2px solid #38bdf8;
+  border-radius: 18px;
+  padding: 12px;
+  animation: panelSlideUp 0.2s ease-out;
+}
+
+.skill-card-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: #1e293b;
+  border: 1.5px solid #38bdf8;
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.skill-card-btn:hover:not(:disabled) {
+  background: #0369a1;
+}
+
+.skill-card-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  border-color: #64748b;
+}
+
+.skill-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.skill-name {
+  font-family: var(--font-game-title);
+  font-size: 12px;
+  font-weight: 800;
+  color: #bae6fd;
+}
+
+.skill-desc {
+  font-size: 9.5px;
+  color: #94a3b8;
+}
+
+.skill-sp-cost {
+  font-family: var(--font-game-title);
+  font-size: 11px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  background: #0284c7;
+  color: #ffffff;
+}
+
+/* Floating Damage Popup */
+.floating-damage {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-game-title);
+  font-size: 26px;
+  font-weight: 900;
+  color: #ef4444;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.8), 0 2px 4px #000;
+  z-index: 50;
+  pointer-events: none;
+  animation: floatUpFade 0.9s ease-out forwards;
+}
+
+.floating-damage.heal {
+  color: #4ade80;
+  text-shadow: 0 0 10px rgba(74, 222, 128, 0.8), 0 2px 4px #000;
+}
+
+.floating-damage.crit {
+  font-size: 32px;
+  color: #facc15;
+  text-shadow: 0 0 12px rgba(250, 204, 21, 0.9), 0 2px 4px #000;
+}
+
+@keyframes floatUpFade {
+  0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  30% { transform: translate(-50%, -20px) scale(1.2); opacity: 1; }
+  100% { transform: translate(-50%, -50px) scale(1); opacity: 0; }
+}

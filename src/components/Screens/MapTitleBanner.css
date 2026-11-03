@@ -1,0 +1,74 @@
+/* ===== Map Title Banner — Desain Vektor Murni Peta Petualangan ===== */
+
+.map-title-vector-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 305px;
+  margin: 0 auto;
+  user-select: none;
+  animation: titleBannerBob 3.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes titleBannerBob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+.map-title-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* Tipografi Vektor Judul Utama "Peta Petualangan" */
+.banner-title-shadow {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 19.5px;
+  font-weight: 900;
+  fill: #451a03;
+  stroke: #451a03;
+  stroke-width: 4px;
+  stroke-linejoin: round;
+  text-anchor: middle;
+}
+
+.banner-title-text {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 19.5px;
+  font-weight: 900;
+  fill: #ffffff;
+  letter-spacing: 0.2px;
+  text-anchor: middle;
+}
+
+/* Tipografi Vektor Subjudul Pita Biru "Jelajahi Dunia, Temukan Bentuknya!" */
+.banner-ribbon-text {
+  font-family: var(--font-game-title, 'Fredoka', cursive, sans-serif);
+  font-size: 10.6px;
+  font-weight: 800;
+  fill: #ffffff;
+  letter-spacing: 0.2px;
+  text-anchor: middle;
+  text-shadow: 0 1px 2px rgba(3, 37, 65, 0.8);
+}
+
+@media (max-width: 380px) {
+  .map-title-vector-banner {
+    max-width: 265px;
+  }
+  .banner-title-shadow,
+  .banner-title-text {
+    font-size: 17.5px;
+  }
+  .banner-ribbon-text {
+    font-size: 9.6px;
+  }
+}

@@ -1,0 +1,174 @@
+{
+  "platform_L": {
+    "file": "png/platform_L.png",
+    "width": 512,
+    "height": 170,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 498
+    },
+    "kind": "slab"
+  },
+  "platform_M": {
+    "file": "png/platform_M.png",
+    "width": 330,
+    "height": 137,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 316
+    },
+    "kind": "slab"
+  },
+  "platform_S": {
+    "file": "png/platform_S.png",
+    "width": 210,
+    "height": 112,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 196
+    },
+    "kind": "slab"
+  },
+  "island_L": {
+    "file": "png/island_L.png",
+    "width": 560,
+    "height": 364,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 546
+    },
+    "kind": "island"
+  },
+  "island_M": {
+    "file": "png/island_M.png",
+    "width": 380,
+    "height": 280,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 366
+    },
+    "kind": "island"
+  },
+  "island_S": {
+    "file": "png/island_S.png",
+    "width": 250,
+    "height": 208,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 236
+    },
+    "kind": "island"
+  },
+  "island_wide": {
+    "file": "png/island_wide.png",
+    "width": 700,
+    "height": 192,
+    "surface": {
+      "y": 24,
+      "x0": 14,
+      "x1": 686
+    },
+    "kind": "wide"
+  },
+  "coin": {
+    "file": "png/coin.png",
+    "width": 128,
+    "height": 128,
+    "role": "pickup",
+    "hitbox_radius": 56
+  },
+  "coin_spin_sheet": {
+    "file": "png/coin_spin_sheet.png",
+    "width": 1024,
+    "height": 128,
+    "frames": 8,
+    "frame_w": 128,
+    "frame_h": 128,
+    "role": "spritesheet"
+  },
+  "star": {
+    "file": "png/star.png",
+    "width": 128,
+    "height": 128,
+    "role": "pickup"
+  },
+  "heart": {
+    "file": "png/heart.png",
+    "width": 128,
+    "height": 128,
+    "role": "life"
+  },
+  "gem": {
+    "file": "png/gem.png",
+    "width": 128,
+    "height": 128,
+    "role": "pickup"
+  },
+  "token_segitiga": {
+    "file": "png/token_segitiga.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "segitiga"
+  },
+  "token_persegi": {
+    "file": "png/token_persegi.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "persegi"
+  },
+  "token_lingkaran": {
+    "file": "png/token_lingkaran.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "lingkaran"
+  },
+  "token_persegi_panjang": {
+    "file": "png/token_persegi_panjang.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "persegi_panjang"
+  },
+  "token_jajar_genjang": {
+    "file": "png/token_jajar_genjang.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "jajar_genjang"
+  },
+  "token_belah_ketupat": {
+    "file": "png/token_belah_ketupat.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "belah_ketupat"
+  },
+  "token_trapesium": {
+    "file": "png/token_trapesium.png",
+    "width": 128,
+    "height": 136,
+    "role": "collectible",
+    "shape": "trapesium"
+  },
+  "cloud_1": {
+    "file": "png/cloud_1.png",
+    "width": 340,
+    "height": 170,
+    "role": "decor"
+  },
+  "cloud_2": {
+    "file": "png/cloud_2.png",
+    "width": 250,
+    "height": 130,
+    "role": "decor"
+  }
+}

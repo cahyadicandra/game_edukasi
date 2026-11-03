@@ -15,3 +15,59 @@
   width: 100%;
   z-index: 30;
 }
+
+.header-cards-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  width: 100%;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.gacha-quick-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid #facc15;
+  border-radius: 14px;
+  padding: 5px 10px;
+  box-shadow: 0 6px 14px -2px rgba(234, 179, 8, 0.25);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  outline: none;
+}
+
+.gacha-quick-banner:active {
+  transform: scale(0.96);
+}
+
+.gacha-quick-icon {
+  font-size: 20px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.gacha-quick-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.gacha-quick-title {
+  font-family: var(--font-game-title);
+  font-size: 11px;
+  font-weight: 800;
+  color: #78350f;
+  line-height: 1.1;
+}
+
+.gacha-quick-sub {
+  font-size: 9px;
+  font-weight: 800;
+  color: #0284c7;
+  font-family: var(--font-game-title);
+}

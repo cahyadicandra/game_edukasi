@@ -1,0 +1,948 @@
+/* ==========================================================================
+   GACHA MODAL & INDEX KOLEKSI 3D STYLING
+   ========================================================================== */
+
+.gacha-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px;
+  animation: gachaFadeIn 0.22s ease-out;
+}
+
+@keyframes gachaFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.gacha-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border: 3px solid #38bdf8;
+  border-radius: 26px;
+  box-shadow: 
+    0 20px 50px rgba(2, 132, 199, 0.4),
+    0 0 0 4px rgba(255, 255, 255, 0.95);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: gachaSlideUp 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes gachaSlideUp {
+  from { transform: scale(0.9) translateY(24px); opacity: 0; }
+  to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ── HEADER MODAL ── */
+.gacha-header-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: linear-gradient(180deg, #0284c7 0%, #0369a1 100%);
+  border-bottom: 2px solid #38bdf8;
+  color: #ffffff;
+  gap: 8px;
+}
+
+.gacha-title-area {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.gacha-header-icon {
+  font-size: 26px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
+}
+
+.gacha-main-heading {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  margin: 0;
+  color: #ffffff;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  letter-spacing: -0.2px;
+}
+
+.gacha-sub-heading {
+  font-size: 10.5px;
+  color: #bae6fd;
+  display: block;
+}
+
+.gacha-wallet-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.wallet-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.wallet-pill.coin strong { color: #fde047; }
+.wallet-pill.star strong { color: #facc15; }
+.wallet-pill.gem strong { color: #38bdf8; }
+
+.gacha-btn-close {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+}
+
+.gacha-btn-close:active {
+  transform: scale(0.9);
+}
+
+/* ── TAB NAVIGASI ── */
+.gacha-tabs-row {
+  display: flex;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 4px 10px;
+  gap: 4px;
+}
+
+.gacha-nav-tab {
+  flex: 1;
+  padding: 7px 6px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 11.5px;
+  font-weight: 800;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.gacha-nav-tab.active {
+  background: #ffffff;
+  color: #0284c7;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.gacha-body-content {
+  padding: 12px 14px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ── CHEST SELECTOR ── */
+.chest-selector-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+
+.chest-type-card {
+  background: #f8fafc;
+  border: 2px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.chest-type-card.coin.selected {
+  border-color: #f59e0b;
+  background: #fefce8;
+  box-shadow: 0 0 0 2px #f59e0b;
+}
+
+.chest-type-card.star.selected {
+  border-color: #eab308;
+  background: #fffbeb;
+  box-shadow: 0 0 0 2px #eab308;
+}
+
+.chest-type-card.diamond.selected {
+  border-color: #0284c7;
+  background: #ecfeff;
+  box-shadow: 0 0 0 2px #0284c7;
+}
+
+.chest-type-icon {
+  font-size: 22px;
+}
+
+.chest-type-name {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f2942;
+  line-height: 1.1;
+}
+
+.chest-type-cost {
+  font-size: 9.5px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+/* ── STAGE IDLE ── */
+.gacha-stage.idle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 10px;
+}
+
+.gacha-chest-display {
+  position: relative;
+  width: 110px;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 6px 0;
+}
+
+.chest-glow-aura {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  filter: blur(16px);
+  animation: chestAuraPulse 2s ease-in-out infinite alternate;
+}
+
+.chest-glow-aura.coin-chest-glow { background: rgba(245, 158, 11, 0.45); }
+.chest-glow-aura.star-chest-glow { background: rgba(234, 179, 8, 0.5); }
+.chest-glow-aura.diamond-chest-glow { background: rgba(2, 132, 199, 0.5); }
+
+@keyframes chestAuraPulse {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to { transform: scale(1.15); opacity: 1; }
+}
+
+.chest-visual-box {
+  font-size: 64px;
+  position: relative;
+  z-index: 2;
+  animation: chestHover 2.5s ease-in-out infinite alternate;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.25));
+}
+
+@keyframes chestHover {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-8px) scale(1.03); }
+}
+
+.gacha-chest-info {
+  max-width: 380px;
+}
+
+.chest-title {
+  margin: 0 0 4px 0;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f2942;
+}
+
+.chest-desc {
+  margin: 0;
+  font-size: 11.5px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.gacha-error-toast {
+  background: #fef2f2;
+  border: 1.5px solid #ef4444;
+  color: #b91c1c;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.animate-shake {
+  animation: shakeAlert 0.3s ease;
+}
+
+@keyframes shakeAlert {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+/* Tombol Tarik */
+.gacha-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+}
+
+.btn-pull-action {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: transform 0.12s, box-shadow 0.12s;
+  font-family: var(--font-game-title, sans-serif);
+}
+
+.btn-pull-action.single {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35);
+}
+
+.btn-pull-action.multi {
+  background: linear-gradient(180deg, #facc15 0%, #eab308 100%);
+  color: #713f12;
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+}
+
+.btn-pull-action:active {
+  transform: scale(0.97);
+}
+
+.pull-badge-discount {
+  position: absolute;
+  top: -8px;
+  right: 6px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 9px;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  border: 1px solid #ffffff;
+}
+
+.pull-lbl {
+  font-size: 13px;
+  font-weight: 900;
+}
+
+.pull-price {
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.9;
+}
+
+/* ── STAGE OPENING ── */
+.gacha-stage.opening {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 30px 10px;
+  gap: 12px;
+}
+
+.opening-chest-animation {
+  position: relative;
+  width: 90px;
+  height: 90px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opening-chest-emoji {
+  font-size: 60px;
+  animation: chestShakeRattle 0.3s ease-in-out infinite;
+}
+
+@keyframes chestShakeRattle {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(-8deg) scale(1.08); }
+  75% { transform: rotate(8deg) scale(1.08); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.opening-title {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  color: #0284c7;
+  margin: 0;
+}
+
+.opening-sub {
+  margin: 0;
+  font-size: 12px;
+  color: #64748b;
+}
+
+/* ── STAGE RESULT ── */
+.gacha-stage.result {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.result-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.result-banner-header h3 {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 15px;
+  font-weight: 900;
+  color: #0f2942;
+  margin: 0;
+}
+
+.sparkle-gold {
+  color: #eab308;
+}
+
+.gacha-results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 52vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.gacha-card-reveal {
+  border-radius: 14px;
+  padding: 10px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  border: 2px solid;
+  animation: cardPopIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes cardPopIn {
+  from { transform: scale(0.6); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.card-rarity-pill {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  color: #ffffff;
+  font-size: 8.5px;
+  font-weight: 900;
+  padding: 1px 6px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.card-icon-center {
+  margin: 6px 0 4px 0;
+}
+
+.card-item-title {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 11px;
+  font-weight: 800;
+  color: #0f2942;
+  line-height: 1.2;
+}
+
+.card-badge-detail {
+  font-size: 9.5px;
+  font-weight: 800;
+  margin-top: 2px;
+}
+
+.result-actions-row {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.btn-again-pull {
+  flex: 1;
+  padding: 9px;
+  border: 1.5px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 12px;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #334155;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.btn-confirm-gacha {
+  flex: 1.2;
+  padding: 9px;
+  border: none;
+  background: linear-gradient(180deg, #22c55e 0%, #16a34a 100%);
+  border-radius: 12px;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 3px 10px rgba(22, 163, 74, 0.3);
+}
+
+/* ── TAB INVENTORY ── */
+.gacha-inventory-view {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.inventory-section-title {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 12.5px;
+  font-weight: 800;
+  color: #0f2942;
+  margin: 0;
+}
+
+.inventory-tickets-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.inventory-ticket-card {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.ticket-icon {
+  font-size: 24px;
+}
+
+.ticket-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.ticket-info strong {
+  font-size: 12px;
+  color: #0f2942;
+}
+
+.ticket-info span {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.inventory-back-btn {
+  margin-top: 6px;
+  padding: 10px;
+  border: none;
+  background: #0284c7;
+  color: #ffffff;
+  border-radius: 12px;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ── TAB 3: INDEX KOLEKSI COMPENDIUM ── */
+.gacha-compendium-view {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.compendium-progress-banner {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.progress-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.progress-label-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #0f2942;
+}
+
+.progress-fraction {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 11.5px;
+  font-weight: 800;
+  color: #0284c7;
+}
+
+.compendium-progress-track {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.compendium-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #0284c7);
+  border-radius: 9999px;
+  transition: width 0.35s ease;
+}
+
+/* Milestones */
+.compendium-milestones-area {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.milestones-heading {
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.milestones-scroll-list {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+
+.milestone-badge-box {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 6px 8px;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 10px;
+}
+
+.milestone-badge-box.reached {
+  border-color: #f59e0b;
+  background: #fffbeb;
+}
+
+.milestone-badge-box.claimed {
+  opacity: 0.6;
+}
+
+.milestone-name {
+  font-weight: 800;
+  color: #0f2942;
+  white-space: nowrap;
+}
+
+.milestone-reward-text {
+  font-weight: 900;
+  color: #d97706;
+}
+
+.btn-claim-milestone {
+  background: #22c55e;
+  border: none;
+  color: #ffffff;
+  font-size: 9.5px;
+  font-weight: 800;
+  padding: 2px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.milestone-status-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+/* Filter Bar */
+.compendium-filters-bar {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+}
+
+.filter-pill {
+  padding: 4px 10px;
+  background: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.12s;
+}
+
+.filter-pill.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #0284c7;
+}
+
+/* Grid Kartu Index Koleksi */
+.compendium-items-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 8px;
+  max-height: 48vh;
+  overflow-y: auto;
+  padding: 4px;
+}
+
+.compendium-card {
+  border-radius: 14px;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  border: 1.5px solid;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+  gap: 4px;
+}
+
+.compendium-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+}
+
+.compendium-card.locked {
+  opacity: 0.65;
+}
+
+.compendium-card-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.compendium-rarity-tag {
+  font-size: 8px;
+  font-weight: 800;
+  color: #ffffff;
+  padding: 1px 5px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+}
+
+.compendium-check-tag {
+  font-size: 8px;
+  font-weight: 800;
+  color: #15803d;
+}
+
+.compendium-card-icon-box {
+  margin: 4px 0;
+}
+
+.compendium-card-title {
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 10.5px;
+  font-weight: 800;
+  color: #0f2942;
+  line-height: 1.15;
+}
+
+.compendium-card-badge-info {
+  font-size: 9px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* ── MODAL DETAIL ITEM INDEX ── */
+.compendium-detail-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  background: rgba(15, 23, 42, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: gachaFadeIn 0.2s ease-out;
+}
+
+.compendium-detail-box {
+  background: #ffffff;
+  border-radius: 20px;
+  border: 2px solid;
+  padding: 18px;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.detail-icon-wrap {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.detail-item-name {
+  margin: 0;
+  font-family: var(--font-game-title, sans-serif);
+  font-size: 16px;
+  font-weight: 900;
+  color: #0f2942;
+}
+
+.detail-rarity-badge {
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 9999px;
+}
+
+.detail-item-desc {
+  margin: 0;
+  font-size: 12px;
+  color: #475569;
+  line-height: 1.4;
+}
+
+.detail-formula-box {
+  width: 100%;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  font-size: 11px;
+  color: #1e40af;
+  font-weight: 700;
+}
+
+.detail-fact-box {
+  width: 100%;
+  background: #fefce8;
+  border: 1px solid #fef08a;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-sizing: border-box;
+  font-size: 11px;
+  color: #854d0e;
+  line-height: 1.35;
+}
+
+.detail-source-hint {
+  font-size: 11px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.status-owned-text {
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.status-locked-text {
+  color: #b45309;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.btn-close-detail {
+  margin-top: 6px;
+  padding: 8px 24px;
+  border: none;
+  background: #0284c7;
+  color: #ffffff;
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}

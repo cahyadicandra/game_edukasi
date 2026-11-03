@@ -1,0 +1,126 @@
+/* ===== Level Detail Modal (referensi kolase layar 2) ===== */
+
+.level-detail-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+  background: rgba(9, 30, 66, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.level-detail-card {
+  width: 100%;
+  max-width: 320px;
+  background: linear-gradient(180deg, #fffdf5 0%, #fef9e7 100%);
+  border-radius: 26px;
+  padding: 30px 18px 18px;
+  position: relative;
+  text-align: center;
+  box-shadow: 0 18px 40px rgba(10, 30, 70, 0.45);
+  border: 3px solid #f3d38a;
+  animation: detailPop 0.25s ease-out;
+}
+
+@keyframes detailPop {
+  from { transform: scale(0.85); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.level-detail-banner {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, #b45309, #8a3c06);
+  border: 3px solid #d97706;
+  border-radius: 999px;
+  padding: 8px 26px;
+  box-shadow: 0 5px 10px rgba(90, 40, 0, 0.4);
+}
+
+.level-detail-banner-title {
+  font-family: var(--font-game-title);
+  font-weight: 700;
+  font-size: 17px;
+  color: #ffffff;
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
+  white-space: nowrap;
+}
+
+.level-detail-ribbon {
+  display: inline-block;
+  background: linear-gradient(180deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  font-family: var(--font-game-title);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 4px 14px;
+  margin-top: 6px;
+  box-shadow: 0 3px 6px rgba(29, 78, 216, 0.35);
+}
+
+.level-detail-body {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.level-detail-goal {
+  font-size: 12.5px;
+  color: #475569;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.level-detail-stars {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.level-detail-info-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.level-detail-info-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  border: 1.5px solid #bfdbfe;
+  color: #1e40af;
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 999px;
+}
+
+.level-detail-start-btn {
+  margin-top: 4px;
+  align-self: center;
+  min-width: 160px;
+  background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+  border: none;
+  border-bottom: 4px solid #b45309;
+  border-radius: 999px;
+  color: #ffffff;
+  font-family: var(--font-game-title);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  padding: 10px 30px;
+  cursor: pointer;
+  text-shadow: 0 1.5px 0 rgba(146, 64, 14, 0.6);
+  box-shadow: 0 6px 14px rgba(245, 158, 11, 0.45);
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.level-detail-start-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
+.level-detail-start-btn:active { transform: translateY(2px); border-bottom-width: 2px; }

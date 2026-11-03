@@ -1,0 +1,244 @@
+/* ==========================================================================
+   RPG LEVEL RESULT MODAL STYLING
+   3-Star evaluation card with time, coin, and boss criteria
+   ========================================================================== */
+
+.rpg-result-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: fadeInResult 0.25s ease-out;
+}
+
+@keyframes fadeInResult {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.rpg-result-card {
+  width: 100%;
+  max-width: 460px;
+  background: #1e293b;
+  border-radius: 24px;
+  border: 3px solid #f59e0b;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), 0 0 30px rgba(245, 158, 11, 0.35);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-trophy-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.trophy-gold-icon {
+  color: #facc15;
+  filter: drop-shadow(0 4px 12px rgba(250, 204, 21, 0.6));
+  margin-bottom: 6px;
+}
+
+.result-main-title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 900;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+}
+
+.result-level-subtitle {
+  margin: 2px 0 0 0;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+/* 3 Bintang Bersinar */
+.result-stars-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin: 14px 0 18px 0;
+}
+
+.result-star-wrap {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.result-star-wrap.big {
+  margin-bottom: 14px;
+}
+
+.result-star-wrap.earned .star-icon {
+  color: #facc15;
+  fill: #facc15;
+  filter: drop-shadow(0 0 16px #facc15);
+  animation: starPop 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+
+.result-star-wrap.locked .star-icon {
+  color: #475569;
+  fill: #334155;
+  opacity: 0.6;
+}
+
+@keyframes starPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.3); }
+  100% { transform: scale(1); }
+}
+
+/* Kriteria 3 Bintang */
+.star-criteria-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.criteria-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+}
+
+.criteria-item.success {
+  border-color: rgba(34, 197, 94, 0.4);
+}
+
+.criteria-item.failed {
+  border-color: rgba(239, 68, 68, 0.3);
+  opacity: 0.7;
+}
+
+.criteria-icon-box {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.criteria-item.success .criteria-icon-box {
+  background: rgba(34, 197, 94, 0.2);
+  color: #4ade80;
+}
+
+.criteria-item.failed .criteria-icon-box {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+}
+
+.criteria-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.criteria-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.criteria-sub {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.criteria-star {
+  color: #475569;
+}
+
+.criteria-star.active {
+  color: #facc15;
+  fill: #facc15;
+}
+
+/* Ringkasan Hadiah */
+.result-rewards-summary {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.reward-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #f8fafc;
+}
+
+.reward-coin {
+  color: #facc15;
+  fill: #facc15;
+}
+
+.reward-xp-badge {
+  background: #6366f1;
+  color: #ffffff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+/* Tombol Aksi */
+.result-actions-row {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+}
+
+.result-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s ease;
+}
+
+.result-btn:active {
+  transform: scale(0.96);
+}
+
+.result-btn.btn-retry {
+  background: rgba(255, 255, 255, 0.1);
+  color: #f8fafc;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.result-btn.btn-next {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+}

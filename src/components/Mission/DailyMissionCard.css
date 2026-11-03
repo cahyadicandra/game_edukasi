@@ -108,3 +108,50 @@
   color: #475569;
   font-family: var(--font-game-title);
 }
+
+.mission-progress-badge {
+  font-size: 9px;
+  font-weight: 800;
+  font-family: var(--font-game-title);
+  padding: 1px 6px;
+  border-radius: 9999px;
+  line-height: 1.2;
+}
+
+.mission-progress-badge.done {
+  background: #dcfce7;
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.mission-progress-badge.ready {
+  background: #fef08a;
+  color: #b45309;
+  border: 1px solid #facc15;
+  animation: readyPulse 1.5s infinite;
+}
+
+@keyframes readyPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
+.daily-mission-card.ready-claim {
+  border-color: #facc15;
+  box-shadow: 0 6px 18px rgba(234, 179, 8, 0.35);
+}
+
+.daily-mission-card.completed {
+  border-color: #86efac;
+  background: rgba(240, 253, 244, 0.95);
+}
+
+/* Variasi compact untuk overlay di layar Peta */
+.daily-mission-wrapper.compact {
+  padding: 0;
+  width: 100%;
+}
+
+.daily-mission-card.compact {
+  width: 100%;
+}
