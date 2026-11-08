@@ -606,26 +606,31 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
                           <span className="clean-part-lvl">Lv.{curLvl}</span>
                           {!unlocked && (
                             <span className="part-locked-badge">
-                              <Lock size={12} />
+                              <Lock size={10} />
                               Terkunci
                             </span>
                           )}
-                        </div>
-                        <p className="clean-part-desc">{part.description}</p>
-                        
-                        {/* PERUBAHAN STAT JIKA LEVEL UP */}
-                        {unlocked && curLvl < 5 && (
-                          <div className="part-upgrade-diff-row">
-                            <span className="diff-highlight">
-                              📈 {getPartUpgradeDiff(part, curLvl)}
+                          {part.effect && (
+                            <span className="clean-part-effect">
+                              {part.effect.toUpperCase()}
                             </span>
-                          </div>
-                        )}
-
-                        {part.effect && (
-                          <span className="clean-part-effect">
-                            Efek: {part.effect.toUpperCase()}
-                          </span>
+                          )}
+                        </div>
+                        {unlocked ? (
+                          <>
+                            <p className="clean-part-desc">{part.description}</p>
+                            {curLvl < 5 && (
+                              <div className="part-upgrade-diff-row">
+                                <span className="diff-highlight">
+                                  📈 {getPartUpgradeDiff(part, curLvl)}
+                                </span>
+                              </div>
+                            )}
+                          </>
+                        ) : (
+                          <p className="clean-part-desc locked">
+                            🪙 {unlockCost} koin untuk membuka
+                          </p>
                         )}
                       </div>
                     </div>
@@ -638,33 +643,38 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
                           disabled={!canAffordUnlock}
                           title={canAffordUnlock ? `Buka modul seharga ${unlockCost} koin` : `Butuh ${unlockCost} koin`}
                         >
+                          <Lock size={11} />
                           <span>Buka 🪙{unlockCost}</span>
                         </button>
-                      ) : isEquipped ? (
-                        <div className="badge-equipped-tag">
-                          <Check size={14} />
-                          <span>Terpasang</span>
-                        </div>
                       ) : (
-                        <button
-                          className="btn-clean-equip"
-                          onClick={() => handleSelectPart(activeSlot, part.id)}
-                        >
-                          Pasang
-                        </button>
-                      )}
+                        <>
+                          {isEquipped ? (
+                            <div className="badge-equipped-tag">
+                              <Check size={12} />
+                              <span>Aktif</span>
+                            </div>
+                          ) : (
+                            <button
+                              className="btn-clean-equip"
+                              onClick={() => handleSelectPart(activeSlot, part.id)}
+                            >
+                              Pasang
+                            </button>
+                          )}
 
-                      {/* TOMBOL UPGRADE DENGAN KOIN & HARGA JELAS */}
-                      {unlocked && curLvl < 5 && (
-                        <button
-                          className={`btn-clean-upgrade ${canUpgrade ? 'active' : 'disabled'}`}
-                          onClick={() => handleUpgradePart(part.id)}
-                          disabled={!canUpgrade}
-                          title={canUpgrade ? `Upgrade ke Lv.${curLvl + 1} seharga ${upgradeReq.coins} Koin` : `Butuh ${upgradeReq.coins} Koin`}
-                        >
-                          <ArrowUpCircle size={14} />
-                          <span>Up Lv.{curLvl + 1} (🪙{upgradeReq.coins})</span>
-                        </button>
+                          {/* TOMBOL UPGRADE DENGAN KOIN & HARGA JELAS */}
+                          {curLvl < 5 && (
+                            <button
+                              className={`btn-clean-upgrade ${canUpgrade ? 'active' : 'disabled'}`}
+                              onClick={() => handleUpgradePart(part.id)}
+                              disabled={!canUpgrade}
+                              title={canUpgrade ? `Upgrade ke Lv.${curLvl + 1} seharga ${upgradeReq.coins} Koin` : `Butuh ${upgradeReq.coins} Koin`}
+                            >
+                              <ArrowUpCircle size={11} />
+                              <span>Up 🪙{upgradeReq.coins}</span>
+                            </button>
+                          )}
+                        </>
                       )}
                     </div>
                   </div>

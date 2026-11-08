@@ -377,7 +377,7 @@ export const UPGRADE_REQUIREMENTS: Record<number, { coins: number; shards: numbe
  * Hitung perubahan stat yang didapat jika modul ini naik level
  */
 export function getPartUpgradeDiff(part: WeaponPart, curLevel: number): string {
-  if (curLevel >= 5) return 'Maksimal (Lv.5)';
+  if (curLevel >= 5) return 'Maks (Lv.5)';
   const nextLevel = curLevel + 1;
   const currentMult = 1 + (curLevel - 1) * 0.15;
   const nextMult = 1 + (nextLevel - 1) * 0.15;
@@ -392,15 +392,15 @@ export function getPartUpgradeDiff(part: WeaponPart, curLevel: number): string {
     if (diff > 0) diffs.push(`+${diff}px Jarak`);
   }
   if (part.mods?.fireRate && part.mods.fireRate > 0) {
-    diffs.push(`+0.2 Laju Tembak`);
+    diffs.push(`+0.2 Laju`);
   }
   if (part.mods?.critChance && part.mods.critChance > 0) {
-    diffs.push(`+3% Kritikal`);
+    diffs.push(`+3% Krit`);
   }
   if (diffs.length === 0) {
-    diffs.push(`+15% Daya Tembak`);
+    diffs.push(`+15% Stat`);
   }
-  return `Naik ke Lv.${nextLevel}: ${diffs.join(', ')}`;
+  return `Lv.${nextLevel}: ${diffs.join(', ')}`;
 }
 
 // ─── 7. PERHITUNGAN STAT GABUNGAN SENJATA (computeStats) ───
