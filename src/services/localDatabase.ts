@@ -45,7 +45,7 @@ export interface LevelRecordItem {
   completedAt?: string;
 }
 
-export const CURRENT_DB_VERSION = 'v2026_11_fresh_v3';
+export const CURRENT_DB_VERSION = 'v2026_11_fresh_v4';
 export const DB_VERSION_KEY = 'game_db_clean_version';
 
 /**
@@ -208,15 +208,26 @@ class LocalDatabaseService {
       const raw = this.getRaw(DB_KEYS.PLAYER_PROFILE);
       if (raw) {
         const parsed = JSON.parse(raw);
-        // Saldo melimpah untuk testing gacha
-        if ((parsed.coins || 0) < 5000) {
-          parsed.coins = 99999;
-          parsed.stars = Math.max(parsed.stars || 0, 9999);
-          parsed.diamonds = Math.max(parsed.diamonds || 0, 9999);
-        }
+        // Pastikan modal awal tersedia jika data lama masih sisa testing (99999) atau null
+        const coins =
+          parsed.coins === 99999 || parsed.coins === undefined || parsed.coins === null
+            ? fallback.coins ?? 1000
+            : parsed.coins;
+        const diamonds =
+          parsed.diamonds === 9999 || parsed.diamonds === undefined || parsed.diamonds === null
+            ? fallback.diamonds ?? 20
+            : parsed.diamonds;
+        const stars =
+          parsed.stars === 9999 || parsed.stars === undefined || parsed.stars === null
+            ? fallback.stars ?? 0
+            : parsed.stars;
+
         return {
           ...fallback,
           ...parsed,
+          coins,
+          diamonds,
+          stars,
           inventory: {
             ...fallback.inventory,
             ...(parsed.inventory || {}),
@@ -228,6 +239,7 @@ class LocalDatabaseService {
           equipment: {
             ...fallback.equipment,
             ...(parsed.equipment || {}),
+            shards: parsed.equipment?.shards ?? fallback.equipment?.shards ?? 150,
             unlockedParts:
               parsed.equipment?.unlockedParts && parsed.equipment.unlockedParts.length > 0
                 ? parsed.equipment.unlockedParts

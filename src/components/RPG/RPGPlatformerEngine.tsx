@@ -1402,9 +1402,12 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
           {/* MUSUH-MUSUH WANDERING DI PLATFORM */}
           {enemies.map((enemy) => {
             if (enemy.isDead) return null;
-            const enemyImg = enemy.type === 'bat'
-              ? '/assets/png/enemies/bat_wings_up.png'
-              : `/assets/png/enemies/${enemy.type}_idle.png`;
+            let enemyImg = `/assets/png/enemies/${enemy.type}_idle.png`;
+            if (enemy.type === 'bat') {
+              enemyImg = '/assets/png/enemies/bat_wings_up.png';
+            } else if (enemy.type === 'mushroom_walker') {
+              enemyImg = '/assets/png/enemies/mushroom_walker.png';
+            }
 
             return (
               <div
@@ -1417,7 +1420,14 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
                   transform: `translate3d(${enemy.x}px, ${enemy.y - 48}px, 0) scaleX(${enemy.vx < 0 ? -1 : 1})`,
                 }}
               >
-                <img src={enemyImg} alt={enemy.type} className="rpg-enemy-img" />
+                <img
+                  src={enemyImg}
+                  alt={enemy.type}
+                  className="rpg-enemy-img"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = '/assets/png/enemies/slime_green_idle.png';
+                  }}
+                />
                 {enemy.hp < enemy.maxHp && (
                   <div className="enemy-hp-track">
                     <div className="enemy-hp-fill" style={{ width: `${(enemy.hp / enemy.maxHp) * 100}%` }} />
