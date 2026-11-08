@@ -15,6 +15,7 @@ export const DB_KEYS = {
   ACTIVE_SESSION: 'game_active_session',
   CLAIMED_MILESTONES: 'game_claimed_milestones',
   CLAIMED_ACHIEVEMENTS: 'game_claimed_achievements',
+  SHAPE_ALBUM_MILESTONES: 'game_shape_album_milestones',
 } as const;
 
 export interface ActiveSessionData {
@@ -207,6 +208,12 @@ class LocalDatabaseService {
       const raw = this.getRaw(DB_KEYS.PLAYER_PROFILE);
       if (raw) {
         const parsed = JSON.parse(raw);
+        // Saldo melimpah untuk testing gacha
+        if ((parsed.coins || 0) < 5000) {
+          parsed.coins = 99999;
+          parsed.stars = Math.max(parsed.stars || 0, 9999);
+          parsed.diamonds = Math.max(parsed.diamonds || 0, 9999);
+        }
         return {
           ...fallback,
           ...parsed,
@@ -221,6 +228,16 @@ class LocalDatabaseService {
           equipment: {
             ...fallback.equipment,
             ...(parsed.equipment || {}),
+            unlockedParts:
+              parsed.equipment?.unlockedParts && parsed.equipment.unlockedParts.length > 0
+                ? parsed.equipment.unlockedParts
+                : fallback.equipment?.unlockedParts || [
+                    'blaster_std',
+                    'core_orb',
+                    'barrel_std',
+                    'grip_std',
+                    'charm_none',
+                  ],
           },
         };
       }
@@ -435,6 +452,24 @@ class LocalDatabaseService {
     await this.setRaw(DB_KEYS.CLAIMED_MILESTONES, JSON.stringify(milestones));
   }
 
+  // Klaim milestone Album Koleksi Bangun Datar (terpisah dari milestone gacha agar tidak bentrok)
+  public loadShapeAlbumMilestones(): number[] {
+    try {
+      const raw = this.getRaw(DB_KEYS.SHAPE_ALBUM_MILESTONES);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error('Error saat membaca milestone album bentuk:', e);
+    }
+    return [];
+  }
+
+  public async saveShapeAlbumMilestones(milestones: number[]): Promise<void> {
+    await this.setRaw(DB_KEYS.SHAPE_ALBUM_MILESTONES, JSON.stringify(milestones));
+  }
+
   // ========================================================
   // 9. KLAIM PRESTASI (ACHIEVEMENTS)
   // ========================================================
@@ -507,7 +542,7 @@ class LocalDatabaseService {
       if (typeof data !== 'object' || data === null) return false;
 
       for (const [key, val] of Object.entries(data)) {
-        if (Object.values(DB_KEYS).includes(key as any)) {
+        if ((Object.values(DB_KEYS) as string[]).includes(key)) {
           const stringVal = typeof val === 'string' ? val : JSON.stringify(val);
           await this.setRaw(key, stringVal);
         }

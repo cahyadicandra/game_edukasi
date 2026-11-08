@@ -1,4 +1,4 @@
-export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary';
+﻿export type ItemRarity = 'common' | 'rare' | 'epic' | 'legendary';
 export type ItemType = 'lifeline' | 'accessory' | 'card' | 'avatar' | 'currency' | 'potion' | 'equipment';
 export type ChestType = 'coin' | 'star' | 'diamond';
 
@@ -335,6 +335,85 @@ export const GACHA_POOL: GachaItem[] = [
     icon: '🌈',
     badgeText: 'Pusaka Emas',
     geometryFact: 'Dapat membelokkan cahaya menjadi spektrum sudut pelangi 360° sempurna.',
+  },
+
+  // ─── 4. ITEM BARU UPDATE TRIANGLE QUEST (SENJATA MODULAR & KOSMETIK) ───
+  {
+    id: 'item-blaster-fire',
+    name: 'Inti Api Membara (Fire Core)',
+    rarity: 'epic',
+    type: 'equipment',
+    description: 'Modul peluru api berkobar yang membakar musuh dan bos geometri!',
+    icon: '🔥',
+    badgeText: 'Senjata Api',
+    value: 30,
+    geometryFact: 'Membakar musuh dengan sudut elevasi tembakan yang presisi.',
+  },
+  {
+    id: 'item-blaster-ice',
+    name: 'Inti Es Kristal (Ice Core)',
+    rarity: 'epic',
+    type: 'equipment',
+    description: 'Peluru es kristal yang membekukan dan melambatkan gerakan slime!',
+    icon: '❄️',
+    badgeText: 'Senjata Es',
+    value: 25,
+    geometryFact: 'Struktur kristal es heksagonal memperlambat pergerakan lawan.',
+  },
+  {
+    id: 'item-blaster-laser',
+    name: 'Inti Sinar Laser Penembus',
+    rarity: 'legendary',
+    type: 'equipment',
+    description: 'Sinar laser berkekuatan tinggi yang menembus barisan monster dan bola duri!',
+    icon: '⚡',
+    badgeText: 'Laser Legend',
+    value: 50,
+    geometryFact: 'Garis lurus tak berhingga yang mampu menembus rintangan terberat.',
+  },
+  {
+    id: 'item-charm-lucky',
+    name: 'Jimat Keberuntungan Emas',
+    rarity: 'epic',
+    type: 'accessory',
+    description: 'Jimat sakti yang meningkatkan peluang drop koin dan shard dari monster!',
+    icon: '🍀',
+    badgeText: '+20% Drop',
+    value: 20,
+    geometryFact: 'Simetri sempurna membawa keberuntungan bagi penjelajah pulau.',
+  },
+  {
+    id: 'item-acc-crown',
+    name: 'Mahkota Emas Raja Geometri',
+    rarity: 'legendary',
+    type: 'accessory',
+    description: 'Mahkota megah simbol penguasa seluruh pulau dan penakluk Raja Slime!',
+    icon: '👑',
+    badgeText: 'Raja Bentuk',
+    value: 100,
+    geometryFact: 'Terbuat dari perpaduan segitiga emas proporsi ilahi (Golden Ratio).',
+  },
+  {
+    id: 'item-acc-glasses',
+    name: 'Kacamata Petualang Keren',
+    rarity: 'rare',
+    type: 'accessory',
+    description: 'Kacamata gaya yang meningkatkan fokus dan akurasi tembakan blaster.',
+    icon: '🕶️',
+    badgeText: 'Gaya +10',
+    value: 15,
+    geometryFact: 'Dua lingkaran sejajar dengan fokus lensa yang tajam.',
+  },
+  {
+    id: 'item-acc-scout',
+    name: 'Topi Petualang Pramuka',
+    rarity: 'rare',
+    type: 'accessory',
+    description: 'Topi tangguh penjelajah untuk menghadapi terik matahari gurun dan angin salju.',
+    icon: '🤠',
+    badgeText: 'Penjelajah',
+    value: 15,
+    geometryFact: 'Bentuk kerucut terpancung melindungi kepala dari rintangan.',
   },
 ];
 

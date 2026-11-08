@@ -21,6 +21,10 @@ html, body {
   height: 100%;
   overflow: hidden;
   background-color: #0b1528;
+  /* Optimasi Android: cegah scroll/bounce bawaan browser & zoom double-tap */
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
 }
 
 #root {

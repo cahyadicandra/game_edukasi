@@ -525,30 +525,67 @@ export const worldFiveQuestions: QuizQuestion[] = [
 import { LEVEL_SPECIFIC_QUESTIONS } from './levelSpecificQuestions';
 
 /**
- * Mengambil paket soal unik & bertahap sesuai nomor level yang dipilih (Level 1 sampai 25 memiliki paket soal yang berbeda)
+ * Mengacak posisi pilihan jawaban (A, B, C, D) untuk sebuah soal kuis,
+ * sehingga jawaban benar terdistribusi secara acak dan adil di semua opsi.
+ */
+export function shuffleQuestionOptions(q: QuizQuestion): QuizQuestion {
+  const correctOption = q.options.find((opt) => opt.id === q.correctId) || q.options[0];
+
+  // Buat salinan opsi dan lakukan Fisher-Yates shuffle
+  const shuffled = [...q.options];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+
+  // Petakan ulang ID menjadi 'a', 'b', 'c', 'd' agar label tombol selalu berurutan A, B, C, D
+  const letters = ['a', 'b', 'c', 'd'];
+  let newCorrectId = 'a';
+
+  const remappedOptions = shuffled.map((opt, idx) => {
+    const newId = letters[idx] || opt.id;
+    if (opt.id === correctOption.id) {
+      newCorrectId = newId;
+    }
+    return {
+      ...opt,
+      id: newId,
+    };
+  });
+
+  return {
+    ...q,
+    options: remappedOptions,
+    correctId: newCorrectId,
+  };
+}
+
+/**
+ * Mengambil paket soal unik & bertahap sesuai nomor level yang dipilih (Level 1 sampai 25 memiliki paket soal yang berbeda).
+ * Opsi jawaban diacak secara dinamis agar posisi jawaban benar tidak selalu di opsi A.
  */
 export function getQuestionsForLevel(levelNum: number): QuizQuestion[] {
+  let rawQuestions: QuizQuestion[];
   // Cek apakah ada paket soal spesifik per level
   if (LEVEL_SPECIFIC_QUESTIONS[levelNum]) {
-    return LEVEL_SPECIFIC_QUESTIONS[levelNum];
+    rawQuestions = LEVEL_SPECIFIC_QUESTIONS[levelNum];
+  } else if (levelNum >= 1 && levelNum <= 3) {
+    rawQuestions = worldOneQuestions;
+  } else if (levelNum >= 4 && levelNum <= 5) {
+    rawQuestions = worldOneBossQuestions;
+  } else if (levelNum >= 6 && levelNum <= 10) {
+    rawQuestions = worldTwoQuestions;
+  } else if (levelNum >= 11 && levelNum <= 15) {
+    rawQuestions = worldThreeQuestions;
+  } else if (levelNum >= 16 && levelNum <= 20) {
+    rawQuestions = worldFourQuestions;
+  } else {
+    // Level 21 - 25: Kastil Geometri
+    rawQuestions = worldFiveQuestions;
   }
-  if (levelNum >= 1 && levelNum <= 3) {
-    return worldOneQuestions;
-  }
-  if (levelNum >= 4 && levelNum <= 5) {
-    return worldOneBossQuestions;
-  }
-  if (levelNum >= 6 && levelNum <= 10) {
-    return worldTwoQuestions;
-  }
-  if (levelNum >= 11 && levelNum <= 15) {
-    return worldThreeQuestions;
-  }
-  if (levelNum >= 16 && levelNum <= 20) {
-    return worldFourQuestions;
-  }
-  // Level 21 - 25: Kastil Geometri
-  return worldFiveQuestions;
+
+  // Acak posisi pilihan jawaban secara dinamis
+  return rawQuestions.map(shuffleQuestionOptions);
 }
 
 export const levelOneQuestions = worldOneQuestions;
@@ -560,13 +597,37 @@ export interface LevelResult {
   coins: number;
   xp: number;
   stars: number;
+  firstTryCorrect?: number;
+  retryCount?: number;
 }
 
-export function computeResult(correct: number, total: number): LevelResult {
+export function computeResult(
+  correct: number,
+  total: number,
+  firstTryCorrect?: number,
+  retryCount?: number
+): LevelResult {
   const score = correct * 100;
   const ratio = total === 0 ? 0 : correct / total;
-  const stars = ratio >= 0.8 ? 3 : ratio >= 0.5 ? 2 : 1;
+
+  let stars: number;
+  if (firstTryCorrect !== undefined) {
+    const firstRatio = total === 0 ? 0 : firstTryCorrect / total;
+    if (firstRatio >= 0.99) {
+      // 3 Bintang Penuh: Semua soal dijawab benar pada percobaan pertama
+      stars = 3;
+    } else if (firstRatio >= 0.5 || (retryCount !== undefined && retryCount <= 2)) {
+      // 2 Bintang: Butuh 1-2 kali coba lagi
+      stars = 2;
+    } else {
+      // 1 Bintang: Butuh coba lagi berkali-kali
+      stars = 1;
+    }
+  } else {
+    stars = ratio >= 0.8 ? 3 : ratio >= 0.5 ? 2 : 1;
+  }
+
   const coins = correct * 5;
   const xp = correct * 25;
-  return { correct, total, score, coins, xp, stars };
+  return { correct, total, score, coins, xp, stars, firstTryCorrect, retryCount };
 }

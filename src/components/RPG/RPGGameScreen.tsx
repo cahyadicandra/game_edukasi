@@ -88,7 +88,7 @@ export const RPGGameScreen: React.FC<RPGGameScreenProps> = ({
   };
 
   // Callback ketika pemain berhasil mengalahkan bos melalui kuis
-  const handleBossVictory = (_stats: { correctAnswers: number; totalQuestions: number }) => {
+  const handleBossVictory = () => {
     setBossDefeated(true);
     setPhase('result');
   };
@@ -114,6 +114,7 @@ export const RPGGameScreen: React.FC<RPGGameScreenProps> = ({
         <RPGPlatformerEngine
           levelConfig={levelConfig}
           boss={boss}
+          player={player}
           onReachBoss={handleReachBoss}
           onQuit={onQuit}
         />

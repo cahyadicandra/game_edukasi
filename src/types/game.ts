@@ -19,10 +19,56 @@ export interface PlayerInventory {
   spElixirs?: number;
 }
 
+export interface WeaponPart {
+  id: string;
+  slot: 'body' | 'core' | 'barrel' | 'grip' | 'charm';
+  name: string;
+  rarity: 'common' | 'rare' | 'epic' | 'legendary';
+  level: number;
+  projectile?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser';
+  effect?: 'burn' | 'freeze' | 'shock' | 'pierce' | 'bounce' | null;
+  description: string;
+  icon: string;
+  iconAsset?: string;
+  unlockCostCoins?: number;
+  mods?: {
+    damage?: number;
+    fireRate?: number;
+    range?: number;
+    projectileSpeed?: number;
+    spread?: number;
+    critChance?: number;
+  };
+}
+
+export interface WeaponLoadout {
+  name: string;
+  body: string;
+  core: string;
+  barrel: string;
+  grip: string;
+  charm?: string;
+  color: string;
+}
+
 export interface PlayerEquipment {
   weapon?: string;
   shield?: string;
   accessory?: string;
+  // Kustomisasi Senjata Modular
+  blasterColor?: string;
+  blasterCore?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser';
+  blasterBarrel?: string;
+  blasterGrip?: string;
+  blasterCharm?: string;
+  activeLoadoutIndex?: number;
+  loadouts?: WeaponLoadout[];
+  unlockedParts?: string[];
+  partLevels?: Record<string, number>;
+  shards?: number;
+  // Kustomisasi Karakter Maskot
+  skinColor?: string;
+  hat?: string;
 }
 
 export interface PlayerProfile {

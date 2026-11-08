@@ -8,17 +8,34 @@ export interface RPGIslandBackdropProps {
   levelWidth: number;
 }
 
-export const RPGIslandBackdrop: React.FC<RPGIslandBackdropProps> = ({
+export const RPGIslandBackdrop: React.FC<RPGIslandBackdropProps> = React.memo(({
   islandTheme,
   cameraX,
   levelWidth,
 }) => {
   // Parallax offsets agar latar belakang bergerak lebih lambat dibanding platform
-  const farOffset = cameraX * 0.12;
-  const midOffset = cameraX * 0.25;
+  const mountainOffset = cameraX * 0.08;
+  const farOffset = cameraX * 0.15;
+  const midOffset = cameraX * 0.28;
 
   return (
     <div className={`rpg-island-backdrop theme-${islandTheme}`} aria-hidden="true">
+      {/* LAPISAN PARALLAX ALAM: PEGUNUNGAN & BUKIT PNG (TILED RINGAN) */}
+      <div
+        className="parallax-png-mountains"
+        style={{ transform: `translate3d(${-mountainOffset}px, 0, 0)` }}
+      />
+
+      <div
+        className="parallax-png-hills-far"
+        style={{ transform: `translate3d(${-farOffset}px, 0, 0)` }}
+      />
+
+      <div
+        className="parallax-png-hills-near"
+        style={{ transform: `translate3d(${-midOffset}px, 0, 0)` }}
+      />
+
       {/* 1. PULAU BENTUK: LEMBAH HIJAU TROPIS & AWAN CERIA */}
       {islandTheme === 'pulau-bentuk' && (
         <div className="backdrop-layer-group pulau-bentuk">
@@ -242,4 +259,4 @@ export const RPGIslandBackdrop: React.FC<RPGIslandBackdropProps> = ({
       )}
     </div>
   );
-};
+});

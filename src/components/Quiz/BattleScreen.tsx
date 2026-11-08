@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Swords } from 'lucide-react';
 import type { QuizQuestion } from '../../data/questions';
-import type { PlayerProfile, CharacterStats } from '../../types/game';
+import type { PlayerProfile } from '../../types/game';
 import type { GeometryMonster } from '../../data/monsters';
 import { AvatarRenderer } from '../Common/AvatarRenderer';
 import './Battle.css';
@@ -99,7 +99,7 @@ interface BattleScreenProps {
   onVictory: (reward: { exp: number; coins: number; stars: number; diamonds?: number }) => void;
   onDefeat: () => void;
   onQuit: () => void;
-  onUpdatePlayerStats?: (updater: (prev: CharacterStats) => CharacterStats) => void;
+  onConsumeItem?: (kind: 'potion' | 'elixir') => boolean;
   onUseFiftyFifty?: () => boolean;
   onUseHint?: () => boolean;
 }
@@ -111,6 +111,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
   onVictory,
   onDefeat,
   onQuit,
+  onConsumeItem,
   onUseFiftyFifty,
   onUseHint,
 }) => {
@@ -140,7 +141,15 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
   const [eliminatedOptions, setEliminatedOptions] = useState<string[]>([]);
   const [activeSkill, setActiveSkill] = useState<{ name: string; multiplier: number; spCost: number; heal?: number } | null>(null);
 
-  const currentQ = questions[qIndex % questions.length];
+  const currentQ = questions.length > 0 ? questions[qIndex % questions.length] : undefined;
+  if (!currentQ) {
+    return (
+      <div className="battle-screen" style={{ padding: 24, textAlign: 'center', color: '#fff' }}>
+        <p>Tidak ada soal untuk level ini. Silakan kembali ke peta.</p>
+        <button onClick={onQuit}>Kembali ke Peta</button>
+      </div>
+    );
+  }
 
   const triggerFloating = (text: string, type: 'damage' | 'heal' | 'crit') => {
     setFloatingEffect({ text, type });
@@ -186,9 +195,10 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     setCombatLog(`Mempersiapkan jurus [${skill.name}]! Jawab soal untuk mengeksekusi!`);
   };
 
-  // 4. Penggunaan Ramuan Darah & Eliksir SP di Menu Tas
+  // 4. Penggunaan Ramuan Darah & Eliksir SP di Menu Tas (stok dipotong via App)
   const handleUsePotion = () => {
-    if ((player.inventory?.potions || 0) <= 0 && player.diamonds < 2) {
+    const ok = onConsumeItem ? onConsumeItem('potion') : true;
+    if (!ok) {
       setCombatLog('Ramuan habis dan permata tidak cukup (Butuh 2 💎)!');
       return;
     }
@@ -199,7 +209,8 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
   };
 
   const handleUseElixir = () => {
-    if ((player.inventory?.spElixirs || 0) <= 0 && player.diamonds < 2) {
+    const ok = onConsumeItem ? onConsumeItem('elixir') : true;
+    if (!ok) {
       setCombatLog('Eliksir SP habis dan permata tidak cukup (Butuh 2 💎)!');
       return;
     }
@@ -242,13 +253,17 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
       finalDamage = Math.max(3, Math.floor(finalDamage * 0.5));
     }
 
-    setPlayerHp((hp) => {
-      const nextHp = Math.max(0, hp - finalDamage);
-      if (nextHp <= 0) {
-        setTimeout(() => onDefeat(), 1200);
-      }
-      return nextHp;
-    });
+    // Hitung HP baru di luar updater agar efek samping (kalah) tidak doble-eksekusi
+    const nextHp = Math.max(0, playerHp - finalDamage);
+    setPlayerHp(nextHp);
+
+    if (nextHp <= 0) {
+      triggerFloating(`-${finalDamage}`, 'damage');
+      setIsDefending(false);
+      setConsoleMode('menu');
+      setTimeout(() => onDefeat(), 1200);
+      return;
+    }
 
     triggerFloating(`-${finalDamage}`, 'damage');
     setCombatLog(
@@ -269,7 +284,8 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
     if (correct) {
       // Hitung damage serangan pemain
       let dmg = Math.floor(initialPlayerStats.atk * (activeSkill ? activeSkill.multiplier : 1));
-      const isCrit = (qIndex + optionId.charCodeAt(0)) % 3 === 0;
+      // eslint-disable-next-line react-hooks/purity -- crit dihitung di event handler, bukan saat render
+      const isCrit = Math.random() < 0.25; // Critical acak, tidak bisa diprediksi pemain
       if (isCrit) dmg = Math.floor(dmg * 1.5);
 
       // Kurangi HP Monster

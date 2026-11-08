@@ -45,6 +45,7 @@ export const TangramPuzzleModal: React.FC<TangramPuzzleModalProps> = ({
   const roofSlotRef = useRef<HTMLDivElement>(null);
   const bodySlotRef = useRef<HTMLDivElement>(null);
   const doorSlotRef = useRef<HTMLDivElement>(null);
+  const celebrateTimeoutRef = useRef<number | null>(null);
 
   // Fungsi cek apakah koordinat berada di dalam bounding box elemen slot dengan toleransi luas (pad = 40px)
   const isInsideSlot = useCallback((ref: React.RefObject<HTMLDivElement | null>, clientX: number, clientY: number): boolean => {
@@ -61,20 +62,29 @@ export const TangramPuzzleModal: React.FC<TangramPuzzleModalProps> = ({
 
   // Fungsi memasang potongan ke slot yang tepat
   const snapPiece = useCallback((key: PieceKey) => {
-    setPlacedPieces((prev) => {
-      if (prev[key]) return prev;
-      const nextState = { ...prev, [key]: true };
+    if (placedPieces[key]) return;
+    const nextState = { ...placedPieces, [key]: true };
+    setPlacedPieces(nextState);
 
-      // Cek apakah seluruh rumah selesai dirakit
-      if (nextState.triangleRoof && nextState.squareBody && nextState.rectDoor) {
-        setCelebrating(true);
-        setTimeout(() => {
-          onComplete();
-        }, 1500);
+    // Cek apakah seluruh rumah selesai dirakit (diluar updater agar tidak doble di StrictMode)
+    if (nextState.triangleRoof && nextState.squareBody && nextState.rectDoor) {
+      setCelebrating(true);
+      celebrateTimeoutRef.current = window.setTimeout(() => {
+        celebrateTimeoutRef.current = null;
+        onComplete();
+      }, 1500);
+    }
+  }, [placedPieces, onComplete]);
+
+  // Bersihkan timer selebrasi saat komponen ditutup/dilepas agar reward tidak tembak sendiri
+  useEffect(() => {
+    return () => {
+      if (celebrateTimeoutRef.current) {
+        clearTimeout(celebrateTimeoutRef.current);
+        celebrateTimeoutRef.current = null;
       }
-      return nextState;
-    });
-  }, [onComplete]);
+    };
+  }, []);
 
   // Global pointer move & up listeners ketika sedang dragging
   useEffect(() => {

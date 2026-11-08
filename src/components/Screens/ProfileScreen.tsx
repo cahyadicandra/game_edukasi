@@ -28,6 +28,7 @@ export interface ProfileScreenProps {
   worlds?: WorldData[];
   mission?: DailyMission;
   onUpdatePlayer?: (updated: Partial<PlayerProfile>) => void;
+  onOpenCustomization?: () => void;
 }
 
 // Daftar Gelar Petualang Berdasarkan Level
@@ -118,6 +119,7 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   worlds,
   mission,
   onUpdatePlayer,
+  onOpenCustomization,
 }) => {
   // Modal Edit Profil
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -327,6 +329,35 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             </div>
           </div>
         </div>
+
+        {/* TOMBOL PINTAS: BENGKEL SENJATA & KUSTOMISASI KARAKTER */}
+        {onOpenCustomization && (
+          <button
+            className="profile-workshop-btn"
+            onClick={onOpenCustomization}
+            style={{
+              width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '10px',
+              background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+              color: '#ffffff',
+              border: '2px solid #38bdf8',
+              borderRadius: '16px',
+              padding: '12px 18px',
+              fontSize: '0.95rem',
+              fontWeight: 800,
+              cursor: 'pointer',
+              boxShadow: '0 6px 18px rgba(2, 132, 199, 0.35)',
+              margin: '12px 0 16px 0',
+              transition: 'transform 0.15s ease',
+            }}
+          >
+            <span style={{ fontSize: '1.2rem' }}>🔧</span>
+            <span>Bengkel Senjata & Kustomisasi Karakter</span>
+          </button>
+        )}
 
         {/* 2. KARTU RINGKASAN PEMBELAJARAN DINAMIS */}
         <div className="profile-summary-card">

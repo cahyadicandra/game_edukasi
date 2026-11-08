@@ -32,6 +32,7 @@
   width: 100%;
   max-width: 820px;
   height: 90vh;
+  height: 90dvh; /* aman untuk viewport Android dinamis */
   max-height: 640px;
   background: #0f172a;
   border-radius: 24px;
@@ -304,6 +305,7 @@
 @media (max-width: 640px) {
   .mascot-modal-container {
     height: 96vh;
+    height: 96dvh; /* aman untuk viewport Android dinamis */
     border-radius: 16px;
   }
 

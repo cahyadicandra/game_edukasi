@@ -35,6 +35,27 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           ))}
         </div>
 
+        {/* Evaluasi Bintang Bertingkat */}
+        <div
+          style={{
+            margin: '4px auto 8px',
+            padding: '5px 14px',
+            borderRadius: '9999px',
+            background: result.stars === 3 ? 'rgba(250, 204, 21, 0.2)' : 'rgba(255, 255, 255, 0.15)',
+            border: `1px solid ${result.stars === 3 ? '#facc15' : 'rgba(255, 255, 255, 0.25)'}`,
+            color: result.stars === 3 ? '#fef08a' : '#f8fafc',
+            fontSize: '12.5px',
+            fontWeight: 800,
+            textAlign: 'center',
+          }}
+        >
+          {result.stars === 3
+            ? '🌟 Sempurna! Benar semua di percobaan pertama!'
+            : result.stars === 2
+            ? '✨ Bagus! Selesai dengan sedikit coba lagi'
+            : '👍 Selesai! Ayo coba lagi untuk 3 bintang'}
+        </div>
+
         <div className="result-banner">
           <span>Level Selesai!</span>
         </div>
@@ -78,7 +99,12 @@ export const ResultScreen: React.FC<ResultScreenProps> = ({
           <div className="result-row answer">
             <span className="result-row-label">Jawaban</span>
             <span className="result-row-value good">
-              ✓ {result.correct} benar / {result.total}
+              ✓ {result.correct} / {result.total}
+              {result.firstTryCorrect !== undefined && (
+                <span style={{ fontSize: '11px', opacity: 0.85, marginLeft: '6px' }}>
+                  ({result.firstTryCorrect} sekali coba)
+                </span>
+              )}
             </span>
           </div>
         </div>

@@ -1,3 +1,5 @@
+@import './fonts.css';
+
 /* Game Edukasi Theme Styles */
 
 :root {
@@ -34,7 +36,9 @@ body {
   font-family: var(--font-game-body);
   color: #1e293b;
   overflow: hidden;
+  /* 100vh di Android salah hitung karena address bar; dvh mengikuti viewport nyata */
   height: 100vh;
+  height: 100dvh;
   width: 100vw;
   display: flex;
   align-items: center;
@@ -54,8 +58,12 @@ body {
   position: relative;
   width: 100%;
   height: 100vh;
+  height: 100dvh; /* tinggi viewport dinamis di Android (aman dari status bar) */
   max-width: 440px;
   max-height: 920px;
+  /* Hormati area sistem (notch/gesture bar Android edge-to-edge) */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
   background-color: #38bdf8;
   overflow: hidden;
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
@@ -66,8 +74,12 @@ body {
 @media (min-width: 480px) {
   .game-viewport {
     height: 94vh;
+    height: 94dvh;
     border-radius: 36px;
     border: 4px solid #334155;
+    /* Frame desktop: safe-area tidak relevan */
+    padding-top: 0;
+    padding-bottom: 0;
   }
 }
 

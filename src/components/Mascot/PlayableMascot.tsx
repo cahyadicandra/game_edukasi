@@ -145,22 +145,26 @@ export const PlayableMascot: React.FC<PlayableMascotProps> = ({
       velRef.current.vx = 0;
     };
 
+    // Listener sentuh global harus bernama agar bisa dilepas (anti memory-leak)
+    const resetTouchKeys = () => {
+      keysDown.current.left = false;
+      keysDown.current.right = false;
+    };
+
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
     window.addEventListener('blur', resetKeys);
-    window.addEventListener('pointerup', () => {
-      keysDown.current.left = false;
-      keysDown.current.right = false;
-    });
-    window.addEventListener('touchend', () => {
-      keysDown.current.left = false;
-      keysDown.current.right = false;
-    });
+    window.addEventListener('pointerup', resetTouchKeys);
+    window.addEventListener('pointercancel', resetTouchKeys);
+    window.addEventListener('touchend', resetTouchKeys);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
       window.removeEventListener('blur', resetKeys);
+      window.removeEventListener('pointerup', resetTouchKeys);
+      window.removeEventListener('pointercancel', resetTouchKeys);
+      window.removeEventListener('touchend', resetTouchKeys);
     };
   }, [enableKeyboard, doJump]);
 
@@ -363,7 +367,7 @@ export const PlayableMascot: React.FC<PlayableMascotProps> = ({
           <div className="virtual-dpad">
             <button
               type="button"
-              className={`ctrl-btn btn-left ${keysDown.current.left ? 'active' : ''}`}
+              className="ctrl-btn btn-left"
               title="Gerak Kiri"
               onPointerDown={(e) => {
                 e.preventDefault();
@@ -382,7 +386,7 @@ export const PlayableMascot: React.FC<PlayableMascotProps> = ({
 
             <button
               type="button"
-              className={`ctrl-btn btn-right ${keysDown.current.right ? 'active' : ''}`}
+              className="ctrl-btn btn-right"
               title="Gerak Kanan"
               onPointerDown={(e) => {
                 e.preventDefault();

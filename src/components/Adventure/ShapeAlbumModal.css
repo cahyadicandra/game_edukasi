@@ -18,6 +18,7 @@
   width: 100%;
   max-width: 410px;
   max-height: 88vh;
+  max-height: 88dvh; /* aman untuk viewport Android dinamis */
   background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
   border: 3px solid #38bdf8;
   border-radius: 26px;

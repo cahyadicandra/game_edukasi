@@ -16,6 +16,7 @@ interface HomeScreenProps {
   onOpenSettings: () => void;
   onOpenMission: () => void;
   onOpenGacha: () => void;
+  onOpenCustomization?: () => void;
   onStartAdventure: () => void;
   onExploreShapes?: () => void;
   onOpenMascotPlayground?: () => void;
@@ -30,6 +31,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onOpenSettings,
   onOpenMission,
   onOpenGacha,
+  onOpenCustomization,
   onStartAdventure,
   onOpenMascotPlayground,
 }) => {
@@ -66,6 +68,17 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
               <div className="gacha-quick-text">
                 <span className="gacha-quick-title">Peti Misteri</span>
                 <span className="gacha-quick-sub">Gacha Hadiah!</span>
+              </div>
+            </button>
+            <button
+              className="gacha-quick-banner custom-quick-banner"
+              onClick={onOpenCustomization}
+              title="Bengkel Senjata & Kustomisasi Karakter"
+            >
+              <span className="gacha-quick-icon">🔧</span>
+              <div className="gacha-quick-text">
+                <span className="gacha-quick-title">Bengkel Senjata</span>
+                <span className="gacha-quick-sub">Kustom Karakter</span>
               </div>
             </button>
             <DailyMissionCard

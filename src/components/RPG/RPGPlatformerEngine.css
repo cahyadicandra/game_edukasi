@@ -10,6 +10,7 @@
   z-index: 1000;
   width: 100vw;
   height: 100vh;
+  height: 100dvh; /* aman untuk viewport Android dinamis */
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -190,10 +191,15 @@
   will-change: transform, left, top;
   filter: drop-shadow(0 10px 16px rgba(15, 23, 42, 0.35));
   transition: opacity 0.3s ease;
+  border-radius: 18px 18px 24px 24px;
+  background: linear-gradient(180deg, #48bb78 0%, #38a169 22px, #854d0e 23px, #713f12 100%);
+  overflow: hidden;
 }
 
 .rpg-platform-wrapper.fading {
   animation: shakeCloud 0.1s infinite alternate;
+  background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%);
+  border-radius: 24px;
 }
 
 .rpg-platform-wrapper.faded-out {
@@ -392,9 +398,10 @@
 /* Karakter Maskot */
 .rpg-mascot-entity {
   position: absolute;
-  will-change: left, top;
+  top: 0;
+  left: 0;
+  will-change: transform;
   z-index: 30;
-  transform: translate(-50%, 0);
   pointer-events: none;
 }
 
@@ -418,6 +425,10 @@
 }
 
 .rpg-touch-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 16px;
   pointer-events: auto;
 }
 
@@ -435,7 +446,8 @@
   transition: transform 0.08s ease;
   user-select: none;
   -webkit-user-select: none;
-  touch-action: manipulation;
+  -webkit-touch-callout: none;
+  touch-action: none;
 }
 
 .touch-btn.btn-left,
@@ -592,6 +604,146 @@
   font-style: italic;
 }
 
+/* ==========================================================================
+   UPDATE BARU: DEKORASI ALAM, MUSUH, SENJATA BLASTER & PELURU
+   ========================================================================== */
+
+/* Dekorasi Alam di Atas Platform */
+.rpg-platform-nature-decor {
+  position: absolute;
+  bottom: calc(100% - 24px);
+  left: 20px;
+  height: 64px;
+  width: auto;
+  pointer-events: none;
+  z-index: 2;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+}
+
+/* Musuh-musuh Platform */
+.rpg-enemy-entity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 48px;
+  height: 48px;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  will-change: transform;
+}
+
+.rpg-enemy-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+  animation: enemyHop 1.2s infinite ease-in-out;
+}
+
+@keyframes enemyHop {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.rpg-enemy-entity.bat .rpg-enemy-img {
+  animation: batFly 0.8s infinite ease-in-out;
+}
+
+@keyframes batFly {
+  0%, 100% { transform: translateY(-4px); }
+  50% { transform: translateY(6px); }
+}
+
+.enemy-hp-track {
+  width: 36px;
+  height: 4px;
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 2px;
+  margin-top: 2px;
+  overflow: hidden;
+}
+
+.enemy-hp-fill {
+  height: 100%;
+  background: #ef4444;
+  transition: width 0.2s ease-out;
+}
+
+/* Peluru Blaster Pemain */
+.rpg-bullet-entity {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  z-index: 20;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.rpg-bullet-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px #f59e0b);
+}
+
+/* Blaster di Tangan Maskot */
+.mascot-equipped-blaster {
+  position: absolute;
+  bottom: 22px;
+  right: -8px;
+  width: 32px;
+  height: 24px;
+  object-fit: contain;
+  z-index: 15;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+.mascot-equipped-blaster.flip {
+  right: auto;
+  left: -8px;
+  transform: scaleX(-1);
+}
+
+.mascot-muzzle-flash {
+  position: absolute;
+  bottom: 18px;
+  right: -24px;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+  z-index: 16;
+  animation: flashPop 0.09s ease-out;
+}
+
+.mascot-muzzle-flash.flip {
+  right: auto;
+  left: -24px;
+  transform: scaleX(-1);
+}
+
+@keyframes flashPop {
+  0% { transform: scale(0.6); opacity: 0.5; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+/* Tombol Tembak Sentuh */
+.touch-btn.btn-shoot-action {
+  width: 72px;
+  height: 72px;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.touch-btn.btn-shoot-action:active {
+  transform: scale(0.9);
+  background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+}
+
 /* Responsif Mobile */
 @media (max-width: 600px) {
   .rpg-touch-controls-bar {
@@ -602,13 +754,18 @@
 
   .touch-btn.btn-left,
   .touch-btn.btn-right {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
+  }
+
+  .touch-btn.btn-shoot-action {
+    width: 68px;
+    height: 68px;
   }
 
   .touch-btn.btn-jump-action {
-    width: 76px;
-    height: 76px;
+    width: 72px;
+    height: 72px;
   }
 
   .hud-level-badge {

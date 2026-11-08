@@ -56,7 +56,7 @@ const ShapeSwatch: React.FC<{ shape?: string }> = ({ shape }) => {
 interface QuizScreenProps {
   questions: QuizQuestion[];
   levelTitle: string;
-  onFinish: (correctCount: number) => void;
+  onFinish: (correctCount: number, firstTryCorrect?: number, retryCount?: number) => void;
   onQuit: () => void;
   inventory?: PlayerInventory;
   diamonds?: number;
@@ -78,6 +78,9 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [correctCount, setCorrectCount] = useState(0);
+  const [hasRetriedCurrentQ, setHasRetriedCurrentQ] = useState(false);
+  const [firstTryCorrectCount, setFirstTryCorrectCount] = useState(0);
+  const [totalRetryCount, setTotalRetryCount] = useState(0);
   const [eliminatedIds, setEliminatedIds] = useState<string[]>([]);
   const [showHintModal, setShowHintModal] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -137,12 +140,17 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     const correct = optionId === question.correctId;
     setSelectedId(optionId);
     setIsCorrect(correct);
-    if (correct) setCorrectCount((c) => c + 1);
+    if (correct) {
+      setCorrectCount((c) => c + 1);
+      if (!hasRetriedCurrentQ) {
+        setFirstTryCorrectCount((c) => c + 1);
+      }
+    }
   };
 
   const handleNext = () => {
     if (index + 1 >= total) {
-      onFinish(correctCount);
+      onFinish(correctCount, firstTryCorrectCount, totalRetryCount);
       return;
     }
     setIndex((i) => i + 1);
@@ -150,9 +158,12 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
     setIsCorrect(null);
     setEliminatedIds([]);
     setShowHintModal(false);
+    setHasRetriedCurrentQ(false);
   };
 
   const handleRetry = () => {
+    setHasRetriedCurrentQ(true);
+    setTotalRetryCount((r) => r + 1);
     setSelectedId(null);
     setIsCorrect(null);
   };

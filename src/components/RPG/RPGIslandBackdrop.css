@@ -12,6 +12,55 @@
   z-index: 1;
 }
 
+/* Lapis Parallax Gambar PNG */
+.parallax-png-mountains,
+.parallax-png-hills-far,
+.parallax-png-hills-near {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-position: bottom left;
+  will-change: transform;
+}
+
+.parallax-png-mountains {
+  height: 320px;
+  background-image: url('/assets/png/background/mountains.png');
+  background-size: 1200px 320px;
+  opacity: 0.55;
+  z-index: 1;
+  transform: translate3d(calc(-0.08 * var(--camera-x, 0px)), 0, 0);
+}
+
+.parallax-png-hills-far {
+  height: 250px;
+  background-image: url('/assets/png/background/hills_far.png');
+  background-size: 1200px 250px;
+  opacity: 0.7;
+  z-index: 2;
+  transform: translate3d(calc(-0.15 * var(--camera-x, 0px)), 0, 0);
+}
+
+.parallax-png-hills-near {
+  height: 180px;
+  background-image: url('/assets/png/background/hills_near.png');
+  background-size: 1200px 180px;
+  opacity: 0.85;
+  z-index: 3;
+  transform: translate3d(calc(-0.28 * var(--camera-x, 0px)), 0, 0);
+}
+
+.parallax-far-hills {
+  transform: translate3d(calc(-0.15 * var(--camera-x, 0px)), 0, 0);
+}
+
+.parallax-mid-hills {
+  transform: translate3d(calc(-0.28 * var(--camera-x, 0px)), 0, 0);
+}
+
 .backdrop-layer-group {
   position: absolute;
   inset: 0;

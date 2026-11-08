@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import type { PlayerProfile, DailyMission, NavTabId } from './types/game';
 import { initialPlayer, initialMission } from './data/mockData';
 import { worlds as initialWorlds, type WorldData, type LevelNodeData } from './data/worlds';
@@ -10,20 +10,23 @@ import { AchievementScreen } from './components/Screens/AchievementScreen';
 import { ProfileScreen } from './components/Screens/ProfileScreen';
 import { BottomNavbar } from './components/Navigation/BottomNavbar';
 import { GameModal } from './components/Modals/GameModal';
-import { LevelDetailModal } from './components/Quiz/LevelDetailModal';
 import { ResultScreen } from './components/Quiz/ResultScreen';
 import { AvatarRenderer, type AvatarKey } from './components/Common/AvatarRenderer';
-import { GachaModal } from './components/Gacha/GachaModal';
-import { BattleScreen } from './components/Quiz/BattleScreen';
-import { CampfireModal } from './components/Adventure/CampfireModal';
-import { TangramPuzzleModal } from './components/Adventure/TangramPuzzleModal';
-import { ShapeAlbumModal } from './components/Adventure/ShapeAlbumModal';
-import { MascotPlaygroundModal } from './components/Mascot/MascotPlaygroundModal';
-import { RPGGameScreen } from './components/RPG/RPGGameScreen';
 import { getMonsterForLevel } from './data/monsters';
 import { LocalDB } from './services/localDatabase';
 import { Volume2, VolumeX, Shield, Info, Check, Sparkles, Star, Gem, RotateCcw, Database } from 'lucide-react';
 import './styles/game-theme.css';
+
+// Lazy-loaded Modals & Heavy Game Screens for Mobile Startup Performance
+const LevelDetailModal = lazy(() => import('./components/Quiz/LevelDetailModal').then((m) => ({ default: m.LevelDetailModal })));
+const GachaModal = lazy(() => import('./components/Gacha/GachaModal').then((m) => ({ default: m.GachaModal })));
+const CustomizationModal = lazy(() => import('./components/Customization/CustomizationModal').then((m) => ({ default: m.CustomizationModal })));
+const BattleScreen = lazy(() => import('./components/Quiz/BattleScreen').then((m) => ({ default: m.BattleScreen })));
+const CampfireModal = lazy(() => import('./components/Adventure/CampfireModal').then((m) => ({ default: m.CampfireModal })));
+const TangramPuzzleModal = lazy(() => import('./components/Adventure/TangramPuzzleModal').then((m) => ({ default: m.TangramPuzzleModal })));
+const ShapeAlbumModal = lazy(() => import('./components/Adventure/ShapeAlbumModal').then((m) => ({ default: m.ShapeAlbumModal })));
+const MascotPlaygroundModal = lazy(() => import('./components/Mascot/MascotPlaygroundModal').then((m) => ({ default: m.MascotPlaygroundModal })));
+const RPGGameScreen = lazy(() => import('./components/RPG/RPGGameScreen').then((m) => ({ default: m.RPGGameScreen })));
 
 const getTodayDateString = () => new Date().toISOString().split('T')[0];
 
@@ -95,6 +98,7 @@ export default function App() {
   const [isDiamondModalOpen, setIsDiamondModalOpen] = useState(false);
   const [isLevelUpModalOpen, setIsLevelUpModalOpen] = useState(false);
   const [isGachaModalOpen, setIsGachaModalOpen] = useState(false);
+  const [isCustomizationModalOpen, setIsCustomizationModalOpen] = useState(false);
   const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false);
   const [isMissionModalOpen, setIsMissionModalOpen] = useState(false);
   const [isShapesModalOpen, setIsShapesModalOpen] = useState(false);
@@ -333,9 +337,13 @@ export default function App() {
     }));
   };
 
-  const handleFinishQuiz = (correctCount: number) => {
+  const handleFinishQuiz = (
+    correctCount: number,
+    firstTryCorrect?: number,
+    retryCount?: number
+  ) => {
     const totalQ = selectedLevel ? getQuestionsForLevel(selectedLevel.num).length : 5;
-    const result = computeResult(correctCount, totalQ);
+    const result = computeResult(correctCount, totalQ, firstTryCorrect, retryCount);
     setLastResult(result);
     setQuizPhase('result');
 
@@ -535,6 +543,35 @@ export default function App() {
     return success;
   };
 
+  // Konsumsi Ramuan HP / Eliksir SP saat pertarungan (potong stok, fallback 2 permata)
+  const handleConsumeBattleItem = (kind: 'potion' | 'elixir'): boolean => {
+    const itemKey = kind === 'potion' ? 'potions' : 'spElixirs';
+    let success = false;
+    setPlayer((prev) => {
+      const stock = prev.inventory?.[itemKey] || 0;
+      if (stock > 0) {
+        success = true;
+        return {
+          ...prev,
+          inventory: {
+            ...prev.inventory!,
+            [itemKey]: stock - 1,
+          },
+        };
+      }
+      // Stok habis, beli dengan 2 permata jika saldo mencukupi
+      if (prev.diamonds >= 2) {
+        success = true;
+        return {
+          ...prev,
+          diamonds: prev.diamonds - 2,
+        };
+      }
+      return prev;
+    });
+    return success;
+  };
+
   return (
     <div className="game-viewport">
       <main className="game-scene-container">
@@ -549,6 +586,7 @@ export default function App() {
             onOpenSettings={() => setIsSettingsModalOpen(true)}
             onOpenMission={() => setIsMissionModalOpen(true)}
             onOpenGacha={() => setIsGachaModalOpen(true)}
+            onOpenCustomization={() => setIsCustomizationModalOpen(true)}
             onStartAdventure={handleStartAdventure}
             onOpenMascotPlayground={() => setIsMascotPlaygroundOpen(true)}
           />
@@ -583,6 +621,7 @@ export default function App() {
             worlds={worldsState}
             mission={mission}
             onUpdatePlayer={(updated) => setPlayer((prev) => ({ ...prev, ...updated }))}
+            onOpenCustomization={() => setIsCustomizationModalOpen(true)}
           />
         )}
 
@@ -594,45 +633,48 @@ export default function App() {
       </main>
 
       {/* --- ALUR KUIS & PERTARUNGAN RPG: Detail Level -> Kuis/Battle -> Hasil --- */}
-      {quizPhase === 'detail' && (
-        <LevelDetailModal
-          isOpen
-          world={selectedWorld}
-          level={selectedLevel}
-          onClose={handleQuizQuit}
-          onStart={handleStartNodeEncounter}
-        />
-      )}
+      <Suspense fallback={null}>
+        {quizPhase === 'detail' && (
+          <LevelDetailModal
+            isOpen
+            world={selectedWorld}
+            level={selectedLevel}
+            onClose={handleQuizQuit}
+            onStart={handleStartNodeEncounter}
+          />
+        )}
 
-      {/* --- GAMEPLAY UTAMA: RPG PLATFORMER LONCAT-LONCAT + BOS KUIS --- */}
-      {quizPhase === 'rpg_game' && selectedLevel && (
-        <RPGGameScreen
-          levelNum={selectedLevel.num}
-          player={player}
-          onFinishLevel={handleRPGLevelComplete}
-          onUpdatePlayer={setPlayer}
-          onQuit={() => {
-            LocalDB.clearActiveSession();
-            setQuizPhase('none');
-            setSelectedLevel(null);
-            setSelectedWorld(null);
-          }}
-        />
-      )}
+        {/* --- GAMEPLAY UTAMA: RPG PLATFORMER LONCAT-LONCAT + BOS KUIS --- */}
+        {quizPhase === 'rpg_game' && selectedLevel && (
+          <RPGGameScreen
+            levelNum={selectedLevel.num}
+            player={player}
+            onFinishLevel={handleRPGLevelComplete}
+            onUpdatePlayer={setPlayer}
+            onQuit={() => {
+              LocalDB.clearActiveSession();
+              setQuizPhase('none');
+              setSelectedLevel(null);
+              setSelectedWorld(null);
+            }}
+          />
+        )}
 
-      {/* MODE PERTARUNGAN RPG TURN-BASED MELAWAN MONSTER GEOMETRI */}
-      {quizPhase === 'battle' && selectedLevel && (
-        <BattleScreen
-          monster={getMonsterForLevel(selectedLevel.num)}
-          player={player}
-          questions={getQuestionsForLevel(selectedLevel.num)}
-          onVictory={handleBattleVictory}
-          onDefeat={handleBattleDefeat}
-          onQuit={handleQuizQuit}
-          onUseFiftyFifty={handleUseFiftyFifty}
-          onUseHint={handleUseHint}
-        />
-      )}
+        {/* MODE PERTARUNGAN RPG TURN-BASED MELAWAN MONSTER GEOMETRI */}
+        {quizPhase === 'battle' && selectedLevel && (
+          <BattleScreen
+            monster={getMonsterForLevel(selectedLevel.num)}
+            player={player}
+            questions={getQuestionsForLevel(selectedLevel.num)}
+            onVictory={handleBattleVictory}
+            onDefeat={handleBattleDefeat}
+            onQuit={handleQuizQuit}
+            onUseFiftyFifty={handleUseFiftyFifty}
+            onUseHint={handleUseHint}
+            onConsumeItem={handleConsumeBattleItem}
+          />
+        )}
+      </Suspense>
 
       {quizPhase === 'result' && lastResult && selectedLevel && (
         <ResultScreen
@@ -1289,54 +1331,71 @@ export default function App() {
         </div>
       </GameModal>
 
-      {/* --- MODAL: Peti Misteri Gacha --- */}
-      <GachaModal
-        isOpen={isGachaModalOpen}
-        onClose={() => setIsGachaModalOpen(false)}
-        player={player}
-        onUpdatePlayer={setPlayer}
-      />
+      {/* --- MODAL LAZY LOADED: Gacha, Customization, Adventure & Playground --- */}
+      <Suspense fallback={null}>
+        {isGachaModalOpen && (
+          <GachaModal
+            isOpen={isGachaModalOpen}
+            onClose={() => setIsGachaModalOpen(false)}
+            player={player}
+            onUpdatePlayer={setPlayer}
+          />
+        )}
 
-      {/* --- MODAL: Pos Perkemahan Api Unggun (Adventure Node) --- */}
-      <CampfireModal
-        isOpen={isCampfireModalOpen}
-        onClose={() => setIsCampfireModalOpen(false)}
-        player={player}
-        onRestComplete={handleCampfireRestComplete}
-      />
+        {isCustomizationModalOpen && (
+          <CustomizationModal
+            isOpen={isCustomizationModalOpen}
+            onClose={() => setIsCustomizationModalOpen(false)}
+            player={player}
+            onUpdatePlayer={setPlayer}
+          />
+        )}
 
-      {/* --- MODAL: Teka-Teki Tangram Kuno (Puzzle Node) --- */}
-      <TangramPuzzleModal
-        isOpen={isTangramModalOpen}
-        onClose={() => setIsTangramModalOpen(false)}
-        onComplete={handleTangramComplete}
-      />
+        {isCampfireModalOpen && (
+          <CampfireModal
+            isOpen={isCampfireModalOpen}
+            onClose={() => setIsCampfireModalOpen(false)}
+            player={player}
+            onRestComplete={handleCampfireRestComplete}
+          />
+        )}
 
-      {/* --- MODAL: Album Koleksi Bangun Datar --- */}
-      <ShapeAlbumModal
-        isOpen={isShapeAlbumOpen}
-        onClose={() => setIsShapeAlbumOpen(false)}
-        collectedCardIds={player.inventory?.collectedCards || []}
-        onClaimReward={(bonusStars, bonusGems) => {
-          setPlayer((p) => ({
-            ...p,
-            stars: p.stars + bonusStars,
-            diamonds: p.diamonds + bonusGems,
-          }));
-        }}
-      />
+        {isTangramModalOpen && (
+          <TangramPuzzleModal
+            isOpen={isTangramModalOpen}
+            onClose={() => setIsTangramModalOpen(false)}
+            onComplete={handleTangramComplete}
+          />
+        )}
 
-      {/* --- MODAL: Uji Karakter Maskot Petualang (Gerak Kiri/Kanan & Loncat) --- */}
-      <MascotPlaygroundModal
-        isOpen={isMascotPlaygroundOpen}
-        onClose={() => setIsMascotPlaygroundOpen(false)}
-        onRewardCollected={(stars) => {
-          setPlayer((p) => ({
-            ...p,
-            stars: p.stars + stars,
-          }));
-        }}
-      />
+        {isShapeAlbumOpen && (
+          <ShapeAlbumModal
+            isOpen={isShapeAlbumOpen}
+            onClose={() => setIsShapeAlbumOpen(false)}
+            collectedCardIds={player.inventory?.collectedCards || []}
+            onClaimReward={(bonusStars, bonusGems) => {
+              setPlayer((p) => ({
+                ...p,
+                stars: p.stars + bonusStars,
+                diamonds: p.diamonds + bonusGems,
+              }));
+            }}
+          />
+        )}
+
+        {isMascotPlaygroundOpen && (
+          <MascotPlaygroundModal
+            isOpen={isMascotPlaygroundOpen}
+            onClose={() => setIsMascotPlaygroundOpen(false)}
+            onRewardCollected={(stars) => {
+              setPlayer((p) => ({
+                ...p,
+                stars: p.stars + stars,
+              }));
+            }}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

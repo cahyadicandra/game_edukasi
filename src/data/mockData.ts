@@ -8,9 +8,9 @@ export const initialPlayer: PlayerProfile = {
   level: 1,
   currentExp: 0,
   maxExp: 100,
-  stars: 0,
-  diamonds: 5,
-  coins: 50,
+  stars: 9999,
+  diamonds: 9999,
+  coins: 99999,
   schoolGrade: 'SD Kelas 4',
   bio: 'Siap menjelajah dunia geometri dan menaklukkan semua bos bangun datar!',
   title: 'Petualang Pemula',
@@ -31,7 +31,13 @@ export const initialPlayer: PlayerProfile = {
     atk: 20,
     def: 10,
   },
-  equipment: {},
+  equipment: {
+    unlockedParts: ['blaster_std', 'core_orb', 'barrel_std', 'grip_std', 'charm_none'],
+    blasterColor: 'gold',
+    blasterCore: 'bullet_orb',
+    skinColor: 'default',
+    hat: 'none',
+  },
 };
 
 export const initialMission: DailyMission = {

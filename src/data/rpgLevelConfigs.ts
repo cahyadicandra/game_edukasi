@@ -232,72 +232,95 @@ export function getRPGLevelConfig(levelNum: number): RPGLevelConfig {
     targetCoins: 18 + (levelNum % 3) * 2,
   };
 
-  const levelWidth = 3200;
   const levelHeight = 720;
-  const groundY = 560; // Tinggi garis dasar platform utama
+  const groundY = 560; // Garis acuan dasar pulau
 
   // Tata letak platform berbasis aset tanah game_assets
   const platforms: PlatformDef[] = [];
   const collectibles: CollectibleDef[] = [];
   const hazards: HazardDef[] = [];
 
-  // 1. Platform Awal Tempat Karakter Muncul (Start Island)
+  // 1. Platform Awal Tempat Karakter Muncul (Start Island yang lebar dan kokoh)
+  const startIslandWidth = 520;
   platforms.push({
     id: 'plat-start',
     asset: 'island_wide',
     x: 60,
-    y: groundY - 20,
-    width: 600,
+    y: groundY - 20, // surfaceY = 564
+    width: startIslandWidth,
     height: 192,
   });
 
-  // 2. Platform Tengah Berurutan dengan Variasi Mekanik Level
+  // 2. Platform Tengah Berurutan dengan Variasi Jalur Mulus & Mekanik Menyenangkan
   const totalWaypoints = 6;
+  let currentX = 60 + startIslandWidth + 75; // Jarak awalan 75px yang sangat mudah dilompati
+
   for (let i = 1; i <= totalWaypoints; i++) {
-    const xBase = 650 + (i - 1) * 360;
-    // Variasi ketinggian platform
-    const heightOffset = Math.sin((i + levelNum) * 1.3) * 120;
-    const platY = groundY - 40 - heightOffset;
-
+    // Tentukan tipe dan lebar platform
     let asset: PlatformAssetKey = 'platform_L';
-    if (i % 3 === 1) asset = 'island_M';
-    if (i % 3 === 2) asset = 'platform_M';
-    if (i % 3 === 0) asset = 'island_S';
+    let width = 340;
+    if (i % 3 === 1) {
+      asset = 'island_M';
+      width = 360;
+    } else if (i % 3 === 2) {
+      asset = 'platform_M';
+      width = 300;
+    } else if (i % 3 === 0) {
+      asset = 'island_S';
+      width = 270;
+    }
 
-    // Pengaturan fitur mekanik per level
-    const isMoving = defaultMechanic.type === 'moving_platforms' && i % 2 === 1;
+    // Variasi mekanik khusus per level
+    const isMoving = defaultMechanic.type === 'moving_platforms' && (i === 2 || i === 5);
     const isBouncy = defaultMechanic.type === 'bounce_springs' && (i === 2 || i === 4);
     const isFading = defaultMechanic.type === 'fading_clouds' && (i === 3 || i === 5);
 
+    if (isFading) {
+      asset = 'cloud_1';
+      width = 290;
+    }
+
+    // Variasi ketinggian bergelombang landai (+/- 35px, sangat mudah & mulus dijelajahi)
+    const heightWave = Math.sin((i + levelNum * 0.7) * 1.1) * 40;
+    const platSurfaceY = groundY - 15 - heightWave;
+    const platY = platSurfaceY - 24;
+
     platforms.push({
       id: `plat-${i}`,
-      asset: isFading ? 'cloud_1' : asset,
-      x: xBase,
+      asset,
+      x: currentX,
       y: platY,
-      width: isFading ? 340 : (asset === 'island_M' ? 380 : asset === 'island_S' ? 250 : 330),
+      width,
       height: isFading ? 140 : 137,
       isMoving,
-      moveRangeX: isMoving ? 140 : 0,
+      moveRangeX: isMoving ? 60 : 0,
       moveSpeedX: isMoving ? 1.4 : 0,
-      moveRangeY: isMoving && i % 2 === 0 ? 80 : 0,
-      moveSpeedY: isMoving && i % 2 === 0 ? 1.2 : 0,
+      moveRangeY: 0,
+      moveSpeedY: 0,
       isBouncy,
       isFading,
-      fadeDurationMs: 1200,
+      fadeDurationMs: 1400,
     });
 
-    // Sebar Koin di atas setiap platform
+    // Sebar Koin melengkung indah di atas setiap platform
     collectibles.push({
       id: `coin-${i}-1`,
-      x: xBase + 80,
-      y: platY - 45,
+      x: currentX + 70,
+      y: platSurfaceY - 45,
       type: 'coin',
       points: 10,
     });
     collectibles.push({
       id: `coin-${i}-2`,
-      x: xBase + 160,
-      y: platY - 75,
+      x: currentX + width / 2,
+      y: platSurfaceY - 65,
+      type: 'coin',
+      points: 10,
+    });
+    collectibles.push({
+      id: `coin-${i}-3`,
+      x: currentX + width - 70,
+      y: platSurfaceY - 45,
       type: 'coin',
       points: 10,
     });
@@ -313,68 +336,52 @@ export function getRPGLevelConfig(levelNum: number): RPGLevelConfig {
       ];
       collectibles.push({
         id: `token-${i}`,
-        x: xBase + 120,
-        y: platY - 110,
+        x: currentX + width / 2,
+        y: platSurfaceY - 110,
         type: 'token',
         shapeToken: tokens[(levelNum + i) % tokens.length],
         points: 50,
       });
     }
 
-    // Item Heart Pemulih Darah di titik sulit
+    // Item Heart Pemulih Darah di titik tengah petualangan
     if (i === 3) {
       collectibles.push({
         id: `heart-${i}`,
-        x: xBase + 220,
-        y: platY - 55,
+        x: currentX + width / 2,
+        y: platSurfaceY - 50,
         type: 'heart',
         points: 0,
       });
     }
+
+    // Hitung posisi platform berikutnya dengan celah jumpable yang konsisten (80-100px)
+    const gap = isMoving ? 110 : 85;
+    currentX += width + gap;
   }
 
-  // 3. Mekanik Bahaya Khusus
+  // 3. Mekanik Bahaya / Fitur Tambahan
   if (defaultMechanic.type === 'wind_gusts') {
     hazards.push({
       id: 'hazard-wind-1',
-      x: 900,
+      x: 800,
       y: 100,
       width: 1400,
       height: 480,
       type: 'wind_zone',
-      pushForceX: 28,
+      pushForceX: 20,
       pushForceY: -4,
-    });
-  } else if (defaultMechanic.type === 'laser_hazards') {
-    hazards.push({
-      id: 'hazard-laser-1',
-      x: 1300,
-      y: 320,
-      width: 30,
-      height: 180,
-      type: 'laser',
-      intervalMs: 3000,
-      activeDurationMs: 1400,
-    });
-    hazards.push({
-      id: 'hazard-laser-2',
-      x: 1950,
-      y: 280,
-      width: 30,
-      height: 200,
-      type: 'laser',
-      intervalMs: 3000,
-      activeDurationMs: 1400,
     });
   } else if (defaultMechanic.type === 'warp_portals') {
     platforms[2].isPortal = true;
-    platforms[2].portalTargetX = platforms[4].x + 40;
-    platforms[2].portalTargetY = platforms[4].y - 60;
+    platforms[2].portalTargetX = platforms[4].x + 60;
+    platforms[2].portalTargetY = platforms[4].y - 30;
   }
 
   // 4. Platform Akhir: Arena Pertemuan Bos (Boss Gate Island)
-  const bossX = 2700;
-  const bossY = groundY - 60;
+  const bossGap = 90;
+  const bossX = currentX + bossGap;
+  const bossY = groundY - 40;
   platforms.push({
     id: 'plat-boss',
     asset: 'island_L',
@@ -383,6 +390,8 @@ export function getRPGLevelConfig(levelNum: number): RPGLevelConfig {
     width: 560,
     height: 364,
   });
+
+  const levelWidth = bossX + 650;
 
   // Koin Bonus di Arena Bos
   for (let c = 0; c < 3; c++) {

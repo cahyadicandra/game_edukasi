@@ -30,8 +30,9 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
   const [diamondBouncing, setDiamondBouncing] = useState(false);
 
   useEffect(() => {
-    if (player.stars > prevStars.current) {
-      const diff = player.stars - prevStars.current;
+    const diff = player.stars - prevStars.current;
+    prevStars.current = player.stars; // selalu sinkron agar diff tidak menumpuk
+    if (diff > 0) {
       setStarDiff(diff);
       setStarBouncing(true);
       const timer = setTimeout(() => {
@@ -40,12 +41,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       }, 1200);
       return () => clearTimeout(timer);
     }
-    prevStars.current = player.stars;
   }, [player.stars]);
 
   useEffect(() => {
-    if (player.diamonds > prevDiamonds.current) {
-      const diff = player.diamonds - prevDiamonds.current;
+    const diff = player.diamonds - prevDiamonds.current;
+    prevDiamonds.current = player.diamonds; // selalu sinkron agar diff tidak menumpuk
+    if (diff > 0) {
       setDiamondDiff(diff);
       setDiamondBouncing(true);
       const timer = setTimeout(() => {
@@ -54,7 +55,6 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       }, 1200);
       return () => clearTimeout(timer);
     }
-    prevDiamonds.current = player.diamonds;
   }, [player.diamonds]);
 
   return (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnimatedMascot, type MascotAnimationState, type MascotDirection } from '../Mascot/AnimatedMascot';
 import { Sparkles } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -8,7 +8,7 @@ interface GameMascotsProps {
   onOpenPlayground?: () => void;
 }
 
-export const GameMascots: React.FC<GameMascotsProps> = () => {
+export const GameMascots: React.FC<GameMascotsProps> = ({ onOpenPlayground }) => {
   const [mascotState, setMascotState] = useState<MascotAnimationState>('idle');
   const [direction, setDirection] = useState<MascotDirection>('right');
   const [showBubble, setShowBubble] = useState(false);
@@ -16,7 +16,7 @@ export const GameMascots: React.FC<GameMascotsProps> = () => {
   const [isJumpingAnim, setIsJumpingAnim] = useState(false);
 
   // Memicu aksi lompat visual maskot di Home Screen
-  const triggerJump = () => {
+  const triggerJump = useCallback(() => {
     if (isJumpingAnim) return;
     setIsJumpingAnim(true);
     setMascotState('jump');
@@ -45,7 +45,7 @@ export const GameMascots: React.FC<GameMascotsProps> = () => {
     setTimeout(() => {
       setShowBubble(false);
     }, 2400);
-  };
+  }, [isJumpingAnim]);
 
   // Keyboard listener di Home Screen: Space / ArrowUp untuk loncat, ArrowLeft / Right untuk hadap
   useEffect(() => {
@@ -66,7 +66,7 @@ export const GameMascots: React.FC<GameMascotsProps> = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isJumpingAnim]);
+  }, [triggerJump]);
 
   return (
     <div className="mascots-container">
@@ -127,6 +127,19 @@ export const GameMascots: React.FC<GameMascotsProps> = () => {
           />
         </div>
       </div>
+
+      {/* Tombol pintasan membuka Taman Bermain Maskot */}
+      {onOpenPlayground && (
+        <button
+          type="button"
+          className="mascot-playground-btn"
+          onClick={onOpenPlayground}
+          title="Main & Latih Maskot di Taman Bermain"
+        >
+          <Sparkles size={14} className="bubble-icon" />
+          <span>Main Maskot</span>
+        </button>
+      )}
     </div>
   );
 };

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import type { GeometryMonster } from '../../data/monsters';
-import type { QuizQuestion } from '../../data/questions';
+import { type QuizQuestion, shuffleQuestionOptions } from '../../data/questions';
 import type { PlayerProfile } from '../../types/game';
+import { BLASTER_COLORS } from '../../data/weaponParts';
 import { AnimatedMascot } from '../Mascot/AnimatedMascot';
 import { Swords, Check, X, Skull, Zap, Shield, Sparkles, Trophy } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
@@ -277,6 +278,9 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
   onDefeat,
   onConsumeItem,
 }) => {
+  const [battleQuestions, setBattleQuestions] = useState<QuizQuestion[]>(() =>
+    questions.map(shuffleQuestionOptions)
+  );
   const [currentQIndex, setCurrentQIndex] = useState(0);
   const [bossHp, setBossHp] = useState(boss.maxHp);
   const [playerHp, setPlayerHp] = useState(100);
@@ -311,7 +315,7 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
 
   const introTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const theme = getArenaTheme(boss);
-  const currentQ = questions[currentQIndex] || questions[0];
+  const currentQ = battleQuestions[currentQIndex] || battleQuestions[0];
 
   // Auto-hide Intro Banner setelah 2.2 detik
   useEffect(() => {
@@ -403,7 +407,7 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
           setTimeout(() => {
             onVictory({
               correctAnswers: correctCount + 1,
-              totalQuestions: questions.length,
+              totalQuestions: battleQuestions.length,
             });
           }, 1400);
           return;
@@ -459,8 +463,14 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
       setShowFormulaHint(false);
 
       // Pertarungan TERUS BERLANJUT sampai Bos Kalah ATAU Player Kalah!
-      // Jika di akhir daftar soal, putar kembali pertanyaan secara bergilir
-      setCurrentQIndex((idx) => (idx + 1) % questions.length);
+      // Jika di akhir daftar soal, putar kembali pertanyaan secara bergilir & acak ulang opsi
+      setCurrentQIndex((idx) => {
+        const nextIdx = (idx + 1) % battleQuestions.length;
+        if (nextIdx === 0) {
+          setBattleQuestions((prev) => prev.map(shuffleQuestionOptions));
+        }
+        return nextIdx;
+      });
     }, 700);
   };
 
@@ -556,6 +566,11 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
               direction="right"
               size={160}
               showShadow={true}
+              skinColor={player.equipment?.skinColor || 'default'}
+              hat={player.equipment?.hat || 'none'}
+              weapon="blaster"
+              weaponColorFilter={BLASTER_COLORS.find((c) => c.id === (player.equipment?.blasterColor || 'default'))?.filter}
+              isShooting={mascotAnim === 'jump'}
             />
           </div>
 

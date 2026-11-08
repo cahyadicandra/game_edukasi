@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { PlayableMascot } from './PlayableMascot';
 import { X, Sparkles, Star, Gamepad2, Volume2, VolumeX } from 'lucide-react';
 import './MascotPlaygroundModal.css';
@@ -33,14 +33,6 @@ export const MascotPlaygroundModal: React.FC<MascotPlaygroundModalProps> = ({
   ]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [floatingNotification, setFloatingNotification] = useState<string | null>(null);
-
-  // Reset items when modal opens
-  useEffect(() => {
-    if (isOpen) {
-      setItems((prev) => prev.map((item) => ({ ...item, collected: false })));
-      setScore(0);
-    }
-  }, [isOpen]);
 
   if (!isOpen) return null;
 

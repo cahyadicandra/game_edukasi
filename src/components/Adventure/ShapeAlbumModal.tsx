@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { X, Lock, Sparkles, CheckCircle2, ChevronRight, BookOpen, Award } from 'lucide-react';
+import { LocalDB } from '../../services/localDatabase';
 import './ShapeAlbumModal.css';
 
 interface ShapeDefinition {
@@ -181,7 +182,10 @@ export const ShapeAlbumModal: React.FC<ShapeAlbumModalProps> = ({
   onClaimReward,
 }) => {
   const [selectedShape, setSelectedShape] = useState<ShapeDefinition | null>(null);
-  const [claimedReward, setClaimedReward] = useState(false);
+  // Milestone yang sudah diklaim disimpan permanen di Database Lokal (anti farming reward)
+  const [claimedMilestones, setClaimedMilestones] = useState<number[]>(() => {
+    return LocalDB.loadShapeAlbumMilestones();
+  });
 
   if (!isOpen) return null;
 
@@ -191,14 +195,25 @@ export const ShapeAlbumModal: React.FC<ShapeAlbumModalProps> = ({
   const unlockedCount = unlockedShapes.length;
   const progressPercent = Math.min(100, Math.round((unlockedCount / totalShapes) * 100));
 
-  // Milestone bonus jika pemain mencapai 4 atau 8 bentuk
-  const isEligibleReward = unlockedCount >= 4 && !claimedReward;
+  // Tentukan milestone yang bisa diklaim berikutnya (4 bentuk, lalu 8 bentuk)
+  const pendingMilestone =
+    unlockedCount >= 8 && !claimedMilestones.includes(8)
+      ? 8
+      : unlockedCount >= 4 && !claimedMilestones.includes(4)
+        ? 4
+        : null;
+  const isEligibleReward = pendingMilestone !== null;
+  const allApplicableClaimed = unlockedCount >= 4 && pendingMilestone === null;
 
   const handleClaim = () => {
-    if (!isEligibleReward) return;
-    const bonusStars = unlockedCount === 8 ? 150 : 50;
-    const bonusGems = unlockedCount === 8 ? 25 : 10;
-    setClaimedReward(true);
+    if (!isEligibleReward || pendingMilestone === null) return;
+    const bonusStars = pendingMilestone === 8 ? 150 : 50;
+    const bonusGems = pendingMilestone === 8 ? 25 : 10;
+    const nextClaimed = [...claimedMilestones, pendingMilestone];
+    setClaimedMilestones(nextClaimed);
+    LocalDB.saveShapeAlbumMilestones(nextClaimed).catch((err) =>
+      console.warn('Gagal menyimpan milestone album bentuk:', err)
+    );
     onClaimReward?.(bonusStars, bonusGems);
   };
 
@@ -241,13 +256,17 @@ export const ShapeAlbumModal: React.FC<ShapeAlbumModalProps> = ({
           <div className="milestone-row">
             <div className="milestone-badge">
               <Award size={14} color="#f59e0b" />
-              <span>Target: 4 Bentuk (+50 ⭐, +10 💎)</span>
+              <span>
+                {claimedMilestones.includes(4) && !claimedMilestones.includes(8)
+                  ? 'Target: 8 Bentuk (+150 ⭐, +25 💎)'
+                  : 'Target: 4 Bentuk (+50 ⭐, +10 💎)'}
+              </span>
             </div>
             {isEligibleReward ? (
               <button className="claim-reward-btn animate-pulse" onClick={handleClaim}>
                 <Sparkles size={13} /> Klaim Bonus
               </button>
-            ) : claimedReward ? (
+            ) : allApplicableClaimed ? (
               <span className="claimed-badge">
                 <CheckCircle2 size={13} color="#22c55e" /> Sudah Diklaim
               </span>

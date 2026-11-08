@@ -306,6 +306,33 @@ export const GachaModal: React.FC<GachaModalProps> = ({
               <Gem size={13} fill="#38bdf8" color="#0284c7" />
               <strong>{player.diamonds}</strong>
             </div>
+            <button
+              type="button"
+              className="wallet-pill refill-btn"
+              style={{
+                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                color: '#fff',
+                border: '1px solid #34d399',
+                cursor: 'pointer',
+                fontWeight: 800,
+                padding: '4px 8px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '4px',
+              }}
+              title="Isi Saldo Testing Koin & Permata"
+              onClick={() => {
+                onUpdatePlayer((prev) => ({
+                  ...prev,
+                  coins: (prev.coins || 0) + 9999,
+                  stars: (prev.stars || 0) + 9999,
+                  diamonds: (prev.diamonds || 0) + 9999,
+                }));
+                triggerHaptic(ImpactStyle.Medium);
+              }}
+            >
+              <span>⚡ +9999 Test</span>
+            </button>
             <button className="gacha-btn-close" onClick={onClose}>
               <X size={18} />
             </button>

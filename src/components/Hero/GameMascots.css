@@ -159,3 +159,33 @@
     transform: translateY(-8px);
   }
 }
+
+/* Tombol pintasan Taman Bermain Maskot (di atas maskot utama) */
+.mascot-playground-btn {
+  pointer-events: auto;
+  position: absolute;
+  bottom: 40%;
+  left: 27%;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 9999px;
+  background: linear-gradient(180deg, #fbbf24, #d97706);
+  color: #ffffff;
+  font-family: var(--font-game-title);
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: 0 6px 16px rgba(217, 119, 6, 0.45);
+  cursor: pointer;
+  z-index: 22;
+}
+
+.mascot-playground-btn:active {
+  transform: scale(0.94);
+}
+
+.mascot-playground-btn .bubble-icon {
+  color: #ffffff;
+}
