@@ -1,10 +1,7 @@
 import React from 'react';
 import type { PlayerProfile, DailyMission } from '../../types/game';
 import { TopHeader } from '../Header/TopHeader';
-import { DailyMissionCard } from '../Mission/DailyMissionCard';
-import { GameLogo } from '../Hero/GameLogo';
-import { CenterActions } from '../CenterActions/CenterActions';
-import { GameMascots } from '../Hero/GameMascots';
+import { DailyMissionCard, GameLogo, CenterActions, GameMascots } from '../Home';
 import './HomeScreen.css';
 
 interface HomeScreenProps {
@@ -15,11 +12,8 @@ interface HomeScreenProps {
   onAddDiamonds: () => void;
   onOpenSettings: () => void;
   onOpenMission: () => void;
-  onOpenGacha: () => void;
-  onOpenCustomization?: () => void;
   onStartAdventure: () => void;
   onExploreShapes?: () => void;
-  onOpenMascotPlayground?: () => void;
 }
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({
@@ -30,10 +24,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
   onAddDiamonds,
   onOpenSettings,
   onOpenMission,
-  onOpenGacha,
-  onOpenCustomization,
   onStartAdventure,
-  onOpenMascotPlayground,
 }) => {
   return (
     <div className="home-screen-layout">
@@ -45,7 +36,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
       />
 
       {/* Animated Shape Mascots (Walking Triangle and friends) */}
-      <GameMascots onOpenPlayground={onOpenMascotPlayground} />
+      <GameMascots />
 
       {/* Interactive UI Overlays */}
       <div className="game-overlay">
@@ -59,28 +50,6 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({
             onOpenSettings={onOpenSettings}
           />
           <div className="header-cards-row">
-            <button
-              className="gacha-quick-banner"
-              onClick={onOpenGacha}
-              title="Buka Peti Misteri Geometri"
-            >
-              <span className="gacha-quick-icon">🎁</span>
-              <div className="gacha-quick-text">
-                <span className="gacha-quick-title">Peti Misteri</span>
-                <span className="gacha-quick-sub">Gacha Hadiah!</span>
-              </div>
-            </button>
-            <button
-              className="gacha-quick-banner custom-quick-banner"
-              onClick={onOpenCustomization}
-              title="Bengkel Senjata & Kustomisasi Karakter"
-            >
-              <span className="gacha-quick-icon">🔧</span>
-              <div className="gacha-quick-text">
-                <span className="gacha-quick-title">Bengkel Senjata</span>
-                <span className="gacha-quick-sub">Kustom Karakter</span>
-              </div>
-            </button>
             <DailyMissionCard
               mission={mission}
               onClick={onOpenMission}

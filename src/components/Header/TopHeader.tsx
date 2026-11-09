@@ -72,15 +72,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         </div>
 
         <div className="player-info">
-          <span className="player-role">{player.role}</span>
           <span className="player-name">{player.name}</span>
-          <div className="player-exp-container" title={`${player.currentExp} / ${player.maxExp} EXP`}>
-            <div 
-              className="player-exp-fill" 
-              style={{ width: `${expPercentage}%` }}
-            />
+          <div className="player-level-exp-row">
+            <span className="player-level-tag">Lv.{player.level}</span>
+            <div className="player-exp-container" title={`${player.currentExp} / ${player.maxExp} EXP`}>
+              <div 
+                className="player-exp-fill" 
+                style={{ width: `${expPercentage}%` }}
+              />
+            </div>
           </div>
-          <span className="player-level-text">Level {player.level}</span>
         </div>
       </div>
 
@@ -88,16 +89,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       <div className="header-right">
         {/* Star Counter */}
         <div 
-          className={`currency-pill ${starBouncing ? 'pulse-bounce' : ''}`} 
+          className={`currency-pill star ${starBouncing ? 'pulse-bounce' : ''}`} 
           onClick={onAddStars}
           title="Bintang Petualangan — Klik untuk Klaim Bonus!"
           role="button"
           tabIndex={0}
         >
           <div className="currency-icon">
-            <Star size={16} fill="#facc15" color="#ca8a04" strokeWidth={1.5} />
+            <Star size={15} fill="#facc15" color="#ca8a04" strokeWidth={1.5} />
           </div>
-          <span className="currency-value">{player.stars}</span>
+          <span className="currency-value">{player.stars.toLocaleString()}</span>
           <button 
             className="currency-add-btn" 
             aria-label="Tambah Bintang"
@@ -119,16 +120,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
         {/* Diamond Counter */}
         <div 
-          className={`currency-pill ${diamondBouncing ? 'pulse-bounce' : ''}`} 
+          className={`currency-pill gem ${diamondBouncing ? 'pulse-bounce' : ''}`} 
           onClick={onAddDiamonds}
           title="Permata Petualangan — Klik untuk Klaim Bonus!"
           role="button"
           tabIndex={0}
         >
           <div className="currency-icon">
-            <Gem size={15} fill="#38bdf8" color="#0284c7" strokeWidth={1.5} />
+            <Gem size={14} fill="#38bdf8" color="#0284c7" strokeWidth={1.5} />
           </div>
-          <span className="currency-value">{player.diamonds}</span>
+          <span className="currency-value">{player.diamonds.toLocaleString()}</span>
           <button 
             className="currency-add-btn" 
             aria-label="Tambah Permata"

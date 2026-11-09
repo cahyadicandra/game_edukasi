@@ -2,11 +2,8 @@ import React from 'react';
 import type { PlayerProfile } from '../../types/game';
 import { TopHeader } from '../Header/TopHeader';
 import type { LevelNodeData, WorldData } from '../../data/worlds';
-import { LevelNodeButton } from './LevelNodeButton';
-import { IslandPathLine } from './IslandPathLine';
-import { WorldBanner } from './WorldBanner';
-import { ShapeCollectionCard } from './ShapeCollectionCard';
-import { MapTitleBanner } from './MapTitleBanner';
+import { LevelNodeButton, IslandPathLine, WorldBanner, MapTitleBanner } from '../Map';
+import { ShapeCollectionCard } from '../Common';
 import './MapScreen.css';
 
 interface MapScreenProps {

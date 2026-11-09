@@ -2,51 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Pause, Check, X, Target, Lightbulb, Sparkles } from 'lucide-react';
 import type { QuizQuestion } from '../../data/questions';
 import type { PlayerInventory } from '../../types/game';
+import { QuestionVisual } from './QuestionVisual';
 import './Quiz.css';
-
-/** Ilustrasi CSS untuk visual soal (rumah, pizza, pintu, jam, buku) */
-const QuestionVisual: React.FC<{ type: QuizQuestion['visual'] }> = ({ type }) => {
-  return (
-    <div className={`quiz-visual quiz-visual-${type}`} aria-hidden="true">
-      {type === 'house' && (
-        <>
-          <div className="qv-roof" />
-          <div className="qv-body">
-            <div className="qv-window" />
-            <div className="qv-door" />
-          </div>
-        </>
-      )}
-      {type === 'pizza' && (
-        <div className="qv-pizza">
-          <span className="qv-pepperoni p1" />
-          <span className="qv-pepperoni p2" />
-          <span className="qv-pepperoni p3" />
-        </div>
-      )}
-      {type === 'door' && (
-        <div className="qv-door-frame">
-          <div className="qv-door-leaf">
-            <span className="qv-door-knob" />
-          </div>
-        </div>
-      )}
-      {type === 'clock' && (
-        <div className="qv-clock">
-          <span className="qv-clock-hand hour" />
-          <span className="qv-clock-hand minute" />
-          <span className="qv-clock-dot" />
-        </div>
-      )}
-      {type === 'book' && (
-        <div className="qv-book">
-          <div className="qv-book-lines" />
-          <div className="qv-book-lines short" />
-        </div>
-      )}
-    </div>
-  );
-};
 
 const ShapeSwatch: React.FC<{ shape?: string }> = ({ shape }) => {
   if (!shape) return null;
@@ -199,7 +156,7 @@ export const QuizScreen: React.FC<QuizScreenProps> = ({
 
         {/* Visual benda */}
         <div className="quiz-visual-card">
-          <QuestionVisual type={question.visual} />
+          <QuestionVisual type={question.visual} prompt={question.prompt} />
         </div>
 
         {/* Bar Tombol Lifeline Bantuan Kuis (Fungsional & Terhubung ke Inventori) */}

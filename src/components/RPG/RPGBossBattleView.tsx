@@ -6,6 +6,7 @@ import { BLASTER_COLORS } from '../../data/weaponParts';
 import { AnimatedMascot } from '../Mascot/AnimatedMascot';
 import { Swords, Check, X, Skull, Zap, Shield, Sparkles, Trophy } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { weaponSoundService } from '../../services/weaponSoundService';
 import './RPGBossBattleView.css';
 
 export interface RPGBossBattleViewProps {
@@ -383,6 +384,12 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
       setCorrectCount((c) => c + 1);
       setMascotAnim('jump');
 
+      const equippedWeapon = player.equipment?.blasterSkin || 'blaster_klasik';
+      weaponSoundService.playWeaponShoot(equippedWeapon);
+      setTimeout(() => {
+        weaponSoundService.playWeaponHit(equippedWeapon);
+      }, 150);
+
       // 3 jawaban benar akan menghabisi HP bos + bonus senjata pedang
       const swordBonus = hasSword ? 4 : 0;
       const damageToBoss = Math.ceil(boss.maxHp / 3) + 5 + swordBonus;
@@ -569,6 +576,11 @@ export const RPGBossBattleView: React.FC<RPGBossBattleViewProps> = ({
               skinColor={player.equipment?.skinColor || 'default'}
               hat={player.equipment?.hat || 'none'}
               weapon="blaster"
+              weaponSkin={
+                player.equipment?.blasterSkin ||
+                player.equipment?.loadouts?.[player.equipment?.activeLoadoutIndex ?? 0]?.skinId ||
+                'blaster_klasik'
+              }
               weaponColorFilter={BLASTER_COLORS.find((c) => c.id === (player.equipment?.blasterColor || 'default'))?.filter}
               isShooting={mascotAnim === 'jump'}
             />

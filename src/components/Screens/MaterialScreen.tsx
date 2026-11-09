@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { SubScreenHeader } from './SubScreenHeader';
+import { SubScreenHeader } from '../Common';
 import { Sparkles, Compass, Lightbulb } from 'lucide-react';
 import './ScreenCommon.css';
 
@@ -17,7 +17,11 @@ interface ShapeDetail {
   svg: React.ReactNode;
 }
 
-export const MaterialScreen: React.FC = () => {
+export interface MaterialScreenProps {
+  embedded?: boolean;
+}
+
+export const MaterialScreen: React.FC<MaterialScreenProps> = ({ embedded = false }) => {
   const shapes: ShapeDetail[] = [
     {
       id: 'segitiga',
@@ -267,6 +271,94 @@ export const MaterialScreen: React.FC = () => {
 
   const [selectedShape, setSelectedShape] = useState<ShapeDetail>(shapes[0]);
 
+  const content = (
+    <>
+      {!embedded && (
+        <SubScreenHeader
+          icon="📚"
+          title="Materi Bangun Datar"
+          subtitle="Pelajari sifat, rumus keliling, dan luas bentuk geometri"
+        />
+      )}
+
+      {/* Tab Pemilih Bentuk (Tombol 3D Game) */}
+      <div className="shape-tab-scroll-wrap">
+        <div className="shape-tab-selector">
+          {shapes.map((item) => {
+            const isActive = selectedShape.id === item.id;
+            return (
+              <button
+                key={item.id}
+                className={`shape-selector-btn ${isActive ? 'active' : ''}`}
+                onClick={() => setSelectedShape(item)}
+              >
+                <span className="shape-btn-icon">{item.iconSvg}</span>
+                <span className="shape-btn-name">{item.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Kartu Utama Sorotan Bentuk */}
+      <div className="shape-spotlight-card">
+        {/* Ilustrasi Visual Bentuk */}
+        <div className="spotlight-visual-wrap">
+          <div className="spotlight-visual">
+            {selectedShape.svg}
+          </div>
+        </div>
+
+        <div className="spotlight-info">
+          <div className="spotlight-title-row">
+            <h2 className="spotlight-title">{selectedShape.name}</h2>
+            <div className="shape-properties-row">
+              <span className="property-badge">
+                <Compass size={13} color="#0284c7" />
+                {selectedShape.sides} Sisi
+              </span>
+              <span className="property-badge">
+                <Sparkles size={13} color="#d97706" />
+                {selectedShape.corners} Sudut
+              </span>
+            </div>
+          </div>
+
+          <p className="spotlight-desc">{selectedShape.description}</p>
+
+          {/* Kartu Rumus Luas & Keliling */}
+          <div className="formula-cards-grid">
+            <div className="formula-pill area-pill">
+              <div className="formula-pill-header">
+                <span className="formula-icon">📐</span>
+                <span className="formula-label">Rumus Luas</span>
+              </div>
+              <span className="formula-val">{selectedShape.formula}</span>
+            </div>
+
+            <div className="formula-pill perimeter-pill">
+              <div className="formula-pill-header">
+                <span className="formula-icon">📏</span>
+                <span className="formula-label">Rumus Keliling</span>
+              </div>
+              <span className="formula-val">{selectedShape.formulaKeliling}</span>
+            </div>
+          </div>
+
+          {/* Fakta Unik / Tips Belajar */}
+          <div className="shape-fun-fact-box">
+            <Lightbulb size={18} color="#eab308" className="fact-icon" />
+            <p className="fact-text">{selectedShape.funFact}</p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="embedded-material-wrap">{content}</div>;
+  }
+
   return (
     <div className="sub-screen-container">
       {/* Latar Belakang Langit & Awan Animasi */}
@@ -277,84 +369,7 @@ export const MaterialScreen: React.FC = () => {
       </div>
 
       <div className="sub-screen-content">
-        {/* Spanduk Papan Kayu Tematik */}
-        <SubScreenHeader
-          icon="📚"
-          title="Materi Bangun Datar"
-          subtitle="Pelajari sifat, rumus keliling, dan luas bentuk geometri"
-        />
-
-        {/* Tab Pemilih Bentuk (Tombol 3D Game) */}
-        <div className="shape-tab-scroll-wrap">
-          <div className="shape-tab-selector">
-            {shapes.map((item) => {
-              const isActive = selectedShape.id === item.id;
-              return (
-                <button
-                  key={item.id}
-                  className={`shape-selector-btn ${isActive ? 'active' : ''}`}
-                  onClick={() => setSelectedShape(item)}
-                >
-                  <span className="shape-btn-icon">{item.iconSvg}</span>
-                  <span className="shape-btn-name">{item.name}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Kartu Utama Sorotan Bentuk */}
-        <div className="shape-spotlight-card">
-          {/* Ilustrasi Visual Bentuk */}
-          <div className="spotlight-visual-wrap">
-            <div className="spotlight-visual">
-              {selectedShape.svg}
-            </div>
-          </div>
-
-          <div className="spotlight-info">
-            <div className="spotlight-title-row">
-              <h2 className="spotlight-title">{selectedShape.name}</h2>
-              <div className="shape-properties-row">
-                <span className="property-badge">
-                  <Compass size={13} color="#0284c7" />
-                  {selectedShape.sides} Sisi
-                </span>
-                <span className="property-badge">
-                  <Sparkles size={13} color="#d97706" />
-                  {selectedShape.corners} Sudut
-                </span>
-              </div>
-            </div>
-
-            <p className="spotlight-desc">{selectedShape.description}</p>
-
-            {/* Kartu Rumus Luas & Keliling */}
-            <div className="formula-cards-grid">
-              <div className="formula-pill area-pill">
-                <div className="formula-pill-header">
-                  <span className="formula-icon">📐</span>
-                  <span className="formula-label">Rumus Luas</span>
-                </div>
-                <span className="formula-val">{selectedShape.formula}</span>
-              </div>
-
-              <div className="formula-pill perimeter-pill">
-                <div className="formula-pill-header">
-                  <span className="formula-icon">📏</span>
-                  <span className="formula-label">Rumus Keliling</span>
-                </div>
-                <span className="formula-val">{selectedShape.formulaKeliling}</span>
-              </div>
-            </div>
-
-            {/* Fakta Unik / Tips Belajar */}
-            <div className="shape-fun-fact-box">
-              <Lightbulb size={18} color="#eab308" className="fact-icon" />
-              <p className="fact-text">{selectedShape.funFact}</p>
-            </div>
-          </div>
-        </div>
+        {content}
       </div>
     </div>
   );

@@ -7,11 +7,13 @@ import {
   computeWeaponStats,
   DEFAULT_LOADOUTS,
   BLASTER_COLORS,
+  normalizeLoadout,
   type ComputedWeaponStats,
 } from '../../data/weaponParts';
 import { RPGIslandBackdrop } from './RPGIslandBackdrop';
-import { ArrowLeft, ArrowRight, ArrowUp, Coins, Heart, Clock, Sparkles, RotateCcw, Zap } from 'lucide-react';
+import { ArrowLeft, ArrowRight, ArrowUp, Coins, Heart, Clock, Sparkles, RotateCcw, Zap, Target, BookOpen } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
+import { weaponSoundService } from '../../services/weaponSoundService';
 import './RPGPlatformerEngine.css';
 
 export interface RPGPlatformerEngineProps {
@@ -36,8 +38,20 @@ interface Bullet {
   y: number;
   vx: number;
   damage: number;
+  isCrit?: boolean;
   projectile?: string;
   isPierce?: boolean;
+  skinId?: string;
+  bulletAsset?: string;
+  hitAsset?: string;
+  effectType?: string;
+}
+
+interface HitSpark {
+  id: number;
+  x: number;
+  y: number;
+  hitAsset: string;
 }
 
 interface PlatformEnemy {
@@ -200,9 +214,25 @@ export const RPGPlatformerEngine: React.FC<RPGPlatformerEngineProps> = ({
   onQuit,
 }) => {
   // Hitung Stat Senjata Modular & Kustomisasi
-  const activeLoadout =
+  const rawLoadout =
     player?.equipment?.loadouts?.[player?.equipment?.activeLoadoutIndex ?? 0] ||
     DEFAULT_LOADOUTS[0];
+  const activeSkin =
+    player?.equipment?.blasterSkin || rawLoadout.skinId || 'blaster_klasik';
+  const activeCore =
+    player?.equipment?.blasterCore === 'bullet_skin'
+      ? 'core_skin_native'
+      : rawLoadout.core || 'core_skin_native';
+
+  const activeLoadout = normalizeLoadout(
+    {
+      ...rawLoadout,
+      skinId: activeSkin,
+      core: activeCore,
+      color: player?.equipment?.blasterColor || rawLoadout.color || 'default',
+    },
+    player?.equipment?.activeLoadoutIndex ?? 0
+  );
   const weaponStats: ComputedWeaponStats = computeWeaponStats(
     activeLoadout,
     player?.equipment?.partLevels
@@ -210,6 +240,11 @@ export const RPGPlatformerEngine: React.FC<RPGPlatformerEngineProps> = ({
   const blasterColorDef =
     BLASTER_COLORS.find((c) => c.id === (player?.equipment?.blasterColor || activeLoadout.color)) ||
     BLASTER_COLORS[0];
+
+  // Preload SFX senjata aktif untuk tembakan responsif tanpa delay
+  useEffect(() => {
+    weaponSoundService.preloadWeapon(weaponStats.skinId || 'blaster_klasik');
+  }, [weaponStats.skinId]);
 
   // Viewport & Kamera
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -232,6 +267,7 @@ export const RPGPlatformerEngine: React.FC<RPGPlatformerEngineProps> = ({
   const [isGameOver, setIsGameOver] = useState(false);
   const [isTransitioningToBoss, setIsTransitioningToBoss] = useState(false);
   const [isInvulnerable, setIsInvulnerable] = useState(false);
+  const [showBriefing, setShowBriefing] = useState(true);
 
   // Generator Musuh Berjalan di Platform
 const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
@@ -268,6 +304,8 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
 // Senjata Blaster & Peluru
   const [bullets, setBullets] = useState<Bullet[]>([]);
   const bulletsRef = useRef<Bullet[]>([]);
+  const [hitSparks, setHitSparks] = useState<HitSpark[]>([]);
+  const hitSparksRef = useRef<HitSpark[]>([]);
   const [isShootingFlash, setIsShootingFlash] = useState(false);
 
   // Musuh-musuh wandering di platform
@@ -381,7 +419,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
 
   // Timer Detik Level
   useEffect(() => {
-    if (isGameOver || isTransitioningToBoss) return;
+    if (isGameOver || isTransitioningToBoss || showBriefing) return;
     const interval = setInterval(() => {
       setTimeElapsed((t) => {
         const next = t + 1;
@@ -390,7 +428,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
       });
     }, 1000);
     return () => clearInterval(interval);
-  }, [isGameOver, isTransitioningToBoss]);
+  }, [isGameOver, isTransitioningToBoss, showBriefing]);
 
   // Haptic feedback aman
   const triggerHaptic = (style: ImpactStyle = ImpactStyle.Light) => {
@@ -410,6 +448,22 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     }, 900);
   }, [safeSetTimeout]);
 
+  // Efek ledakan visual benturan peluru asli dari skin
+  const addHitSpark = useCallback((x: number, y: number, hitAsset: string) => {
+    const spark: HitSpark = {
+      id: Date.now() + Math.random(),
+      x,
+      y,
+      hitAsset,
+    };
+    hitSparksRef.current.push(spark);
+    setHitSparks([...hitSparksRef.current]);
+    safeSetTimeout(() => {
+      hitSparksRef.current = hitSparksRef.current.filter((s) => s.id !== spark.id);
+      setHitSparks([...hitSparksRef.current]);
+    }, 220);
+  }, [safeSetTimeout]);
+
   // Fungsi Utama Loncat Maskot dengan Coyote Time
   const doJump = useCallback(() => {
     if (isGameOver || isTransitioningToBoss) return;
@@ -427,7 +481,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     }
   }, [isGameOver, isTransitioningToBoss, levelConfig.mechanic]);
 
-  // Tembak Peluru Blaster Modular
+  // Tembak Peluru Blaster Modular & Ber-Skin
   const handleShoot = useCallback(() => {
     if (isGameOver || isTransitioningToBoss) return;
     const dir = facingRef.current === 'right' ? 1 : -1;
@@ -435,7 +489,17 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     const spawnY = playerPosRef.current.y - 48;
 
     const isCrit = Math.random() * 100 < weaponStats.critChance;
-    const dmg = isCrit ? Math.round(weaponStats.damage * 2 * 10) / 10 : weaponStats.damage;
+    const dmg = isCrit
+      ? Math.round(weaponStats.damage * (weaponStats.critMult || 1.6) * 10) / 10
+      : weaponStats.damage;
+
+    const bulletAsset =
+      weaponStats.bulletType === 'bullet_skin'
+        ? (weaponStats.bulletFrames[0] || `/weapons/Bullet/${weaponStats.skinId}/bullet_f1.png`)
+        : `/assets/png/attack/${weaponStats.bulletType}.png`;
+
+    const hitAsset =
+      weaponStats.hitFrames[0] || `/weapons/Bullet/${weaponStats.skinId}/hit_f1.png`;
 
     const newBullet: Bullet = {
       id: ++bulletIdCounterRef.current,
@@ -443,8 +507,13 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
       y: spawnY,
       vx: dir * weaponStats.projectileSpeed,
       damage: dmg,
+      isCrit,
       projectile: weaponStats.bulletType,
-      isPierce: weaponStats.bulletType === 'bullet_laser',
+      isPierce: weaponStats.pierce > 0 || weaponStats.bulletType === 'bullet_laser',
+      skinId: weaponStats.skinId,
+      bulletAsset,
+      hitAsset,
+      effectType: weaponStats.effectType,
     };
 
     bulletsRef.current.push(newBullet);
@@ -453,7 +522,8 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     setIsShootingFlash(true);
     safeSetTimeout(() => setIsShootingFlash(false), 90);
 
-    playSfx('shoot');
+    // Mainkan SFX tembakan asli khas senjata yang sedang dipakai
+    weaponSoundService.playWeaponShoot(weaponStats.skinId || 'blaster_klasik');
     triggerHaptic(ImpactStyle.Light);
   }, [isGameOver, isTransitioningToBoss, safeSetTimeout, weaponStats]);
 
@@ -508,7 +578,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
       e.key === 'F';
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (isGameOver || isTransitioningToBoss) return;
+      if (isGameOver || isTransitioningToBoss || showBriefing) return;
       if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'KeyA', 'KeyD', 'KeyW', 'Space', 'KeyJ', 'KeyX'].includes(e.code) || e.key === ' ') {
         e.preventDefault();
       }
@@ -622,6 +692,11 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     let lastTime = performance.now();
 
     const loop = (time: number) => {
+      if (showBriefing) {
+        lastTime = time;
+        animId = requestAnimationFrame(loop);
+        return;
+      }
       const dt = Math.min((time - lastTime) / 1000, 0.05);
       lastTime = time;
 
@@ -929,35 +1004,54 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
               en.hp -= b.damage;
               playSfx('hit');
 
-              // Efek khusus status peluru modular
+              // Efek khusus status peluru modular & skin
               let hitText = `-${b.damage} 💥`;
               let hitColor = '#f59e0b';
-              if (b.projectile === 'bullet_fire') {
+              if (b.effectType === 'fire' || b.projectile === 'bullet_fire') {
                 hitText = `🔥 -${b.damage}`;
                 hitColor = '#ef4444';
-              } else if (b.projectile === 'bullet_ice') {
+              } else if (b.effectType === 'ice' || b.projectile === 'bullet_ice') {
                 hitText = `❄️ -${b.damage}`;
-                hitColor = '#38bdf8';
-                en.vx = en.vx * 0.4;
-              } else if (b.projectile === 'bullet_laser') {
+                hitColor = '#06b6d4';
+                en.vx = en.vx * 0.4; // Freeze slow
+              } else if (b.effectType === 'lightning') {
                 hitText = `⚡ -${b.damage}`;
+                hitColor = '#eab308';
+                en.vx = 0; // Mini shock stun
+              } else if (b.effectType === 'cosmic' || b.projectile === 'bullet_laser') {
+                hitText = `✨ -${b.damage}`;
                 hitColor = '#a855f7';
-              } else if (b.projectile === 'bullet_star') {
-                hitText = `⭐ -${b.damage}`;
+              } else if (b.effectType === 'royal') {
+                hitText = `👑 -${b.damage}`;
                 hitColor = '#fbbf24';
+              } else if (b.effectType === 'candy') {
+                hitText = `🍬 -${b.damage}`;
+                hitColor = '#f43f5e';
+              } else if (b.effectType === 'rainbow' || b.projectile === 'bullet_star') {
+                hitText = `🌈 -${b.damage}`;
+                hitColor = '#ec4899';
               }
 
               addFloatingText(b.x, b.y - 20, hitText, hitColor);
 
+              // Ledakan Hit Spark Visual Asli dari Skin & SFX Hit Khas Senjata
+              addHitSpark(
+                b.x,
+                b.y - 12,
+                b.hitAsset || `/weapons/Bullet/${b.skinId || 'blaster_klasik'}/hit_f1.png`
+              );
+              weaponSoundService.playWeaponHit(b.skinId || 'blaster_klasik');
+
               if (en.hp <= 0) {
                 en.isDead = true;
                 playSfx('explosion');
+                const coinBonus = (b.effectType === 'candy' || b.skinId === 'blaster_raja_emas') ? 5 : 3;
                 setCoins((c) => {
-                  const next = c + 3;
+                  const next = c + coinBonus;
                   coinsRef.current = next;
                   return next;
                 });
-                addFloatingText(en.x, en.y - 30, '+3 🪙 KALAH!', '#10b981');
+                addFloatingText(en.x, en.y - 30, `+${coinBonus} 🪙 KALAH!`, '#10b981');
               }
               if (!b.isPierce) break;
             }
@@ -1088,6 +1182,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
   }, [
     isGameOver,
     isTransitioningToBoss,
+    showBriefing,
     dynamicPlatforms,
     levelConfig,
     viewportWidth,
@@ -1151,51 +1246,80 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
     <div className="rpg-engine-container" ref={containerRef}>
       {/* 1. TOP HEADS-UP DISPLAY (HUD) */}
       <header className="rpg-hud-header">
-        {/* Tombol Keluar / Kembali */}
-        <button type="button" className="hud-btn-quit" onClick={onQuit} title="Keluar ke Peta">
-          <ArrowLeft size={20} />
-          <span>Peta</span>
-        </button>
+        {/* Kluster Kiri: Navigasi & Briefing Misi */}
+        <div className="hud-left-cluster">
+          <button
+            type="button"
+            className="hud-pill-btn hud-btn-quit"
+            onClick={onQuit}
+            title="Keluar ke Peta"
+          >
+            <ArrowLeft size={16} />
+            <span>Peta</span>
+          </button>
 
-        {/* Info Level & Mekanik Unik */}
-        <div
-          className="hud-level-badge"
-          style={{ borderColor: levelConfig.mechanicBadgeColor }}
-        >
-          <span className="badge-level-title">{levelConfig.title}</span>
-          <span className="badge-mechanic-desc">
-            <Sparkles size={13} style={{ color: levelConfig.mechanicBadgeColor }} />
-            {levelConfig.mechanicName}
-          </span>
+          <button
+            type="button"
+            className="hud-pill-btn hud-btn-briefing"
+            onClick={() => {
+              triggerHaptic(ImpactStyle.Light);
+              setShowBriefing(true);
+            }}
+            title="Lihat Tujuan Belajar & Misi Level"
+          >
+            <BookOpen size={15} />
+            <span>Misi</span>
+          </button>
         </div>
 
-        {/* Statistik Live: Koin, Waktu, & Nyawa */}
-        <div className="hud-stats-group">
+        {/* Kluster Tengah: Level & Mekanik Unik */}
+        <div
+          className={`hud-level-badge ${levelConfig.isBossLevel ? 'boss-badge' : ''}`}
+          style={{ borderColor: levelConfig.isBossLevel ? '#f59e0b' : (levelConfig.mechanicBadgeColor || '#38bdf8') }}
+          onClick={() => {
+            triggerHaptic(ImpactStyle.Light);
+            setShowBriefing(true);
+          }}
+          title="Klik untuk ringkasan misi level"
+        >
+          <span className="badge-level-title">
+            {levelConfig.isBossLevel ? `👑 Lv.${levelConfig.levelNum} BOS` : `Level ${levelConfig.levelNum}`}
+          </span>
+          {levelConfig.mechanicName && (
+            <span className="badge-mechanic-desc">
+              <Sparkles size={11} style={{ color: levelConfig.mechanicBadgeColor || '#facc15' }} />
+              <span>{levelConfig.mechanicName}</span>
+            </span>
+          )}
+        </div>
+
+        {/* Kluster Kanan: Statistik Live (Nyawa, Koin, Waktu) */}
+        <div className="hud-right-cluster">
           {/* Nyawa */}
-          <div className="hud-heart-row" title="Sisa Nyawa">
+          <div className="hud-stat-pill hud-heart-pill" title="Sisa Nyawa">
             {[1, 2, 3].map((idx) => (
               <Heart
                 key={idx}
-                size={22}
+                size={14}
                 className={`hud-heart-icon ${idx <= hearts ? 'filled' : 'empty'}`}
               />
             ))}
           </div>
 
           {/* Koin Terkumpul */}
-          <div className="hud-counter-pill" title="Koin Terkumpul">
-            <Coins size={18} className="coin-icon" />
+          <div className="hud-stat-pill hud-coin-pill" title="Koin Terkumpul">
+            <Coins size={14} className="coin-icon" />
             <span>
-              {coins} / {levelConfig.targetCoins}
+              {coins}/{levelConfig.targetCoins}
             </span>
           </div>
 
           {/* Stopwatch Waktu */}
           <div
-            className={`hud-counter-pill ${timeElapsed <= levelConfig.targetTimeSec ? 'time-good' : 'time-warning'}`}
+            className={`hud-stat-pill hud-time-pill ${timeElapsed <= levelConfig.targetTimeSec ? 'time-good' : 'time-warning'}`}
             title="Waktu Bermain"
           >
-            <Clock size={17} />
+            <Clock size={13} />
             <span>
               {Math.floor(timeElapsed / 60)}:{(timeElapsed % 60).toString().padStart(2, '0')}
             </span>
@@ -1449,15 +1573,32 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
                   delete bulletElsRef.current[b.id];
                 }
               }}
-              className={`rpg-bullet-entity ${b.projectile || 'bullet_orb'}`}
+              className={`rpg-bullet-entity ${b.skinId ? `skin-${b.skinId}` : ''} ${b.projectile || 'bullet_skin'}`}
               style={{
                 transform: `translate3d(${b.x}px, ${b.y}px, 0) scaleX(${b.vx < 0 ? -1 : 1})`,
               }}
             >
               <img
-                src={`/assets/png/attack/${b.projectile || 'bullet_orb'}.png`}
+                src={b.bulletAsset || `/weapons/Bullet/${b.skinId || 'blaster_klasik'}/bullet_f1.png`}
                 alt="Bullet"
                 className="rpg-bullet-img"
+              />
+            </div>
+          ))}
+
+          {/* EFEK LEDAKAN HIT SPARK SAAT PELURU BENTUR MUSUH */}
+          {hitSparks.map((spark) => (
+            <div
+              key={spark.id}
+              className="rpg-hit-spark-entity"
+              style={{
+                transform: `translate3d(${spark.x - 24}px, ${spark.y - 24}px, 0)`,
+              }}
+            >
+              <img
+                src={spark.hitAsset}
+                alt="Hit Spark"
+                className="rpg-hit-spark-img"
               />
             </div>
           ))}
@@ -1483,6 +1624,9 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
               skinColor={player?.equipment?.skinColor || 'default'}
               hat={player?.equipment?.hat || 'none'}
               weapon="blaster"
+              weaponSkin={weaponStats.skinId}
+              weaponSkinAsset={weaponStats.skinAsset}
+              muzzleFlashAsset={weaponStats.muzzleFrames[0]}
               weaponColorFilter={blasterColorDef.filter}
               isShooting={isShootingFlash}
             />
@@ -1500,6 +1644,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
             title="Lari Kiri"
             onPointerDown={(e) => {
               e.preventDefault();
+              if (showBriefing) return;
               safeCapturePointer(e.currentTarget, e.pointerId);
               keysRef.current.left = true;
             }}
@@ -1523,6 +1668,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
             title="Lari Kanan"
             onPointerDown={(e) => {
               e.preventDefault();
+              if (showBriefing) return;
               safeCapturePointer(e.currentTarget, e.pointerId);
               keysRef.current.right = true;
             }}
@@ -1549,6 +1695,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
             title="Tembak Blaster"
             onPointerDown={(e) => {
               e.preventDefault();
+              if (showBriefing) return;
               e.currentTarget.blur();
               safeCapturePointer(e.currentTarget, e.pointerId);
               handleShoot();
@@ -1568,6 +1715,7 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
             title="Loncat"
             onPointerDown={(e) => {
               e.preventDefault();
+              if (showBriefing) return;
               e.currentTarget.blur();
               safeCapturePointer(e.currentTarget, e.pointerId);
               handleTouchJump();
@@ -1620,9 +1768,94 @@ const generateInitialEnemies = (platforms: PlatformDef[]): PlatformEnemy[] => {
       {isTransitioningToBoss && (
         <div className="rpg-boss-intro-curtain">
           <div className="boss-intro-content">
-            <span className="boss-alert-text" style={{ color: '#facc15' }}>🏁 LEVEL SELESAI! 🏁</span>
-            <h1 className="boss-intro-name">Garis Akhir Tercapai!</h1>
-            <p className="boss-intro-title">Menghitung bintang & koin terkumpul...</p>
+            <span className="boss-alert-text" style={{ color: levelConfig.isBossLevel ? '#f59e0b' : '#38bdf8' }}>
+              {levelConfig.isBossLevel ? '👑 PERINGATAN BOS PULAU! 👑' : '🏁 GERBANG KUIS TERCAPAI! 🏁'}
+            </span>
+            <h1 className="boss-intro-name">
+              {levelConfig.isBossLevel ? (levelConfig.bossName || boss?.name || 'Bos Geometri') : 'Uji Pemahaman Konsep!'}
+            </h1>
+            <p className="boss-intro-title">
+              {levelConfig.isBossLevel
+                ? 'Kalahkan bos dengan menjawab kuis rumus sakti!'
+                : 'Jawab 3 soal evaluasi materi pembelajaran hari ini!'}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* 7. BRIEFING LEVEL EDUKASI (MUNCUL SEBELUM PETUALANGAN DIMULAI) */}
+      {showBriefing && (
+        <div className="rpg-briefing-overlay">
+          <div className="rpg-briefing-modal">
+            <div className="rpg-briefing-top-banner">
+              <span className="briefing-island-badge">🏝️ {levelConfig.worldName}</span>
+              <h2 className="briefing-title">{levelConfig.title}</h2>
+              <span className="briefing-type-pill">
+                {levelConfig.isBossLevel ? '👑 Tantangan Bos Akhir Pulau' : '🧭 Misi Penjelajahan Konsep'}
+              </span>
+            </div>
+
+            <div className="rpg-briefing-body">
+              {/* Tujuan Belajar Edukatif */}
+              <div className="briefing-card-goal">
+                <div className="briefing-card-header">
+                  <Target size={18} color="#0284c7" />
+                  <h4>Tujuan Belajar Level Ini:</h4>
+                </div>
+                <p className="briefing-goal-text">{levelConfig.learningGoal}</p>
+              </div>
+
+              {/* Target Koleksi */}
+              <div className="briefing-tasks-grid">
+                <div className="briefing-task-box">
+                  <span className="task-box-icon">🪙</span>
+                  <div className="task-box-info">
+                    <span className="task-box-label">Kumpulkan Koin</span>
+                    <strong className="task-box-value">Target: {levelConfig.targetCoins} Koin</strong>
+                  </div>
+                </div>
+
+                <div className="briefing-task-box">
+                  <span className="task-box-icon">📐</span>
+                  <div className="task-box-info">
+                    <span className="task-box-label">Token Bentuk</span>
+                    <strong className="task-box-value">{levelConfig.targetShapesDesc}</strong>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mekanik Khusus Level */}
+              <div className="briefing-mechanic-box">
+                <div className="briefing-mechanic-header">
+                  <Sparkles size={16} color={levelConfig.mechanicBadgeColor || '#f59e0b'} />
+                  <span>Mekanik Rintangan: <strong>{levelConfig.mechanicName}</strong></span>
+                </div>
+                <p className="briefing-mechanic-text">{levelConfig.mechanicInstruction}</p>
+              </div>
+
+              {/* Info Gerbang Akhir */}
+              <div className={`briefing-gate-box ${levelConfig.isBossLevel ? 'boss' : 'quiz'}`}>
+                {levelConfig.isBossLevel ? (
+                  <span>⚔️ Di akhir level: <strong>Pertarungan Bos {levelConfig.bossName || 'Pulau'}</strong>!</span>
+                ) : (
+                  <span>📝 Di akhir level: <strong>Jawab 3 Soal Kuis Geometri</strong> untuk dapat 3 Bintang!</span>
+                )}
+              </div>
+            </div>
+
+            {/* Tombol Mulai Petualangan */}
+            <div className="rpg-briefing-footer">
+              <button
+                type="button"
+                className="btn-start-adventure"
+                onClick={() => {
+                  triggerHaptic(ImpactStyle.Medium);
+                  setShowBriefing(false);
+                }}
+              >
+                <span>🚀 Siap, Mulai Petualangan!</span>
+              </button>
+            </div>
           </div>
         </div>
       )}

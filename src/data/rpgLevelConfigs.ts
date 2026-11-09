@@ -97,12 +97,244 @@ export type IslandThemeKey =
   | 'danau-lingkaran'
   | 'kastil-geometri';
 
+export interface LevelCurriculumInfo {
+  levelNum: number;
+  title: string;
+  learningGoal: string;
+  targetShapes: string[];
+  targetShapesDesc: string;
+  isBossLevel: boolean;
+  bossName?: string;
+}
+
+export const LEVEL_CURRICULUM_DATA: Record<number, LevelCurriculumInfo> = {
+  // Pulau 1: Pulau Bentuk (Level 1 - 5)
+  1: {
+    levelNum: 1,
+    title: 'Mengenal Segitiga, Persegi, & Lingkaran',
+    learningGoal: 'Mengenal bentuk dasar segitiga (3 sisi), persegi (4 sisi sama), dan lingkaran (1 sisi lengkung).',
+    targetShapes: ['Segitiga', 'Persegi', 'Lingkaran'],
+    targetShapesDesc: 'Koleksi token segitiga & persegi',
+    isBossLevel: false,
+  },
+  2: {
+    levelNum: 2,
+    title: 'Mengenal Persegi Panjang & Menghitung Sisi',
+    learningGoal: 'Membedakan persegi dan persegi panjang, serta memahami sisi berhadapan sama panjang.',
+    targetShapes: ['Persegi Panjang'],
+    targetShapesDesc: 'Koleksi token persegi panjang',
+    isBossLevel: false,
+  },
+  3: {
+    levelNum: 3,
+    title: 'Mengenal Titik Sudut & Sudut Siku-Siku',
+    learningGoal: 'Mengenal apa itu titik sudut dan mengidentifikasi sudut tegak siku-siku (90°).',
+    targetShapes: ['Persegi', 'Segitiga'],
+    targetShapesDesc: 'Koleksi token sudut geometri',
+    isBossLevel: false,
+  },
+  4: {
+    levelNum: 4,
+    title: 'Benda Nyata & Pengelompokan Bangun Datar',
+    learningGoal: 'Mengelompokkan berbagai objek di sekitar kita berdasarkan bentuk bangun datarnya.',
+    targetShapes: ['Segitiga', 'Lingkaran', 'Persegi'],
+    targetShapesDesc: 'Koleksi token aneka bentuk benda nyata',
+    isBossLevel: false,
+  },
+  5: {
+    levelNum: 5,
+    title: 'Ujian Pulau Bentuk: Golem Tri-Shape',
+    learningGoal: 'Ujian komprehensif bentuk dasar geometri untuk menaklukkan Bos Golem Tri-Shape Purba!',
+    targetShapes: ['Segitiga', 'Persegi', 'Lingkaran'],
+    targetShapesDesc: 'Koleksi token kristal inti bentuk',
+    isBossLevel: true,
+    bossName: 'Golem Tri-Shape Purba',
+  },
+
+  // Pulau 2: Hutan Segi Empat (Level 6 - 10)
+  6: {
+    levelNum: 6,
+    title: 'Mengenal Sifat Persegi',
+    learningGoal: 'Memahami 4 sisi sama panjang dan 4 sudut siku-siku pada bangun persegi.',
+    targetShapes: ['Persegi'],
+    targetShapesDesc: 'Koleksi token persegi emas',
+    isBossLevel: false,
+  },
+  7: {
+    levelNum: 7,
+    title: 'Persegi Panjang & Keliling Dasarnya',
+    learningGoal: 'Mengenal konsep panjang dan lebar serta cara menghitung keliling persegi panjang.',
+    targetShapes: ['Persegi Panjang'],
+    targetShapesDesc: 'Koleksi token persegi panjang',
+    isBossLevel: false,
+  },
+  8: {
+    levelNum: 8,
+    title: 'Jajar Genjang & Sisi Sejajar',
+    learningGoal: 'Mengenal sifat dua pasang sisi sejajar dan sudut berhadapan sama besar pada jajar genjang.',
+    targetShapes: ['Jajar Genjang'],
+    targetShapesDesc: 'Koleksi token jajar genjang',
+    isBossLevel: false,
+  },
+  9: {
+    levelNum: 9,
+    title: 'Belah Ketupat & Layang-Layang',
+    learningGoal: 'Memahami sifat 4 sisi sama belah ketupat dan diagonal tegak lurus layang-layang.',
+    targetShapes: ['Belah Ketupat'],
+    targetShapesDesc: 'Koleksi token belah ketupat',
+    isBossLevel: false,
+  },
+  10: {
+    levelNum: 10,
+    title: 'Ujian Hutan: Kuadraton Penjaga Rimba',
+    learningGoal: 'Evaluasi menyeluruh seluruh sifat segi empat melawan Bos Kuadraton Penjaga Rimba!',
+    targetShapes: ['Persegi', 'Jajar Genjang', 'Belah Ketupat', 'Trapesium'],
+    targetShapesDesc: 'Koleksi token inti segi empat',
+    isBossLevel: true,
+    bossName: 'Kuadraton Penjaga Rimba',
+  },
+
+  // Pulau 3: Pegunungan Segitiga (Level 11 - 15)
+  11: {
+    levelNum: 11,
+    title: 'Segitiga Berdasarkan Sisi',
+    learningGoal: 'Mengklasifikasikan segitiga sama sisi, sama kaki, dan sembarang berdasarkan panjang sisinya.',
+    targetShapes: ['Segitiga Sama Sisi', 'Segitiga Sama Kaki'],
+    targetShapesDesc: 'Koleksi token segitiga sama sisi',
+    isBossLevel: false,
+  },
+  12: {
+    levelNum: 12,
+    title: 'Segitiga Berdasarkan Sudut',
+    learningGoal: 'Mengidentifikasi segitiga lancip (<90°), siku-siku (90°), dan tumpul (>90°).',
+    targetShapes: ['Segitiga Siku-siku'],
+    targetShapesDesc: 'Koleksi token segitiga siku-siku',
+    isBossLevel: false,
+  },
+  13: {
+    levelNum: 13,
+    title: 'Jumlah Sudut Segitiga Selalu 180°',
+    learningGoal: 'Menghitung salah satu sudut segitiga jika dua sudut lainnya diketahui (total 180°).',
+    targetShapes: ['Segitiga'],
+    targetShapesDesc: 'Koleksi token sudut segitiga',
+    isBossLevel: false,
+  },
+  14: {
+    levelNum: 14,
+    title: 'Keliling Segitiga & Alas-Tinggi',
+    learningGoal: 'Menghitung keliling segitiga (a + b + c) serta mengenal garis alas dan tinggi tegak lurus.',
+    targetShapes: ['Segitiga'],
+    targetShapesDesc: 'Koleksi token piramida segitiga',
+    isBossLevel: false,
+  },
+  15: {
+    levelNum: 15,
+    title: 'Ujian Pegunungan: Naga Trigon Puncak Salju',
+    learningGoal: 'Ujian segitiga komprehensif untuk menundukkan Bos Naga Trigon di puncak salju abadi!',
+    targetShapes: ['Segitiga Sama Sisi', 'Segitiga Siku-siku'],
+    targetShapesDesc: 'Koleksi kristal es segitiga murni',
+    isBossLevel: true,
+    bossName: 'Naga Trigon Puncak Salju',
+  },
+
+  // Pulau 4: Danau Lingkaran (Level 16 - 20)
+  16: {
+    levelNum: 16,
+    title: 'Unsur Lingkaran: Pusat, Jari-Jari, Diameter',
+    learningGoal: 'Mengenal titik pusat, jari-jari (r), dan diameter (d) pada bangun datar lingkaran.',
+    targetShapes: ['Lingkaran'],
+    targetShapesDesc: 'Koleksi token lingkaran air',
+    isBossLevel: false,
+  },
+  17: {
+    levelNum: 17,
+    title: 'Hubungan Diameter & Jari-Jari',
+    learningGoal: 'Menghitung diameter dari jari-jari atau sebaliknya (d = 2r dan r = d / 2).',
+    targetShapes: ['Lingkaran'],
+    targetShapesDesc: 'Koleksi token kompas sirkular',
+    isBossLevel: false,
+  },
+  18: {
+    levelNum: 18,
+    title: 'Busur, Tali Busur, Juring, Tembereng',
+    learningGoal: 'Mengenal bagian interior lingkaran seperti potongan pizza (juring) dan tembereng.',
+    targetShapes: ['Lingkaran'],
+    targetShapesDesc: 'Koleksi token juring lingkaran',
+    isBossLevel: false,
+  },
+  19: {
+    levelNum: 19,
+    title: 'Mengenal Nilai Pi (π) & Keliling Lingkaran',
+    learningGoal: 'Mengenal nilai pecahan pendekatan π (22/7 atau 3,14) dan rumus keliling lingkaran.',
+    targetShapes: ['Lingkaran'],
+    targetShapesDesc: 'Koleksi token simbol pi emas',
+    isBossLevel: false,
+  },
+  20: {
+    levelNum: 20,
+    title: 'Ujian Samudra: Kraken Sirkular Samudra',
+    learningGoal: 'Ujian penguasaan lingkaran menyeluruh melawan penguasa pusaran Danau Lingkaran!',
+    targetShapes: ['Lingkaran'],
+    targetShapesDesc: 'Koleksi mutiara lingkaran samudra',
+    isBossLevel: true,
+    bossName: 'Kraken Sirkular Samudra',
+  },
+
+  // Pulau 5: Kastil Geometri (Level 21 - 25)
+  21: {
+    levelNum: 21,
+    title: 'Bangun Gabungan: Rumah Geometri',
+    learningGoal: 'Menghitung keliling luar bangun rumah gabungan persegi dan atap segitiga.',
+    targetShapes: ['Persegi', 'Segitiga'],
+    targetShapesDesc: 'Koleksi token rumah geometri',
+    isBossLevel: false,
+  },
+  22: {
+    levelNum: 22,
+    title: 'Bangun Gabungan: Lapangan & Kapsul',
+    learningGoal: 'Memahami keliling bentuk stadion dari persegi panjang dan dua setengah lingkaran.',
+    targetShapes: ['Persegi Panjang', 'Lingkaran'],
+    targetShapesDesc: 'Koleksi token kapsul stadion',
+    isBossLevel: false,
+  },
+  23: {
+    levelNum: 23,
+    title: 'Keliling Bangun Berundak (Bentuk L)',
+    learningGoal: 'Menghitung keliling bangun poligon tak beraturan dan berundak dengan menjumlahkan sisi luar.',
+    targetShapes: ['Persegi', 'Persegi Panjang'],
+    targetShapesDesc: 'Koleksi token poligon berundak',
+    isBossLevel: false,
+  },
+  24: {
+    levelNum: 24,
+    title: 'Soal Cerita Pemecahan Masalah Nyata',
+    learningGoal: 'Menerapkan konsep keliling geometri dalam menghitung pagar taman dan renda pita taplak.',
+    targetShapes: ['Persegi', 'Lingkaran', 'Segitiga'],
+    targetShapesDesc: 'Koleksi token bintang geometri terapan',
+    isBossLevel: false,
+  },
+  25: {
+    levelNum: 25,
+    title: 'Tantangan Terakhir: Kaisar Agung Poly-Apex',
+    learningGoal: 'Ujian Pamungkas Geometri Edukasi SD: Buktikan kehebatanmu melawan Kaisar Poly-Apex!',
+    targetShapes: ['Segitiga', 'Persegi', 'Lingkaran', 'Trapesium'],
+    targetShapesDesc: 'Koleksi mahkota geometrikal kuno',
+    isBossLevel: true,
+    bossName: 'Kaisar Agung Poly-Apex',
+  },
+};
+
 export interface RPGLevelConfig {
   levelNum: number;
   title: string;
   worldName: string;
   islandThemeKey: IslandThemeKey;
   description: string;
+  learningGoal: string;
+  targetShapes: string[];
+  targetShapesDesc: string;
+  isBossLevel: boolean;
+  bossName?: string;
   mechanic: UniqueMechanicType;
   mechanicName: string;
   mechanicInstruction: string;
@@ -325,21 +557,30 @@ export function getRPGLevelConfig(levelNum: number): RPGLevelConfig {
       points: 10,
     });
 
-    // Token Bangun Datar Spesial di platform tertentu
+    // Token Bangun Datar Spesial di platform tertentu sesuai kurikulum pulau
     if (i === 2 || i === 4) {
-      const tokens: CollectibleDef['shapeToken'][] = [
-        'token_segitiga',
-        'token_persegi',
-        'token_lingkaran',
-        'token_persegi_panjang',
-        'token_trapesium',
-      ];
+      let shapeToken: CollectibleDef['shapeToken'] = 'token_segitiga';
+      if (levelNum <= 5) {
+        const p1Tokens: CollectibleDef['shapeToken'][] = ['token_segitiga', 'token_persegi', 'token_lingkaran', 'token_persegi_panjang'];
+        shapeToken = p1Tokens[(levelNum + i) % p1Tokens.length];
+      } else if (levelNum <= 10) {
+        const p2Tokens: CollectibleDef['shapeToken'][] = ['token_persegi', 'token_persegi_panjang', 'token_jajar_genjang', 'token_belah_ketupat', 'token_trapesium'];
+        shapeToken = p2Tokens[(levelNum + i) % p2Tokens.length];
+      } else if (levelNum <= 15) {
+        shapeToken = 'token_segitiga';
+      } else if (levelNum <= 20) {
+        shapeToken = 'token_lingkaran';
+      } else {
+        const p5Tokens: CollectibleDef['shapeToken'][] = ['token_segitiga', 'token_persegi', 'token_lingkaran', 'token_trapesium', 'token_jajar_genjang'];
+        shapeToken = p5Tokens[(levelNum + i) % p5Tokens.length];
+      }
+
       collectibles.push({
         id: `token-${i}`,
         x: currentX + width / 2,
         y: platSurfaceY - 110,
         type: 'token',
-        shapeToken: tokens[(levelNum + i) % tokens.length],
+        shapeToken,
         points: 50,
       });
     }
@@ -444,12 +685,27 @@ export function getRPGLevelConfig(levelNum: number): RPGLevelConfig {
       ? 'Danau Lingkaran'
       : 'Kastil Geometri';
 
-  return {
+  const curriculum = LEVEL_CURRICULUM_DATA[levelNum] || {
     levelNum,
     title: `Level ${levelNum}`,
+    learningGoal: defaultMechanic.instruction,
+    targetShapes: ['Bangun Datar'],
+    targetShapesDesc: 'Koleksi token geometri',
+    isBossLevel: levelNum % 5 === 0,
+    bossName: levelNum % 5 === 0 ? 'Bos Geometri' : undefined,
+  };
+
+  return {
+    levelNum,
+    title: curriculum.title,
     worldName,
     islandThemeKey,
     description: defaultMechanic.instruction,
+    learningGoal: curriculum.learningGoal,
+    targetShapes: curriculum.targetShapes,
+    targetShapesDesc: curriculum.targetShapesDesc,
+    isBossLevel: curriculum.isBossLevel,
+    bossName: curriculum.bossName,
     mechanic: defaultMechanic.type,
     mechanicName: defaultMechanic.name,
     mechanicInstruction: defaultMechanic.instruction,

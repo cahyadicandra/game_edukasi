@@ -7,7 +7,7 @@ export interface CharacterStats {
   def: number;
 }
 
-export type MapNodeType = 'battle' | 'boss' | 'puzzle' | 'campfire' | 'treasure';
+export type MapNodeType = 'battle' | 'boss' | 'puzzle' | 'campfire' | 'treasure' | 'regular';
 
 export interface PlayerInventory {
   hintTickets: number;
@@ -25,7 +25,7 @@ export interface WeaponPart {
   name: string;
   rarity: 'common' | 'rare' | 'epic' | 'legendary';
   level: number;
-  projectile?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser';
+  projectile?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser' | 'bullet_skin' | string;
   effect?: 'burn' | 'freeze' | 'shock' | 'pierce' | 'bounce' | null;
   description: string;
   icon: string;
@@ -42,7 +42,9 @@ export interface WeaponPart {
 }
 
 export interface WeaponLoadout {
+  id?: string;
   name: string;
+  skinId?: string; // ID skin senjata (misal 'blaster_klasik', 'blaster_api', 'blaster_es', dll)
   body: string;
   core: string;
   barrel: string;
@@ -55,15 +57,17 @@ export interface PlayerEquipment {
   weapon?: string;
   shield?: string;
   accessory?: string;
-  // Kustomisasi Senjata Modular
+  // Kustomisasi Senjata Modular & Skin Koleksi
+  blasterSkin?: string; // Skin blaster aktif saat ini
   blasterColor?: string;
-  blasterCore?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser';
+  blasterCore?: 'bullet_orb' | 'bullet_star' | 'bullet_fire' | 'bullet_ice' | 'bullet_laser' | string;
   blasterBarrel?: string;
   blasterGrip?: string;
   blasterCharm?: string;
   activeLoadoutIndex?: number;
   loadouts?: WeaponLoadout[];
   unlockedParts?: string[];
+  unlockedSkins?: string[]; // Daftar ID skin senjata yang sudah dimiliki/dibeli
   partLevels?: Record<string, number>;
   shards?: number;
   // Kustomisasi Karakter Maskot
@@ -101,7 +105,7 @@ export interface DailyMission {
   date?: string;
 }
 
-export type NavTabId = 'beranda' | 'peta' | 'prestasi' | 'materi' | 'profil';
+export type NavTabId = 'beranda' | 'peta' | 'bengkel' | 'profil';
 
 export interface NavTabItem {
   id: NavTabId;

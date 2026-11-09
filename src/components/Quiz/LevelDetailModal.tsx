@@ -1,7 +1,7 @@
 import React from 'react';
-import { Star, Clock, Target, Swords, Flame, Puzzle, Crown } from 'lucide-react';
+import { Star, Target, Crown, Sparkles, BookOpen, Coins } from 'lucide-react';
 import type { WorldData, LevelNodeData } from '../../data/worlds';
-import { getMonsterForLevel } from '../../data/monsters';
+import { LEVEL_CURRICULUM_DATA } from '../../data/rpgLevelConfigs';
 import './LevelDetail.css';
 
 interface LevelDetailModalProps {
@@ -21,8 +21,16 @@ export const LevelDetailModal: React.FC<LevelDetailModalProps> = ({
 }) => {
   if (!isOpen || !world || !level) return null;
 
-  const nodeType = level.nodeType || 'battle';
-  const monster = getMonsterForLevel(level.num);
+  const isBossLevel = level.num % 5 === 0 || level.nodeType === 'boss';
+  const curriculum = LEVEL_CURRICULUM_DATA[level.num] || {
+    levelNum: level.num,
+    title: `Level ${level.num}`,
+    learningGoal: 'Jelajahi arena, kumpulkan koin dan bangun datar, lalu selesaikan soal evaluasi!',
+    targetShapes: ['Bangun Datar'],
+    targetShapesDesc: 'Koleksi token geometri',
+    isBossLevel,
+    bossName: isBossLevel ? 'Bos Geometri' : undefined,
+  };
 
   return (
     <div className="level-detail-backdrop" onClick={onClose}>
@@ -36,71 +44,57 @@ export const LevelDetailModal: React.FC<LevelDetailModalProps> = ({
         </div>
 
         <div className="level-detail-body">
-          {/* Badge Tipe Misi Petualangan RPG */}
+          {/* Judul Topik Pembelajaran */}
+          <h3 className="level-detail-topic-title">
+            {curriculum.title}
+          </h3>
+
+          {/* Badge Tipe Level */}
           <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '6px',
-              padding: '4px 12px',
-              borderRadius: '9999px',
-              fontSize: '11px',
-              fontFamily: 'var(--font-game-title)',
-              fontWeight: 800,
-              background:
-                nodeType === 'boss'
-                  ? 'linear-gradient(135deg, #f59e0b, #d97706)'
-                  : nodeType === 'puzzle'
-                  ? '#8b5cf6'
-                  : nodeType === 'campfire'
-                  ? '#10b981'
-                  : '#ef4444',
-              color: '#ffffff',
-              boxShadow: '0 2px 6px rgba(0,0,0,0.2)',
-              marginBottom: '4px',
-            }}
+            className={`level-detail-type-badge ${isBossLevel ? 'boss-type' : 'regular-type'}`}
           >
-            {nodeType === 'boss' && <Crown size={14} />}
-            {nodeType === 'battle' && <Swords size={14} />}
-            {nodeType === 'puzzle' && <Puzzle size={14} />}
-            {nodeType === 'campfire' && <Flame size={14} />}
-            <span>
-              {nodeType === 'boss' && 'TANTANGAN BOS BESAR'}
-              {nodeType === 'battle' && 'PERTARUNGAN RPG'}
-              {nodeType === 'puzzle' && 'TEKA-TEKI TANGRAM'}
-              {nodeType === 'campfire' && 'POS PERKEMAHAN'}
-            </span>
+            {isBossLevel ? (
+              <>
+                <Crown size={14} />
+                <span>TANTANGAN BOS PULAU</span>
+              </>
+            ) : (
+              <>
+                <BookOpen size={14} />
+                <span>BELAJAR & KUIS KONSEP</span>
+              </>
+            )}
           </div>
 
-          <p className="level-detail-goal">
-            {nodeType === 'battle' && (
-              <>
-                <strong>Lawan:</strong> {monster.name} ({monster.title}).
-              </>
-            )}
-            {nodeType === 'boss' && (
-              <>
-                <strong>Bos Pulau:</strong> {monster.name}! Kalahkan dengan rumus sakti.
-              </>
-            )}
-            {nodeType === 'puzzle' && (
-              <>
-                <strong>Misi:</strong> Rakit siluet bangunan dari potongan bangun datar.
-              </>
-            )}
-            {nodeType === 'campfire' && (
-              <>
-                <strong>Misi:</strong> Pulihkan HP & SP bersama Kakek Archimedes.
-              </>
-            )}
-          </p>
+          {/* Kartu Tujuan Pembelajaran (Briefing Edukasi) */}
+          <div className="level-briefing-box">
+            <div className="briefing-box-header">
+              <Target size={14} color="#0284c7" />
+              <span>Tujuan Belajar Hari Ini:</span>
+            </div>
+            <p className="briefing-goal-text">
+              {curriculum.learningGoal}
+            </p>
+          </div>
 
-          {/* Pratinjau bintang */}
+          {/* Kartu Misi Koleksi Token & Koin */}
+          <div className="briefing-mission-row">
+            <div className="briefing-mission-chip coin-chip">
+              <Coins size={13} color="#d97706" />
+              <span>Kumpulkan Koin</span>
+            </div>
+            <div className="briefing-mission-chip shape-chip">
+              <Sparkles size={13} color="#2563eb" />
+              <span>{curriculum.targetShapesDesc}</span>
+            </div>
+          </div>
+
+          {/* Pratinjau bintang perolehan */}
           <div className="level-detail-stars">
             {[1, 2, 3].map((s) => (
               <Star
                 key={s}
-                size={30}
+                size={28}
                 fill={s <= (level.stars ?? 0) ? '#facc15' : '#ffffff'}
                 color={s <= (level.stars ?? 0) ? '#ca8a04' : '#94a3b8'}
                 strokeWidth={1.6}
@@ -108,22 +102,21 @@ export const LevelDetailModal: React.FC<LevelDetailModalProps> = ({
             ))}
           </div>
 
-          {/* Info waktu & tantangan */}
-          <div className="level-detail-info-row">
-            <span className="level-detail-info-pill">
-              <Clock size={14} strokeWidth={2.4} /> 2–3 menit
-            </span>
-            <span className="level-detail-info-pill">
-              <Target size={14} strokeWidth={2.4} />
-              {nodeType === 'battle' || nodeType === 'boss' ? 'Pertarungan Turn-Based' : 'Tantangan Visual'}
-            </span>
+          {/* Petunjuk Akhir Level */}
+          <div className="level-detail-end-hint">
+            {isBossLevel ? (
+              <span>⚔️ Kalahkan <strong>{curriculum.bossName}</strong> di gerbang akhir!</span>
+            ) : (
+              <span>📝 Jawab <strong>3 Soal Evaluasi</strong> di gerbang akhir tanpa bos.</span>
+            )}
           </div>
 
-          <button className="level-detail-start-btn" onClick={onStart}>
-            {nodeType === 'boss' && '⚔️ Hadapi Bos!'}
-            {nodeType === 'battle' && '⚔️ Mulai Bertarung!'}
-            {nodeType === 'puzzle' && '🧩 Pecahkan Tangram!'}
-            {nodeType === 'campfire' && '🏕️ Masuk Berkemah!'}
+          <button
+            type="button"
+            className="level-detail-start-btn"
+            onClick={onStart}
+          >
+            {isBossLevel ? '👑 Hadapi Bos Pulau!' : '🚀 Mulai Belajar & Main!'}
           </button>
         </div>
       </div>

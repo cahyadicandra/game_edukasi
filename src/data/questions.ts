@@ -7,13 +7,23 @@ export type VisualType =
   | 'door'
   | 'clock'
   | 'book'
+  | 'chessboard'
+  | 'coin'
   | 'shape_triangle'
+  | 'shape_triangle_right'
+  | 'shape_triangle_isosceles'
   | 'shape_square'
   | 'shape_rectangle'
   | 'shape_circle'
+  | 'shape_circle_radius'
+  | 'shape_circle_diameter'
+  | 'shape_circle_sector'
   | 'shape_trapezoid'
   | 'shape_rhombus'
-  | 'shape_parallelogram';
+  | 'shape_parallelogram'
+  | 'shape_composite_house'
+  | 'shape_composite_track'
+  | 'shape_composite_l';
 
 export interface QuizOption {
   id: string;

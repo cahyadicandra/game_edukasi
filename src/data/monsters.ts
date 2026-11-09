@@ -110,7 +110,7 @@ export const MONSTERS_DATABASE: Record<number, GeometryMonster> = {
   5: {
     id: 'boss-titan-pyramid',
     levelNum: 5,
-    name: 'Titan Piramida Kuno',
+    name: 'Golem Tri-Shape Purba',
     title: '👑 BOS BESAR: Penguasa Pulau Bentuk',
     shapeType: 'polygon',
     isBoss: true,
@@ -211,8 +211,8 @@ export const MONSTERS_DATABASE: Record<number, GeometryMonster> = {
   10: {
     id: 'boss-forest-hydra',
     levelNum: 10,
-    name: 'Hydra Hutan Kegelapan',
-    title: '👑 BOS BESAR: Raja Hutan Terlarang',
+    name: 'Kuadraton Penjaga Rimba',
+    title: '👑 BOS BESAR: Raja Hutan Segi Empat',
     shapeType: 'polygon',
     isBoss: true,
     maxHp: 320,
@@ -287,8 +287,8 @@ export const MONSTERS_DATABASE: Record<number, GeometryMonster> = {
   15: {
     id: 'boss-mountain-titan',
     levelNum: 15,
-    name: 'Titan Pegunungan Keabadian',
-    title: '👑 BOS BESAR: Penguasa Puncak Abadi',
+    name: 'Naga Trigon Puncak Salju',
+    title: '👑 BOS BESAR: Penguasa Puncak Salju Segitiga',
     shapeType: 'triangle',
     isBoss: true,
     maxHp: 420,
@@ -363,8 +363,8 @@ export const MONSTERS_DATABASE: Record<number, GeometryMonster> = {
   20: {
     id: 'boss-volcano-demon',
     levelNum: 20,
-    name: 'Iblis Gunung Api Kiamat',
-    title: '👑 BOS BESAR: Raja Api Neraka',
+    name: 'Kraken Sirkular Samudra',
+    title: '👑 BOS BESAR: Penguasa Danau Lingkaran',
     shapeType: 'polygon',
     isBoss: true,
     maxHp: 520,
@@ -439,8 +439,8 @@ export const MONSTERS_DATABASE: Record<number, GeometryMonster> = {
   25: {
     id: 'boss-geometry-overlord',
     levelNum: 25,
-    name: 'Penguasa Geometri Abadi',
-    title: '💀 RAJA TERAKHIR: Dewa Geometri Kegelapan',
+    name: 'Kaisar Agung Poly-Apex',
+    title: '👑 BOS BESAR: Kaisar Pamungkas Kastil Geometri',
     shapeType: 'polygon',
     isBoss: true,
     maxHp: 700,

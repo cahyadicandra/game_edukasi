@@ -5,16 +5,22 @@ import { worlds as initialWorlds, type WorldData, type LevelNodeData } from './d
 import { getQuestionsForLevel, computeResult, type LevelResult } from './data/questions';
 import { HomeScreen } from './components/Screens/HomeScreen';
 import { MapScreen } from './components/Screens/MapScreen';
-import { MaterialScreen } from './components/Screens/MaterialScreen';
-import { AchievementScreen } from './components/Screens/AchievementScreen';
-import { ProfileScreen } from './components/Screens/ProfileScreen';
+import { ProfileScreen, type ProfileSubTab } from './components/Screens/ProfileScreen';
+import { WorkshopScreen, type WorkshopSubTab } from './components/Screens/WorkshopScreen';
 import { BottomNavbar } from './components/Navigation/BottomNavbar';
-import { GameModal } from './components/Modals/GameModal';
+import {
+  ProfileModal,
+  PlayIntroModal,
+  ShapesGuideModal,
+  DailyMissionModal,
+  DailyStarModal,
+  DailyDiamondModal,
+  LevelUpCelebrationModal,
+  GameSettingsModal,
+} from './components/Modals';
 import { ResultScreen } from './components/Quiz/ResultScreen';
-import { AvatarRenderer, type AvatarKey } from './components/Common/AvatarRenderer';
 import { getMonsterForLevel } from './data/monsters';
 import { LocalDB } from './services/localDatabase';
-import { Volume2, VolumeX, Shield, Info, Check, Sparkles, Star, Gem, RotateCcw, Database } from 'lucide-react';
 import './styles/game-theme.css';
 
 // Lazy-loaded Modals & Heavy Game Screens for Mobile Startup Performance
@@ -49,6 +55,13 @@ export default function App() {
   });
 
   const [activeTab, setActiveTab] = useState<NavTabId>('beranda');
+  const [workshopSubTab, setWorkshopSubTab] = useState<WorkshopSubTab>('weapon');
+  const [profileSubTab, setProfileSubTab] = useState<ProfileSubTab>('profile');
+
+  const handleOpenCustomization = () => {
+    setWorkshopSubTab('weapon');
+    setActiveTab('bengkel');
+  };
 
   // Pelacakan klaim hadiah harian (1x per hari) dari Database Lokal
   const [lastClaimedStarDate, setLastClaimedStarDate] = useState<string | null>(() => {
@@ -585,10 +598,7 @@ export default function App() {
             onAddDiamonds={handleAddDiamonds}
             onOpenSettings={() => setIsSettingsModalOpen(true)}
             onOpenMission={() => setIsMissionModalOpen(true)}
-            onOpenGacha={() => setIsGachaModalOpen(true)}
-            onOpenCustomization={() => setIsCustomizationModalOpen(true)}
             onStartAdventure={handleStartAdventure}
-            onOpenMascotPlayground={() => setIsMascotPlaygroundOpen(true)}
           />
         )}
 
@@ -605,15 +615,14 @@ export default function App() {
           />
         )}
 
-        {activeTab === 'prestasi' && (
-          <AchievementScreen
+        {activeTab === 'bengkel' && (
+          <WorkshopScreen
             player={player}
-            worlds={worldsState}
             onUpdatePlayer={setPlayer}
+            initialSubTab={workshopSubTab}
+            onSubTabChange={setWorkshopSubTab}
           />
         )}
-
-        {activeTab === 'materi' && <MaterialScreen />}
 
         {activeTab === 'profil' && (
           <ProfileScreen
@@ -621,7 +630,10 @@ export default function App() {
             worlds={worldsState}
             mission={mission}
             onUpdatePlayer={(updated) => setPlayer((prev) => ({ ...prev, ...updated }))}
-            onOpenCustomization={() => setIsCustomizationModalOpen(true)}
+            onSetPlayerFull={setPlayer}
+            onOpenCustomization={handleOpenCustomization}
+            initialSubTab={profileSubTab}
+            onSubTabChange={setProfileSubTab}
           />
         )}
 
@@ -685,651 +697,77 @@ export default function App() {
         />
       )}
 
-      {/* --- MODAL: Mulai Petualangan --- */}
-      <GameModal
+      {/* --- POPUP MODALS UTAMA (TERMODULARISASI) --- */}
+      <PlayIntroModal
         isOpen={isPlayModalOpen}
-        title="🎮 Mulai Petualangan!"
         onClose={() => setIsPlayModalOpen(false)}
-        footerActionLabel="Buka Peta Petualangan 🚀"
-        onFooterAction={handleStartLevel}
-      >
-        <div style={{ textAlign: 'center', padding: '10px 0' }}>
-          <img
-            src="/assets/mascot_triangle.png"
-            alt="Petualang Segitiga"
-            style={{
-              width: '85px',
-              height: 'auto',
-              marginBottom: '10px',
-              filter: 'drop-shadow(0 8px 14px rgba(15, 23, 42, 0.2))',
-            }}
-          />
-          <h3 style={{ margin: '0 0 6px 0', fontFamily: 'var(--font-game-title)', color: '#0f172a' }}>
-            Siap Menjelajah Dunia Geometri?
-          </h3>
-          <p style={{ fontSize: '13px', color: '#64748b', lineHeight: 1.4 }}>
-            Temani si <strong>Kuning Segitiga</strong> menaklukkan tantangan dan mengumpulkan semua bintang di Lembah Geometri!
-          </p>
-        </div>
-      </GameModal>
+        onStart={handleStartLevel}
+      />
 
-      {/* --- MODAL: Kenali Bangun Datar --- */}
-      <GameModal
+      <ShapesGuideModal
         isOpen={isShapesModalOpen}
-        title="🔺 Kenali Bangun Datar"
         onClose={() => setIsShapesModalOpen(false)}
-        footerActionLabel="Pelajari Selengkapnya 📖"
-        onFooterAction={() => {
+        onLearnMore={() => {
           setIsShapesModalOpen(false);
-          setActiveTab('materi');
+          setProfileSubTab('materials');
+          setActiveTab('profil');
         }}
-      >
-        <p style={{ fontSize: '12px', color: '#64748b', margin: '0 0 10px 0' }}>
-          Sentuh bentuk untuk memahami karakteristik utamanya:
-        </p>
-        <div className="shape-grid">
-          <div className="shape-item">
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <polygon points="50,15 90,85 10,85" fill="#facc15" stroke="#ca8a04" strokeWidth="6" />
-            </svg>
-            <span className="shape-name">Segitiga</span>
-            <span className="shape-desc">3 sisi & 3 sudut</span>
-          </div>
+      />
 
-          <div className="shape-item">
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <rect x="15" y="15" width="70" height="70" rx="8" fill="#38bdf8" stroke="#0284c7" strokeWidth="6" />
-            </svg>
-            <span className="shape-name">Persegi</span>
-            <span className="shape-desc">4 sisi sama panjang</span>
-          </div>
-
-          <div className="shape-item">
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="35" fill="#f87171" stroke="#dc2626" strokeWidth="6" />
-            </svg>
-            <span className="shape-name">Lingkaran</span>
-            <span className="shape-desc">1 sisi lengkung, tanpa sudut</span>
-          </div>
-
-          <div className="shape-item">
-            <svg width="40" height="40" viewBox="0 0 100 100">
-              <rect x="10" y="25" width="80" height="50" rx="6" fill="#4ade80" stroke="#16a34a" strokeWidth="6" />
-            </svg>
-            <span className="shape-name">Persegi Panjang</span>
-            <span className="shape-desc">2 pasang sisi sejajar</span>
-          </div>
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Misi Hari Ini Dinamis --- */}
-      <GameModal
+      <DailyMissionModal
         isOpen={isMissionModalOpen}
-        title="📋 Misi Hari Ini"
         onClose={() => setIsMissionModalOpen(false)}
-        footerActionLabel={
-          mission.isCompleted
-            ? 'Tutup'
-            : mission.current >= mission.target
-            ? `🎁 Klaim Hadiah (+${mission.rewardDiamonds} 💎)`
-            : 'Mainkan Level di Peta 🗺️'
-        }
-        onFooterAction={() => {
-          if (mission.isCompleted) {
-            setIsMissionModalOpen(false);
-          } else if (mission.current >= mission.target) {
-            setPlayer((p) => ({ ...p, diamonds: p.diamonds + mission.rewardDiamonds }));
-            setMission((m) => ({ ...m, isCompleted: true }));
-          } else {
-            setIsMissionModalOpen(false);
-            setActiveTab('peta');
-          }
+        mission={mission}
+        onClaimReward={() => {
+          setPlayer((p) => ({ ...p, diamonds: p.diamonds + mission.rewardDiamonds }));
+          setMission((m) => ({ ...m, isCompleted: true }));
         }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div
-            style={{
-              background: mission.isCompleted ? '#f0fdf4' : '#f8fafc',
-              padding: '14px',
-              borderRadius: '16px',
-              border: mission.isCompleted ? '1.5px solid #86efac' : '1.5px solid #e2e8f0',
-              boxShadow: '0 4px 12px rgba(15, 35, 75, 0.05)',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
-              <h4 style={{ margin: 0, color: '#0f172a', fontFamily: 'var(--font-game-title)', fontSize: '15px' }}>
-                {mission.title}
-              </h4>
-              <span
-                style={{
-                  fontSize: '11px',
-                  fontWeight: 800,
-                  fontFamily: 'var(--font-game-title)',
-                  padding: '3px 8px',
-                  borderRadius: '9999px',
-                  background: mission.isCompleted ? '#dcfce7' : mission.current >= mission.target ? '#fef08a' : '#e0f2fe',
-                  color: mission.isCompleted ? '#166534' : mission.current >= mission.target ? '#854d0e' : '#0369a1',
-                  border: mission.isCompleted ? '1px solid #86efac' : mission.current >= mission.target ? '1px solid #facc15' : '1px solid #bae6fd',
-                }}
-              >
-                {mission.isCompleted ? '✓ Selesai & Diklaim' : mission.current >= mission.target ? 'Siap Diklaim!' : 'Sedang Berjalan'}
-              </span>
-            </div>
+        onGoToMap={() => {
+          setIsMissionModalOpen(false);
+          setActiveTab('peta');
+        }}
+      />
 
-            <p style={{ margin: '0 0 10px 0', fontSize: '12.5px', color: '#475569', lineHeight: 1.4 }}>
-              {mission.description}
-            </p>
-
-            {/* Visual Progress Bar Misi */}
-            <div style={{ width: '100%', height: '9px', background: '#e2e8f0', borderRadius: '9999px', overflow: 'hidden', marginBottom: '8px' }}>
-              <div
-                style={{
-                  width: `${Math.min(100, Math.round((mission.current / mission.target) * 100))}%`,
-                  height: '100%',
-                  background: mission.isCompleted
-                    ? 'linear-gradient(90deg, #22c55e, #16a34a)'
-                    : 'linear-gradient(90deg, #38bdf8, #0284c7)',
-                  borderRadius: '9999px',
-                  transition: 'width 0.4s ease',
-                }}
-              />
-            </div>
-
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ fontSize: '12px', fontWeight: 700, color: '#0284c7' }}>
-                Progres: {mission.current} dari {mission.target} Level Sempurna
-              </span>
-              <span style={{ fontSize: '12px', fontWeight: 800, color: '#059669', display: 'flex', alignItems: 'center', gap: '3px' }}>
-                <Sparkles size={14} /> +{mission.rewardDiamonds} Permata
-              </span>
-            </div>
-          </div>
-
-          {/* Keterangan Status Edukatif */}
-          <div style={{ textAlign: 'center', padding: '0 4px' }}>
-            {mission.isCompleted ? (
-              <p style={{ margin: 0, fontSize: '11.5px', color: '#16a34a', fontWeight: 700 }}>
-                🎉 Kamu sudah mengklaim hadiah misi hari ini. Misi baru akan diperbarui besok hari!
-              </p>
-            ) : mission.current >= mission.target ? (
-              <p style={{ margin: 0, fontSize: '11.5px', color: '#b45309', fontWeight: 700 }}>
-                ✨ Kerja bagus! 3 level sempurna telah tercapai. Klik tombol di bawah untuk mengklaim permata!
-              </p>
-            ) : (
-              <p style={{ margin: 0, fontSize: '11.5px', color: '#64748b' }}>
-                💡 Selesaikan {mission.target - mission.current} level lagi dengan nilai sempurna (3 bintang) untuk membuka hadiah permata!
-              </p>
-            )}
-          </div>
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Pengaturan --- */}
-      <GameModal
+      <GameSettingsModal
         isOpen={isSettingsModalOpen}
-        title="⚙️ Pengaturan"
         onClose={() => setIsSettingsModalOpen(false)}
-        footerActionLabel="Simpan"
-        onFooterAction={() => setIsSettingsModalOpen(false)}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              padding: '10px 12px',
-              background: '#f8fafc',
-              borderRadius: '12px',
-            }}
-          >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {soundEnabled ? <Volume2 size={18} color="#0284c7" /> : <VolumeX size={18} color="#94a3b8" />}
-              <span style={{ fontWeight: 700, fontSize: '13px' }}>Suara & Musik Game</span>
-            </div>
-            <button
-              style={{
-                background: soundEnabled ? '#22c55e' : '#cbd5e1',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '9999px',
-                padding: '4px 12px',
-                fontSize: '11px',
-                fontWeight: 800,
-                cursor: 'pointer',
-              }}
-              onClick={() => setSoundEnabled(!soundEnabled)}
-            >
-              {soundEnabled ? 'ON' : 'OFF'}
-            </button>
-          </div>
+        soundEnabled={soundEnabled}
+        onToggleSound={() => setSoundEnabled(!soundEnabled)}
+        onResetGameData={handleResetGameData}
+      />
 
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 12px',
-              background: '#f8fafc',
-              borderRadius: '12px',
-              fontSize: '12px',
-              color: '#475569',
-            }}
-          >
-            <Shield size={16} color="#0284c7" />
-            <span>Mode Aman Anak & Edukasi Aktif</span>
-            <Check size={16} color="#16a34a" style={{ marginLeft: 'auto' }} />
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 12px',
-              background: '#f8fafc',
-              borderRadius: '12px',
-              fontSize: '12px',
-              color: '#475569',
-            }}
-          >
-            <Database size={16} color="#0284c7" />
-            <span>Database Lokal: Terhubung Aktif (100% Offline)</span>
-            <Check size={16} color="#16a34a" style={{ marginLeft: 'auto' }} />
-          </div>
-
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              padding: '10px 12px',
-              background: '#f8fafc',
-              borderRadius: '12px',
-              fontSize: '12px',
-              color: '#475569',
-            }}
-          >
-            <Info size={16} color="#0284c7" />
-            <span>Versi Game: 1.0.0 (Capacitor Mobile)</span>
-          </div>
-
-          <button
-            onClick={handleResetGameData}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '6px',
-              background: '#fee2e2',
-              color: '#dc2626',
-              border: '1px solid #fca5a5',
-              borderRadius: '12px',
-              padding: '10px',
-              fontSize: '12px',
-              fontWeight: 800,
-              cursor: 'pointer',
-              marginTop: '4px',
-            }}
-          >
-            <RotateCcw size={14} />
-            <span>Reset Data Petualangan</span>
-          </button>
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Profil & Kustomisasi Siswa --- */}
-      <GameModal
+      <ProfileModal
         isOpen={isProfileModalOpen}
-        title="🎒 Profil Petualang Siswa"
         onClose={() => setIsProfileModalOpen(false)}
-        footerActionLabel="Buka Profil Lengkap"
-        onFooterAction={() => {
+        player={player}
+        onUpdatePlayer={setPlayer}
+        onOpenFullProfile={() => {
           setIsProfileModalOpen(false);
           setActiveTab('profil');
         }}
-      >
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', alignItems: 'center' }}>
-          {/* Avatar Preview */}
-          <div
-            style={{
-              width: '74px',
-              height: '74px',
-              borderRadius: '50%',
-              border: '3.5px solid #38bdf8',
-              overflow: 'hidden',
-              background: 'linear-gradient(135deg, #a5f3fc, #38bdf8)',
-              boxShadow: '0 6px 14px rgba(2, 132, 199, 0.3)',
-            }}
-          >
-            <AvatarRenderer avatarId={player.avatarId} />
-          </div>
+      />
 
-          {/* Pilih Karakter Avatar */}
-          <div style={{ width: '100%', textAlign: 'center' }}>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', display: 'block', marginBottom: '8px' }}>
-              Pilih Karakter Siswa (Termasuk Avatar Khusus Gacha):
-            </span>
-            <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', flexWrap: 'wrap' }}>
-              {(['boy', 'girl', 'adventurer', 'scientist', 'wizard', 'princess'] as AvatarKey[]).map((avId) => {
-                const isUnlocked =
-                  avId === 'boy' ||
-                  avId === 'girl' ||
-                  avId === 'adventurer' ||
-                  avId === 'scientist' ||
-                  (player.inventory?.unlockedAvatars || []).includes(avId);
-
-                const isSelected = (player.avatarId || 'boy') === avId;
-
-                return (
-                  <button
-                    key={avId}
-                    disabled={!isUnlocked}
-                    onClick={() => {
-                      if (isUnlocked) {
-                        setPlayer((p) => ({ ...p, avatarId: avId }));
-                      }
-                    }}
-                    title={
-                      isUnlocked
-                        ? `Pilih Avatar ${avId}`
-                        : `Terkunci! Dapatkan avatar ${avId === 'wizard' ? 'Penyihir' : 'Putri'} dari Peti Gacha Permata!`
-                    }
-                    style={{
-                      position: 'relative',
-                      width: '46px',
-                      height: '46px',
-                      borderRadius: '50%',
-                      border: isSelected
-                        ? '3px solid #0284c7'
-                        : isUnlocked
-                        ? '2px solid #bae6fd'
-                        : '2px dashed #cbd5e1',
-                      transform: isSelected ? 'scale(1.12)' : 'scale(1)',
-                      transition: 'all 0.15s ease',
-                      background: isUnlocked ? '#f8fafc' : '#f1f5f9',
-                      padding: '2px',
-                      cursor: isUnlocked ? 'pointer' : 'not-allowed',
-                      opacity: isUnlocked ? 1 : 0.45,
-                      boxShadow: isSelected ? '0 4px 10px rgba(2, 132, 199, 0.35)' : 'none',
-                    }}
-                  >
-                    <AvatarRenderer avatarId={avId} />
-                    {!isUnlocked && (
-                      <span
-                        style={{
-                          position: 'absolute',
-                          bottom: '-2px',
-                          right: '-2px',
-                          fontSize: '11px',
-                          background: '#475569',
-                          borderRadius: '50%',
-                          width: '16px',
-                          height: '16px',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          color: '#fff',
-                        }}
-                      >
-                        🔒
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Ubah Nama Siswa Dinamis */}
-          <div style={{ width: '100%' }}>
-            <label style={{ fontSize: '12px', fontWeight: 800, color: '#0f2942', display: 'block', marginBottom: '4px' }}>
-              Nama Siswa Petualang:
-            </label>
-            <input
-              type="text"
-              value={player.name}
-              onChange={(e) => setPlayer((p) => ({ ...p, name: e.target.value || 'Siswa' }))}
-              maxLength={15}
-              placeholder="Ketik nama siswa..."
-              style={{
-                width: '100%',
-                boxSizing: 'border-box',
-                padding: '10px 14px',
-                borderRadius: '12px',
-                border: '2px solid #bae6fd',
-                fontSize: '14px',
-                fontFamily: 'var(--font-game-title)',
-                fontWeight: 700,
-                color: '#0f2942',
-                outline: 'none',
-                background: '#f0f9ff',
-              }}
-            />
-          </div>
-
-          {/* Statistik Kemajuan Level & EXP */}
-          <div
-            style={{
-              width: '100%',
-              background: '#f8fafc',
-              borderRadius: '14px',
-              padding: '10px 14px',
-              border: '1.5px solid #e2e8f0',
-              boxSizing: 'border-box',
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 800, marginBottom: '6px' }}>
-              <span style={{ color: '#0284c7' }}>Level {player.level}</span>
-              <span style={{ color: '#16a34a' }}>{player.currentExp} / {player.maxExp} EXP</span>
-            </div>
-            <div style={{ width: '100%', height: '8px', background: '#e2e8f0', borderRadius: '9999px', overflow: 'hidden' }}>
-              <div
-                style={{
-                  width: `${Math.min(100, Math.round((player.currentExp / player.maxExp) * 100))}%`,
-                  height: '100%',
-                  background: 'linear-gradient(90deg, #4ade80, #22c55e)',
-                  borderRadius: '9999px',
-                  transition: 'width 0.4s ease',
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Bintang Petualangan Dinamis --- */}
-      <GameModal
+      <DailyStarModal
         isOpen={isStarModalOpen}
-        title="⭐ Bintang Petualangan"
         onClose={() => setIsStarModalOpen(false)}
-        footerActionLabel="Tutup"
-        onFooterAction={() => setIsStarModalOpen(false)}
-      >
-        <div style={{ textAlign: 'center', padding: '6px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              background: '#fef3c7',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
-            }}
-          >
-            <Star size={36} fill="#facc15" color="#ca8a04" />
-          </div>
-          <h3 style={{ margin: '0', fontFamily: 'var(--font-game-title)', fontSize: '26px', color: '#b45309' }}>
-            {player.stars} Bintang
-          </h3>
-          <p style={{ fontSize: '12.5px', color: '#64748b', margin: '0', lineHeight: 1.4 }}>
-            Kumpulkan bintang emas dengan menyelesaikan kuis bangun datar dengan nilai sempurna di setiap pulau!
-          </p>
+        stars={player.stars}
+        isClaimedToday={isStarClaimedToday}
+        onClaimBonus={handleClaimStarsBonus}
+      />
 
-          {isStarClaimedToday ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', marginTop: '4px' }}>
-              <button
-                disabled
-                style={{
-                  background: '#f1f5f9',
-                  color: '#94a3b8',
-                  border: '1.5px solid #cbd5e1',
-                  borderRadius: '9999px',
-                  padding: '10px 22px',
-                  fontFamily: 'var(--font-game-title)',
-                  fontSize: '13.5px',
-                  fontWeight: 800,
-                  cursor: 'not-allowed',
-                }}
-              >
-                ✓ Hadiah Hari Ini Sudah Diklaim
-              </button>
-              <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
-                ⏳ Hadiah bintang harian akan di-reset besok hari!
-              </span>
-            </div>
-          ) : (
-            <button
-              onClick={() => handleClaimStarsBonus(20)}
-              style={{
-                marginTop: '4px',
-                background: 'linear-gradient(180deg, #facc15, #f59e0b)',
-                color: '#78350f',
-                border: '2px solid #ffffff',
-                borderRadius: '9999px',
-                padding: '10px 22px',
-                fontFamily: 'var(--font-game-title)',
-                fontSize: '14px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(245, 158, 11, 0.4)',
-                transition: 'transform 0.15s ease',
-              }}
-            >
-              🎁 Klaim Hadiah Harian +20 ⭐
-            </button>
-          )}
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Permata Ajaib Dinamis --- */}
-      <GameModal
+      <DailyDiamondModal
         isOpen={isDiamondModalOpen}
-        title="💎 Permata Ajaib"
         onClose={() => setIsDiamondModalOpen(false)}
-        footerActionLabel="Tutup"
-        onFooterAction={() => setIsDiamondModalOpen(false)}
-      >
-        <div style={{ textAlign: 'center', padding: '6px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div
-            style={{
-              width: '64px',
-              height: '64px',
-              borderRadius: '50%',
-              background: '#cffafe',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 4px 12px rgba(2, 132, 199, 0.3)',
-            }}
-          >
-            <Gem size={34} fill="#38bdf8" color="#0284c7" />
-          </div>
-          <h3 style={{ margin: '0', fontFamily: 'var(--font-game-title)', fontSize: '26px', color: '#0369a1' }}>
-            {player.diamonds} Permata
-          </h3>
-          <p style={{ fontSize: '12.5px', color: '#64748b', margin: '0', lineHeight: 1.4 }}>
-            Permata ajaib digunakan untuk membuka petunjuk kuis saat kesulitan dan membuka lencana prestisius!
-          </p>
+        diamonds={player.diamonds}
+        isClaimedToday={isDiamondClaimedToday}
+        onClaimBonus={handleClaimDiamondsBonus}
+      />
 
-          {isDiamondClaimedToday ? (
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px', marginTop: '4px' }}>
-              <button
-                disabled
-                style={{
-                  background: '#f1f5f9',
-                  color: '#94a3b8',
-                  border: '1.5px solid #cbd5e1',
-                  borderRadius: '9999px',
-                  padding: '10px 22px',
-                  fontFamily: 'var(--font-game-title)',
-                  fontSize: '13.5px',
-                  fontWeight: 800,
-                  cursor: 'not-allowed',
-                }}
-              >
-                ✓ Hadiah Hari Ini Sudah Diklaim
-              </button>
-              <span style={{ fontSize: '11px', color: '#64748b', fontWeight: 600 }}>
-                ⏳ Hadiah permata harian akan di-reset besok hari!
-              </span>
-            </div>
-          ) : (
-            <button
-              onClick={() => handleClaimDiamondsBonus(10)}
-              style={{
-                marginTop: '4px',
-                background: 'linear-gradient(180deg, #38bdf8, #0284c7)',
-                color: '#ffffff',
-                border: '2px solid #ffffff',
-                borderRadius: '9999px',
-                padding: '10px 22px',
-                fontFamily: 'var(--font-game-title)',
-                fontSize: '14px',
-                fontWeight: 800,
-                cursor: 'pointer',
-                boxShadow: '0 4px 12px rgba(2, 132, 199, 0.4)',
-                transition: 'transform 0.15s ease',
-              }}
-            >
-              🎁 Klaim Hadiah Harian +10 💎
-            </button>
-          )}
-        </div>
-      </GameModal>
-
-      {/* --- MODAL: Naik Level Dinamis --- */}
-      <GameModal
+      <LevelUpCelebrationModal
         isOpen={isLevelUpModalOpen}
-        title="🎉 NAIK LEVEL!"
         onClose={() => setIsLevelUpModalOpen(false)}
-        footerActionLabel="Lanjutkan Petualangan 🚀"
-        onFooterAction={() => setIsLevelUpModalOpen(false)}
-      >
-        <div style={{ textAlign: 'center', padding: '10px 0', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
-          <div
-            style={{
-              width: '72px',
-              height: '72px',
-              borderRadius: '50%',
-              background: 'linear-gradient(135deg, #fef08a, #f59e0b)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              boxShadow: '0 6px 16px rgba(234, 179, 8, 0.4)',
-              animation: 'gentleBob 2s ease-in-out infinite',
-            }}
-          >
-            <Sparkles size={38} color="#78350f" />
-          </div>
-          <h3 style={{ margin: '0', fontFamily: 'var(--font-game-title)', fontSize: '22px', color: '#0f2942' }}>
-            Hore! Kamu Mencapai Level {player.level}!
-          </h3>
-          <p style={{ fontSize: '13px', color: '#475569', margin: '0' }}>
-            Kemampuan geometrimu makin hebat! Hadiah bonus kenaikan tingkat:
-          </p>
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '6px' }}>
-            <span style={{ background: '#fef3c7', padding: '6px 14px', borderRadius: '9999px', fontWeight: 800, fontSize: '13px', color: '#b45309', border: '1px solid #fde68a' }}>
-              ⭐ +50 Bintang
-            </span>
-            <span style={{ background: '#e0f2fe', padding: '6px 14px', borderRadius: '9999px', fontWeight: 800, fontSize: '13px', color: '#0369a1', border: '1px solid #bae6fd' }}>
-              💎 +10 Permata
-            </span>
-          </div>
-        </div>
-      </GameModal>
+        level={player.level}
+      />
 
       {/* --- MODAL LAZY LOADED: Gacha, Customization, Adventure & Playground --- */}
       <Suspense fallback={null}>

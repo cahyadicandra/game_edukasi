@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { PlayerProfile, DailyMission } from '../../types/game';
 import type { WorldData } from '../../data/worlds';
-import { SubScreenHeader } from './SubScreenHeader';
-import { AvatarRenderer, type AvatarKey } from '../Common/AvatarRenderer';
+import { SubScreenHeader } from '../Common';
+import { AvatarRenderer, type AvatarKey } from '../Common';
+import { AchievementScreen } from './AchievementScreen';
+import { MaterialScreen } from './MaterialScreen';
 import {
   Star,
   Gem,
@@ -18,17 +20,23 @@ import {
   X,
   Camera,
   Lock,
+  User,
 } from 'lucide-react';
 import { Haptics, ImpactStyle } from '@capacitor/haptics';
 import './ScreenCommon.css';
 import './ProfileScreen.css';
+
+export type ProfileSubTab = 'profile' | 'achievements' | 'materials';
 
 export interface ProfileScreenProps {
   player: PlayerProfile;
   worlds?: WorldData[];
   mission?: DailyMission;
   onUpdatePlayer?: (updated: Partial<PlayerProfile>) => void;
+  onSetPlayerFull?: React.Dispatch<React.SetStateAction<PlayerProfile>>;
   onOpenCustomization?: () => void;
+  initialSubTab?: ProfileSubTab;
+  onSubTabChange?: (tab: ProfileSubTab) => void;
 }
 
 // Daftar Gelar Petualang Berdasarkan Level
@@ -119,8 +127,24 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
   worlds,
   mission,
   onUpdatePlayer,
+  onSetPlayerFull,
   onOpenCustomization,
+  initialSubTab = 'profile',
+  onSubTabChange,
 }) => {
+  const [activeSubTab, setActiveSubTab] = useState<ProfileSubTab>(initialSubTab);
+
+  useEffect(() => {
+    if (initialSubTab) {
+      setActiveSubTab(initialSubTab);
+    }
+  }, [initialSubTab]);
+
+  const handleSwitchTab = (tab: ProfileSubTab) => {
+    setActiveSubTab(tab);
+    onSubTabChange?.(tab);
+    triggerHaptic(ImpactStyle.Light);
+  };
   // Modal Edit Profil
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editTab, setEditTab] = useState<'identity' | 'avatar'>('identity');
@@ -222,12 +246,58 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
       </div>
 
       <div className="sub-screen-content">
-        {/* Spanduk Papan Kayu Tematik */}
+        {/* Spanduk Papan Kayu Tematik Dinamis */}
         <SubScreenHeader
-          icon="👤"
-          title="Profil Siswa"
-          subtitle="Data petualang, kustomisasi karakter, dan pencapaian belajarmu"
+          icon={activeSubTab === 'profile' ? '👤' : activeSubTab === 'achievements' ? '🏆' : '📚'}
+          title={
+            activeSubTab === 'profile'
+              ? 'Profil Siswa'
+              : activeSubTab === 'achievements'
+              ? 'Prestasi & Lencana'
+              : 'Materi Bangun Datar'
+          }
+          subtitle={
+            activeSubTab === 'profile'
+              ? 'Data petualang, statistik, dan pencapaian belajarmu'
+              : activeSubTab === 'achievements'
+              ? 'Klaim hadiah bintang & permata dari setiap pencapaian'
+              : 'Pelajari sifat, rumus keliling, dan luas bentuk geometri'
+          }
         />
+
+        {/* Sub-Tab Navigation Bar */}
+        <nav className="profile-subtabs-nav" role="tablist">
+          <button
+            role="tab"
+            aria-selected={activeSubTab === 'profile'}
+            className={`profile-subtab-btn ${activeSubTab === 'profile' ? 'active' : ''}`}
+            onClick={() => handleSwitchTab('profile')}
+          >
+            <User size={15} />
+            <span>Profil Siswa</span>
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeSubTab === 'achievements'}
+            className={`profile-subtab-btn ${activeSubTab === 'achievements' ? 'active' : ''}`}
+            onClick={() => handleSwitchTab('achievements')}
+          >
+            <Trophy size={15} />
+            <span>Prestasi ({badgesCount})</span>
+          </button>
+          <button
+            role="tab"
+            aria-selected={activeSubTab === 'materials'}
+            className={`profile-subtab-btn ${activeSubTab === 'materials' ? 'active' : ''}`}
+            onClick={() => handleSwitchTab('materials')}
+          >
+            <BookOpen size={15} />
+            <span>Materi Geometri</span>
+          </button>
+        </nav>
+
+        {activeSubTab === 'profile' && (
+          <>
 
         {/* 1. KARTU UTAMA PROFIL SISWA DINAMIS */}
         <div className="profile-hero-card">
@@ -449,6 +519,21 @@ export const ProfileScreen: React.FC<ProfileScreenProps> = ({
             })}
           </div>
         </div>
+          </>
+        )}
+
+        {activeSubTab === 'achievements' && (
+          <AchievementScreen
+            embedded
+            player={player}
+            worlds={worlds}
+            onUpdatePlayer={onSetPlayerFull}
+          />
+        )}
+
+        {activeSubTab === 'materials' && (
+          <MaterialScreen embedded />
+        )}
       </div>
 
       {/* 4. MODAL EDIT PROFIL INTERAKTIF */}

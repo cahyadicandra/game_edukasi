@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Map, Trophy, BookOpen, User } from 'lucide-react';
+import { Home, Map, User, Sparkles } from 'lucide-react';
 import type { NavTabId } from '../../types/game';
 import './BottomNavbar.css';
 
@@ -16,27 +16,22 @@ export const BottomNavbar: React.FC<BottomNavbarProps> = ({
     {
       id: 'beranda',
       label: 'Beranda',
-      icon: <Home size={21} strokeWidth={2.4} fill={activeTab === 'beranda' ? '#0284c7' : 'none'} />,
+      icon: <Home size={22} strokeWidth={2.4} fill={activeTab === 'beranda' ? '#0284c7' : 'none'} />,
     },
     {
       id: 'peta',
       label: 'Peta',
-      icon: <Map size={21} strokeWidth={2.2} />,
+      icon: <Map size={22} strokeWidth={2.2} />,
     },
     {
-      id: 'prestasi',
-      label: 'Prestasi',
-      icon: <Trophy size={21} strokeWidth={2.2} />,
-    },
-    {
-      id: 'materi',
-      label: 'Materi',
-      icon: <BookOpen size={21} strokeWidth={2.2} />,
+      id: 'bengkel',
+      label: 'Bengkel',
+      icon: <Sparkles size={22} strokeWidth={2.2} fill={activeTab === 'bengkel' ? '#0284c7' : 'none'} />,
     },
     {
       id: 'profil',
       label: 'Profil',
-      icon: <User size={21} strokeWidth={2.2} />,
+      icon: <User size={22} strokeWidth={2.2} fill={activeTab === 'profil' ? '#0284c7' : 'none'} />,
     },
   ];
 

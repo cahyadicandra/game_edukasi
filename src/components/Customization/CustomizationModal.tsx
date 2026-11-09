@@ -1,17 +1,15 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import type { PlayerProfile, WeaponLoadout } from '../../types/game';
 import {
-  WEAPON_PARTS_CATALOG,
+  WEAPON_SKINS_CATALOG,
+  DEFAULT_UNLOCKED_SKINS,
+  getWeaponSkin,
   BLASTER_COLORS,
   CHARACTER_SKINS,
   CHARACTER_HATS,
-  DEFAULT_LOADOUTS,
-  DEFAULT_UNLOCKED_PARTS,
-  SLOT_INFO,
-  UPGRADE_REQUIREMENTS,
   computeWeaponStats,
-  getPartUpgradeDiff,
   type ComputedWeaponStats,
+  type WeaponSkinDef,
 } from '../../data/weaponParts';
 import { AnimatedMascot, type MascotAnimationState } from '../Mascot/AnimatedMascot';
 import {
@@ -19,11 +17,10 @@ import {
   Crosshair,
   Wrench,
   Palette,
-  Zap,
-  ArrowUpCircle,
   Check,
   Lock,
 } from 'lucide-react';
+import { weaponSoundService } from '../../services/weaponSoundService';
 import './CustomizationModal.css';
 
 export interface CustomizationModalProps {
@@ -34,7 +31,6 @@ export interface CustomizationModalProps {
 }
 
 type TabType = 'weapon' | 'character';
-type WeaponSlotType = 'body' | 'core' | 'barrel' | 'grip' | 'charm';
 
 export const CustomizationModal: React.FC<CustomizationModalProps> = ({
   isOpen,
@@ -43,20 +39,6 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
   onUpdatePlayer,
 }) => {
   const [activeTab, setActiveTab] = useState<TabType>('weapon');
-
-  // Loadouts State
-  const initialLoadouts: WeaponLoadout[] =
-    player.equipment?.loadouts && player.equipment.loadouts.length === 3
-      ? player.equipment.loadouts
-      : DEFAULT_LOADOUTS;
-
-  const [activeLoadoutIdx, setActiveLoadoutIdx] = useState<number>(
-    player.equipment?.activeLoadoutIndex ?? 0
-  );
-  const [loadouts, setLoadouts] = useState<WeaponLoadout[]>(initialLoadouts);
-
-  // Selected Weapon Slot for inspection
-  const [activeSlot, setActiveSlot] = useState<WeaponSlotType>('core');
 
   // Character Mascot Preview State
   const [mascotAnimState, setMascotAnimState] = useState<MascotAnimationState>('idle');
@@ -67,38 +49,71 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
     player.equipment?.hat || 'none'
   );
 
-  // Unlocked Parts List (Default jika kosong)
-  const unlockedParts: string[] =
-    player.equipment?.unlockedParts && player.equipment.unlockedParts.length > 0
-      ? player.equipment.unlockedParts
-      : DEFAULT_UNLOCKED_PARTS;
+  // Unlocked Skins List
+  const unlockedSkins: string[] =
+    player.equipment?.unlockedSkins && player.equipment.unlockedSkins.length > 0
+      ? player.equipment.unlockedSkins
+      : DEFAULT_UNLOCKED_SKINS;
 
-  const isPartUnlocked = (partId: string) => {
-    const partDef = WEAPON_PARTS_CATALOG[partId];
-    if (!partDef) return false;
-    if ((partDef.unlockCostCoins ?? 0) === 0) return true;
-    return unlockedParts.includes(partId);
+  const isSkinUnlocked = (skinId: string) => {
+    const skinDef = WEAPON_SKINS_CATALOG[skinId];
+    if (!skinDef) return false;
+    if (skinDef.unlockCostCoins === 0) return true;
+    return unlockedSkins.includes(skinId);
   };
 
-  // Part Levels & Coins
-  const partLevels = player.equipment?.partLevels || {};
-  const playerShards = player.equipment?.shards ?? 150;
   const playerCoins = player.coins ?? 1000;
 
-  // Dummy Shooting Target & Bullet Fly Animation Simulator
-  const [isDummyHurt, setIsDummyHurt] = useState(false);
-  const [isMuzzleFlashing, setIsMuzzleFlashing] = useState(false);
-  const [flyingBullet, setFlyingBullet] = useState<{ active: boolean; type: string } | null>(null);
-  const [impactSpark, setImpactSpark] = useState(false);
-  const [floatingDamage, setFloatingDamage] = useState<{ text: string; id: number } | null>(null);
+  // Single Active Weapon Configuration (Semua Stat & Peluru Terkandung Langsung di Skin)
+  const activeSkinId =
+    player.equipment?.blasterSkin ||
+    player.equipment?.loadouts?.[0]?.skinId ||
+    'blaster_klasik';
+
+  const activeColor =
+    player.equipment?.blasterColor ||
+    player.equipment?.loadouts?.[0]?.color ||
+    'default';
+
+  const currentWeaponLoadout: WeaponLoadout = {
+    name: 'Blaster Aktif',
+    skinId: activeSkinId,
+    body: 'blaster_std',
+    core: 'core_skin_native',
+    barrel: 'barrel_std',
+    grip: 'grip_std',
+    charm: 'charm_none',
+    color: activeColor,
+  };
+
+  const computedStats: ComputedWeaponStats = computeWeaponStats(
+    currentWeaponLoadout,
+    player.equipment?.partLevels
+  );
+  const activeSkinDef: WeaponSkinDef = getWeaponSkin(activeSkinId);
+  const activeColorDef =
+    BLASTER_COLORS.find((c) => c.id === activeColor) || BLASTER_COLORS[0];
+
+  // Siklus frame animasi peluru bawaan untuk live preview
+  const [bulletAnimFrameIdx, setBulletAnimFrameIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBulletAnimFrameIdx((prev) => (prev + 1) % 4);
+    }, 180);
+    return () => clearInterval(interval);
+  }, []);
 
   // Audio Context Ref for instant zero-latency SFX
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  const playSynthesizedSfx = (type: 'shoot' | 'hit' | 'upgrade' | 'equip' | 'click' | 'unlock') => {
+  const playSynthesizedSfx = (type: 'equip' | 'unlock' | 'click') => {
     try {
       if (!audioCtxRef.current) {
-        audioCtxRef.current = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+        audioCtxRef.current = new (
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
+        )();
       }
       const ctx = audioCtxRef.current;
       if (ctx.state === 'suspended') ctx.resume();
@@ -109,23 +124,7 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
       osc.connect(gain);
       gain.connect(ctx.destination);
 
-      if (type === 'shoot') {
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(620, now);
-        osc.frequency.exponentialRampToValueAtTime(140, now + 0.12);
-        gain.gain.setValueAtTime(0.35, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.12);
-        osc.start(now);
-        osc.stop(now + 0.13);
-      } else if (type === 'hit') {
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(260, now);
-        osc.frequency.exponentialRampToValueAtTime(60, now + 0.18);
-        gain.gain.setValueAtTime(0.4, now);
-        gain.gain.linearRampToValueAtTime(0.01, now + 0.18);
-        osc.start(now);
-        osc.stop(now + 0.19);
-      } else if (type === 'upgrade' || type === 'unlock') {
+      if (type === 'unlock') {
         osc.type = 'sine';
         osc.frequency.setValueAtTime(440, now);
         osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
@@ -157,182 +156,100 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
 
   if (!isOpen) return null;
 
-  const currentLoadout = loadouts[activeLoadoutIdx] || DEFAULT_LOADOUTS[0];
-  const computedStats: ComputedWeaponStats = computeWeaponStats(currentLoadout, partLevels);
-  const activeColorDef = BLASTER_COLORS.find((c) => c.id === currentLoadout.color) || BLASTER_COLORS[0];
+  // 1. Pilih & Pasang Skin Senjata Langsung (Peluru & Stat Langsung Include di Skin)
+  const handleSelectSkinWeapon = (skinId: string) => {
+    if (!isSkinUnlocked(skinId)) return;
+    weaponSoundService.playWeaponEquip(skinId);
 
-  // Helper ganti item pada loadout aktif
-  const handleSelectPart = (slot: WeaponSlotType, partId: string) => {
-    if (!isPartUnlocked(partId)) return;
-    playSynthesizedSfx('equip');
-    const updated = [...loadouts];
-    updated[activeLoadoutIdx] = {
-      ...updated[activeLoadoutIdx],
-      [slot]: partId,
+    const nextWeapon: WeaponLoadout = {
+      name: 'Blaster Aktif',
+      skinId,
+      body: 'blaster_std',
+      core: 'core_skin_native',
+      barrel: 'barrel_std',
+      grip: 'grip_std',
+      charm: 'charm_none',
+      color: activeColor,
     };
-    setLoadouts(updated);
-    saveToPlayerProfile(updated, activeLoadoutIdx, selectedSkin, selectedHat);
-  };
-
-  // Buka Kunci / Pembelian Peluru atau Bagian Senjata
-  const handleUnlockPart = (partId: string) => {
-    const partDef = WEAPON_PARTS_CATALOG[partId];
-    if (!partDef) return;
-    const cost = partDef.unlockCostCoins || 0;
-    if (playerCoins < cost) return;
-
-    playSynthesizedSfx('unlock');
-
-    onUpdatePlayer((prev) => {
-      const prevCoins = prev.coins ?? 1000;
-      const prevUnlocked = prev.equipment?.unlockedParts || DEFAULT_UNLOCKED_PARTS;
-      // Cegah doble-eksekusi (double tap) dan koin negatif
-      if (prevUnlocked.includes(partId)) return prev;
-      if (prevCoins < cost) return prev;
-      const nextUnlocked = Array.from(new Set([...prevUnlocked, partId]));
-
-      return {
-        ...prev,
-        coins: Math.max(0, prevCoins - cost),
-        equipment: {
-          ...prev.equipment,
-          unlockedParts: nextUnlocked,
-        },
-      };
-    });
-  };
-
-  // Ganti warna blaster
-  const handleSelectColor = (colorId: string) => {
-    playSynthesizedSfx('click');
-    const updated = [...loadouts];
-    updated[activeLoadoutIdx] = {
-      ...updated[activeLoadoutIdx],
-      color: colorId,
-    };
-    setLoadouts(updated);
-    saveToPlayerProfile(updated, activeLoadoutIdx, selectedSkin, selectedHat);
-  };
-
-  // Ganti slot loadout aktif (1, 2, atau 3)
-  const handleSwitchLoadout = (idx: number) => {
-    playSynthesizedSfx('click');
-    setActiveLoadoutIdx(idx);
-    saveToPlayerProfile(loadouts, idx, selectedSkin, selectedHat);
-  };
-
-  // Upgrade part senjata (MENGGUNAKAN KOIN)
-  const handleUpgradePart = (partId: string) => {
-    const curLevel = partLevels[partId] || 1;
-    if (curLevel >= 5) return;
-    const req = UPGRADE_REQUIREMENTS[curLevel];
-    if (playerCoins < req.coins) return;
-
-    playSynthesizedSfx('upgrade');
-
-    onUpdatePlayer((prev) => {
-      const prevCoins = prev.coins ?? 1000;
-      const prevLevels = prev.equipment?.partLevels || {};
-
-      // Cegah doble-eksekusi (double tap) dan koin negatif
-      if ((prevLevels[partId] || 1) > curLevel) return prev;
-      if (prevCoins < req.coins) return prev;
-
-      const nextLevels = {
-        ...prevLevels,
-        [partId]: curLevel + 1,
-      };
-
-      const updatedEq = {
-        ...prev.equipment,
-        partLevels: nextLevels,
-      };
-
-      return {
-        ...prev,
-        coins: Math.max(0, prevCoins - req.coins),
-        equipment: updatedEq,
-      };
-    });
-  };
-
-  // Simpan data kustomisasi ke Player Profile
-  const saveToPlayerProfile = (
-    updatedLoadouts: WeaponLoadout[],
-    activeIdx: number,
-    skin: string,
-    hat: string
-  ) => {
-    const curL = updatedLoadouts[activeIdx];
-    const coreDef = WEAPON_PARTS_CATALOG[curL.core];
-    const activeBulletType = coreDef?.projectile || 'bullet_orb';
 
     onUpdatePlayer((prev) => ({
       ...prev,
       equipment: {
         ...prev.equipment,
-        loadouts: updatedLoadouts,
-        activeLoadoutIndex: activeIdx,
-        blasterColor: curL.color,
-        blasterCore: activeBulletType,
-        blasterBarrel: curL.barrel,
-        blasterGrip: curL.grip,
-        blasterCharm: curL.charm,
-        skinColor: skin,
-        hat: hat,
-        unlockedParts: prev.equipment?.unlockedParts || unlockedParts,
+        loadouts: [nextWeapon],
+        activeLoadoutIndex: 0,
+        blasterSkin: skinId,
+        blasterCore: 'bullet_skin',
+        blasterColor: activeColor,
+        skinColor: selectedSkin,
+        hat: selectedHat,
+        unlockedSkins: prev.equipment?.unlockedSkins || unlockedSkins,
       },
     }));
   };
 
-  // Simpan Kustomisasi Karakter
+  // 2. Beli / Buka Kunci Skin Baru dengan Koin & Langsung Pasang
+  const handleUnlockSkin = (skinId: string) => {
+    const skinDef = WEAPON_SKINS_CATALOG[skinId];
+    if (!skinDef) return;
+    const cost = skinDef.unlockCostCoins || 0;
+    if (playerCoins < cost) return;
+
+    weaponSoundService.playWeaponEquip(skinId);
+
+    const nextUnlocked = Array.from(new Set([...unlockedSkins, skinId]));
+    const nextWeapon: WeaponLoadout = {
+      name: 'Blaster Aktif',
+      skinId,
+      body: 'blaster_std',
+      core: 'core_skin_native',
+      barrel: 'barrel_std',
+      grip: 'grip_std',
+      charm: 'charm_none',
+      color: activeColor,
+    };
+
+    onUpdatePlayer((prev) => ({
+      ...prev,
+      coins: Math.max(0, (prev.coins ?? 1000) - cost),
+      equipment: {
+        ...prev.equipment,
+        unlockedSkins: nextUnlocked,
+        loadouts: [nextWeapon],
+        activeLoadoutIndex: 0,
+        blasterSkin: skinId,
+        blasterCore: 'bullet_skin',
+        blasterColor: activeColor,
+      },
+    }));
+  };
+
+  // 3. Kustomisasi Maskot Karakter
   const handleSelectSkin = (skinId: string) => {
     playSynthesizedSfx('click');
     setSelectedSkin(skinId);
-    saveToPlayerProfile(loadouts, activeLoadoutIdx, skinId, selectedHat);
+    onUpdatePlayer((prev) => ({
+      ...prev,
+      equipment: {
+        ...prev.equipment,
+        skinColor: skinId,
+      },
+    }));
   };
 
   const handleSelectHat = (hatId: string) => {
     playSynthesizedSfx('equip');
     setSelectedHat(hatId);
-    saveToPlayerProfile(loadouts, activeLoadoutIdx, selectedSkin, hatId);
+    onUpdatePlayer((prev) => ({
+      ...prev,
+      equipment: {
+        ...prev.equipment,
+        hat: hatId,
+      },
+    }));
   };
 
-  // Uji Coba Tembak Dummy Target dengan Peluru Terbang Animasi Nyata
-  const handleTestShoot = () => {
-    playSynthesizedSfx('shoot');
-    setIsMuzzleFlashing(true);
-    setFlyingBullet({ active: true, type: computedStats.bulletType });
-    setTimeout(() => setIsMuzzleFlashing(false), 100);
-
-    // Peluru tiba di target dummy setelah 160ms
-    setTimeout(() => {
-      playSynthesizedSfx('hit');
-      setFlyingBullet(null);
-      setIsDummyHurt(true);
-      setImpactSpark(true);
-
-      const isCrit = Math.random() * 100 < computedStats.critChance;
-      const finalDmg = isCrit ? Math.round(computedStats.damage * 2 * 10) / 10 : computedStats.damage;
-
-      setFloatingDamage({
-        text: isCrit ? `💥 CRIT! -${finalDmg}` : `-${finalDmg}`,
-        id: Date.now(),
-      });
-
-      setTimeout(() => {
-        setIsDummyHurt(false);
-        setImpactSpark(false);
-      }, 200);
-
-      setTimeout(() => setFloatingDamage(null), 850);
-    }, 160);
-  };
-
-  // Part yang tersedia untuk slot aktif
-  const availablePartsForSlot = Object.values(WEAPON_PARTS_CATALOG).filter(
-    (p) => p.slot === activeSlot
-  );
+  const allSkinsList = Object.values(WEAPON_SKINS_CATALOG);
 
   return (
     <div className="custom-modal-overlay" role="dialog" aria-modal="true">
@@ -344,13 +261,10 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
               <Wrench size={20} color="#f59e0b" />
             </div>
             <div className="custom-header-text">
-              <h2 className="custom-header-title">Bengkel & Kustomisasi</h2>
+              <h2 className="custom-header-title">Koleksi Senjata & Maskot</h2>
               <div className="custom-currencies-pill">
                 <span className="curr-badge gold">
                   🪙 {playerCoins.toLocaleString()} Koin
-                </span>
-                <span className="curr-badge shard">
-                  💠 {playerShards.toLocaleString()} Shard
                 </span>
               </div>
             </div>
@@ -365,7 +279,7 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
           </button>
         </header>
 
-        {/* 2. TAB NAVIGASI COLORFUL DUA TOMBOL */}
+        {/* 2. TAB NAVIGASI UTAMA DUA TOMBOL BERSIH */}
         <nav className="custom-tab-nav">
           <button
             className={`custom-tab-btn btn-weapon ${activeTab === 'weapon' ? 'active' : ''}`}
@@ -375,7 +289,7 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
             }}
           >
             <Crosshair size={16} />
-            <span>Bengkel Senjata</span>
+            <span>Koleksi Senjata ({allSkinsList.length})</span>
           </button>
           <button
             className={`custom-tab-btn btn-character ${activeTab === 'character' ? 'active' : ''}`}
@@ -390,291 +304,175 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
         </nav>
 
         {/* ════════════════════════════════════════════════════════════════ */}
-        {/* TAB 1: BENGKEL SENJATA (CLEAN, COLORFUL & ANIMATED) */}
+        {/* TAB 1: KOLEKSI 13 SENJATA BLASTER (SIMPLE & CLEAN)               */}
         {/* ════════════════════════════════════════════════════════════════ */}
         {activeTab === 'weapon' && (
           <div className="custom-workshop-body">
-            {/* ROW LOADOUT & PILIHAN WARNA CEPAT */}
-            <div className="custom-quick-bar">
-              <div className="loadout-pills-row">
-                {[0, 1, 2].map((idx) => (
-                  <button
-                    key={idx}
-                    className={`loadout-pill-btn ${activeLoadoutIdx === idx ? 'active' : ''}`}
-                    onClick={() => handleSwitchLoadout(idx)}
-                  >
-                    <span>Loadout {idx + 1}</span>
-                    {activeLoadoutIdx === idx && <Check size={14} />}
-                  </button>
-                ))}
-              </div>
-
-              {/* Warna Blaster Cepat */}
-              <div className="swatches-compact-row">
-                {BLASTER_COLORS.map((col) => (
-                  <button
-                    key={col.id}
-                    className={`swatch-dot ${currentLoadout.color === col.id ? 'selected' : ''}`}
-                    style={{ backgroundColor: col.hex }}
-                    onClick={() => handleSelectColor(col.id)}
-                    title={col.name}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* SHOWCASE ARENA BLASTER, PELURU TERBANG & DUMMY TARGET */}
-            <div className="blaster-showcase-arena">
-              {/* Sisi Kiri: Blaster & Info Peluru */}
-              <div className="blaster-display-box">
-                <div className="blaster-img-container">
+            {/* 1. KARTU HERO PREVIEW SENJATA AKTIF */}
+            <div className="active-weapon-hero-card">
+              <div className="active-weapon-top-row">
+                {/* Thumbnail Senjata */}
+                <div className="active-weapon-thumb-box">
                   <img
-                    src="/assets/png/attack/blaster.png"
-                    alt="Blaster"
-                    className="blaster-hero-img"
-                    style={{ filter: activeColorDef.filter }}
-                  />
-                  {isMuzzleFlashing && (
-                    <img
-                      src="/assets/png/attack/muzzle_flash.png"
-                      alt="Flash"
-                      className="blaster-muzzle-flash"
-                    />
-                  )}
-                </div>
-              </div>
-
-              {/* PELURU ANIMASI TERBANG NYATA KE DUMMY TARGET */}
-              {flyingBullet && (
-                <div className={`flying-bullet-anim-box ${flyingBullet.type}`}>
-                  <img
-                    src={`/assets/png/attack/${flyingBullet.type}.png`}
-                    alt="Flying Bullet"
-                    className="flying-bullet-img"
+                    src={activeSkinDef.assetPng}
+                    alt={activeSkinDef.name}
+                    className="active-weapon-hero-img"
                   />
                 </div>
-              )}
 
-              {/* SPARK EFEK SAAT PELURU MELEDAK DI DUMMY */}
-              {impactSpark && (
-                <img
-                  src="/assets/png/attack/hit_spark_1.png"
-                  alt="Hit Spark"
-                  className="target-impact-spark-effect"
-                />
-              )}
-
-              {/* Tombol Tembak Tengah */}
-              <button
-                className="btn-action-test-shoot"
-                onClick={handleTestShoot}
-                title="Tembak dummy target untuk menguji senjata & peluru"
-              >
-                <Zap size={16} color="#fcd34d" />
-                <span>Tembak!</span>
-              </button>
-
-              {/* Sisi Kanan: Target Dummy Uji */}
-              <div className="dummy-target-box">
-                <div className={`dummy-doll ${isDummyHurt ? 'hurt' : ''}`}>
-                  <span className="dummy-emoji">🎯</span>
-                  <span className="dummy-text">Target Uji</span>
-                  {floatingDamage && (
-                    <span className="floating-dmg-pop">
-                      {floatingDamage.text}
+                {/* Detail Senjata Aktif */}
+                <div className="active-weapon-details">
+                  <div className="active-weapon-badges-row">
+                    <span className={`rarity-badge ${activeSkinDef.rarity}`}>
+                      {activeSkinDef.rarity === 'common' && 'Biasa'}
+                      {activeSkinDef.rarity === 'rare' && 'Langka'}
+                      {activeSkinDef.rarity === 'epic' && 'Epik'}
+                      {activeSkinDef.rarity === 'legendary' && 'Legendaris'}
                     </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* KARTU PRATINJAU PELURU AKTIF & EFEK STATUS KHUSUS */}
-            <div className="active-bullet-showcase-card">
-              <div className="bullet-glow-orbit">
-                <img
-                  src={`/assets/png/attack/${computedStats.bulletType}.png`}
-                  alt={computedStats.bulletType}
-                  className="bullet-hero-preview-img"
-                />
-              </div>
-              <div className="bullet-preview-details">
-                <div className="bullet-title-badge-row">
-                  <span className="bullet-display-title">
-                    {computedStats.bulletType === 'bullet_orb' && 'Inti Plasma Orb'}
-                    {computedStats.bulletType === 'bullet_fire' && 'Inti Api Membara'}
-                    {computedStats.bulletType === 'bullet_ice' && 'Inti Es Kristal'}
-                    {computedStats.bulletType === 'bullet_star' && 'Inti Bintang Pantul'}
-                    {computedStats.bulletType === 'bullet_laser' && 'Inti Laser Penembus'}
-                  </span>
-                  <span className={`bullet-effect-pill ${computedStats.bulletType}`}>
-                    {computedStats.effectName}
-                  </span>
-                </div>
-                <p className="bullet-display-desc">
-                  {computedStats.bulletType === 'bullet_orb' && 'Tembakan plasma seimbang & stabil untuk segala medan petualangan.'}
-                  {computedStats.bulletType === 'bullet_fire' && 'Membakar musuh dengan bola api berkobar dan damage berkala!'}
-                  {computedStats.bulletType === 'bullet_ice' && 'Membekukan dan memperlambat pergerakan slime monster sebesar 50%!'}
-                  {computedStats.bulletType === 'bullet_star' && 'Bintang berpendar yang memantul di platform dan menjangkau musuh tersembunyi.'}
-                  {computedStats.bulletType === 'bullet_laser' && 'Sinar laser berkecepatan tinggi yang menembus barisan monster sekaligus!'}
-                </p>
-              </div>
-            </div>
-
-            {/* STATISTIK MINI COLORFUL (4 CHIP BERSIH & RAPI) */}
-            <div className="stats-pills-row">
-              <div className="stat-pill red">
-                <span className="stat-pill-label">⚔️ ATK</span>
-                <span className="stat-pill-val">{computedStats.damage}</span>
-              </div>
-              <div className="stat-pill blue">
-                <span className="stat-pill-label">⚡ Laju</span>
-                <span className="stat-pill-val">{computedStats.fireRate}/s</span>
-              </div>
-              <div className="stat-pill green">
-                <span className="stat-pill-label">🎯 Jarak</span>
-                <span className="stat-pill-val">{computedStats.range}px</span>
-              </div>
-              <div className="stat-pill purple">
-                <span className="stat-pill-label">💥 Krit</span>
-                <span className="stat-pill-val">{computedStats.critChance}%</span>
-              </div>
-            </div>
-
-            {/* TAB 5 SLOT SENJATA DENGAN IKON ASET ASLI */}
-            <div className="slot-nav-container">
-              <span className="custom-sub-label">PILIH BAGIAN SENJATA:</span>
-              <div className="slot-buttons-flex">
-                {(['body', 'core', 'barrel', 'grip', 'charm'] as WeaponSlotType[]).map((slotKey) => {
-                  const slotMeta = SLOT_INFO[slotKey];
-                  return (
-                    <button
-                      key={slotKey}
-                      className={`slot-tab-item ${activeSlot === slotKey ? 'active' : ''}`}
-                      onClick={() => {
-                        playSynthesizedSfx('click');
-                        setActiveSlot(slotKey);
+                    <span
+                      className="active-weapon-elem-badge"
+                      style={{
+                        backgroundColor: activeSkinDef.elementBadgeBg,
+                        color: activeSkinDef.elementColor,
+                        borderColor: activeSkinDef.elementColor,
                       }}
                     >
-                      <img
-                        src={slotMeta.iconAsset}
-                        alt={slotMeta.label}
-                        className="slot-tab-img"
-                      />
-                      <span className="slot-tab-text">
-                        {slotMeta.label}
-                      </span>
-                    </button>
-                  );
-                })}
+                      {activeSkinDef.elementLabel}
+                    </span>
+                  </div>
+
+                  <h3 className="active-weapon-name">{activeSkinDef.name}</h3>
+                  <span className="active-weapon-tagline">{activeSkinDef.tagline}</span>
+                  <p className="active-weapon-effect">✨ {activeSkinDef.specialEffect}</p>
+                </div>
+
+                {/* Animasi Peluru Bawaan Skin */}
+                <div className="active-bullet-preview-box">
+                  <div className="bullet-anim-stage">
+                    <img
+                      src={
+                        activeSkinDef.bullets.bulletFrames[bulletAnimFrameIdx] ||
+                        activeSkinDef.bullets.bulletFrames[0]
+                      }
+                      alt="Bullet Frame"
+                      className="bullet-anim-frame"
+                    />
+                  </div>
+                  <span className="bullet-anim-label">Peluru Bawaan</span>
+                </div>
+              </div>
+
+              {/* 4 STAT CHIPS BERSIH & RAPI */}
+              <div className="active-weapon-stats-grid">
+                <div className="stat-chip-clean red">
+                  <span className="stat-label">⚔️ ATK</span>
+                  <span className="stat-val">{computedStats.damage}</span>
+                </div>
+                <div className="stat-chip-clean blue">
+                  <span className="stat-label">⚡ Laju</span>
+                  <span className="stat-val">{computedStats.fireRate}/s</span>
+                </div>
+                <div className="stat-chip-clean green">
+                  <span className="stat-label">🎯 Jarak</span>
+                  <span className="stat-val">{computedStats.range}px</span>
+                </div>
+                <div className="stat-chip-clean purple">
+                  <span className="stat-label">💥 Krit</span>
+                  <span className="stat-val">{computedStats.critChance}%</span>
+                </div>
               </div>
             </div>
 
-            {/* DAFTAR PART UNTUK SLOT INI (PAKAI ASET GAMBAR NYATA + UPGRADE PAKAI KOIN & DIFF) */}
-            <div className="parts-clean-list">
-              {availablePartsForSlot.map((part) => {
-                const isEquipped = currentLoadout[activeSlot] === part.id;
-                const curLvl = partLevels[part.id] || 1;
-                const upgradeReq = UPGRADE_REQUIREMENTS[curLvl];
-                const unlocked = isPartUnlocked(part.id);
-                const unlockCost = part.unlockCostCoins || 0;
-                const canAffordUnlock = playerCoins >= unlockCost;
-                const canUpgrade =
-                  unlocked &&
-                  curLvl < 5 &&
-                  playerCoins >= upgradeReq.coins;
+            {/* 2. HEADER DAFTAR SENJATA */}
+            <div className="skin-catalog-header">
+              <span className="skin-catalog-title">PILIH SKIN SENJATA:</span>
+              <span className="skin-count-pill">
+                {unlockedSkins.length} / {allSkinsList.length} Dimiliki
+              </span>
+            </div>
+
+            {/* 3. GRID 13 SKIN SENJATA LENGKAP */}
+            <div className="skins-cards-grid">
+              {allSkinsList.map((skin) => {
+                const isEquipped = activeSkinId === skin.id;
+                const unlocked = isSkinUnlocked(skin.id);
+                const canAfford = playerCoins >= skin.unlockCostCoins;
 
                 return (
                   <div
-                    key={part.id}
-                    className={`clean-part-card rarity-${part.rarity} ${isEquipped ? 'is-equipped' : ''} ${!unlocked ? 'is-locked' : ''}`}
+                    key={skin.id}
+                    className={`weapon-skin-card rarity-${skin.rarity} ${isEquipped ? 'is-equipped' : ''} ${!unlocked ? 'is-locked' : ''}`}
                   >
-                    <div className="clean-part-left">
-                      <div className="clean-part-icon">
-                        {part.iconAsset ? (
-                          <img
-                            src={part.iconAsset}
-                            alt={part.name}
-                            className="clean-part-asset-img"
-                          />
-                        ) : (
-                          <span>{part.icon}</span>
-                        )}
-                      </div>
-                      <div className="clean-part-info">
-                        <div className="clean-part-title-row">
-                          <span className="clean-part-name">{part.name}</span>
-                          <span className="clean-part-lvl">Lv.{curLvl}</span>
-                          {!unlocked && (
-                            <span className="part-locked-badge">
-                              <Lock size={10} />
-                              Terkunci
-                            </span>
-                          )}
-                          {part.effect && (
-                            <span className="clean-part-effect">
-                              {part.effect.toUpperCase()}
-                            </span>
-                          )}
-                        </div>
-                        {unlocked ? (
-                          <>
-                            <p className="clean-part-desc">{part.description}</p>
-                            {curLvl < 5 && (
-                              <div className="part-upgrade-diff-row">
-                                <span className="diff-highlight">
-                                  📈 {getPartUpgradeDiff(part, curLvl)}
-                                </span>
-                              </div>
-                            )}
-                          </>
-                        ) : (
-                          <p className="clean-part-desc locked">
-                            🪙 {unlockCost} koin untuk membuka
-                          </p>
-                        )}
+                    {/* Header: Rarity & Elemen */}
+                    <div className="skin-card-header">
+                      <span className={`rarity-badge ${skin.rarity}`}>
+                        {skin.rarity === 'common' && 'Biasa'}
+                        {skin.rarity === 'rare' && 'Langka'}
+                        {skin.rarity === 'epic' && 'Epik'}
+                        {skin.rarity === 'legendary' && 'Legendaris'}
+                      </span>
+                      <span
+                        className="skin-element-chip"
+                        style={{
+                          color: skin.elementColor,
+                          backgroundColor: skin.elementBadgeBg,
+                        }}
+                      >
+                        {skin.elementLabel}
+                      </span>
+                    </div>
+
+                    {/* Thumbnail Senjata */}
+                    <div className="skin-card-thumb-wrap">
+                      <img
+                        src={skin.assetPng}
+                        alt={skin.name}
+                        className="skin-card-img"
+                      />
+                    </div>
+
+                    {/* Detail Senjata & Efek */}
+                    <div className="skin-card-details">
+                      <h4 className="skin-card-title">{skin.name}</h4>
+                      <span className="skin-card-tagline">{skin.tagline}</span>
+                      <div className="skin-effect-box">
+                        <span className="skin-effect-text">✨ {skin.specialEffect}</span>
                       </div>
                     </div>
 
-                    <div className="clean-part-actions">
+                    {/* Animasi Mini Peluru Bawaan */}
+                    <div className="skin-mini-bullet-row">
+                      <span className="mini-bullet-label">Peluru:</span>
+                      <img
+                        src={skin.bullets.bulletFrames[bulletAnimFrameIdx] || skin.bullets.bulletFrames[0]}
+                        alt="Bullet preview"
+                        className="mini-bullet-preview-img"
+                      />
+                    </div>
+
+                    {/* Tombol Aksi: Pasang atau Buka Kunci */}
+                    <div className="skin-card-action-bar">
                       {!unlocked ? (
                         <button
-                          className={`btn-unlock-part ${canAffordUnlock ? 'can-buy' : 'cant-afford'}`}
-                          onClick={() => handleUnlockPart(part.id)}
-                          disabled={!canAffordUnlock}
-                          title={canAffordUnlock ? `Buka modul seharga ${unlockCost} koin` : `Butuh ${unlockCost} koin`}
+                          className={`btn-skin-unlock ${canAfford ? 'can-buy' : 'cant-afford'}`}
+                          onClick={() => handleUnlockSkin(skin.id)}
+                          disabled={!canAfford}
                         >
-                          <Lock size={11} />
-                          <span>Buka 🪙{unlockCost}</span>
+                          <Lock size={12} />
+                          <span>Buka 🪙{skin.unlockCostCoins}</span>
                         </button>
+                      ) : isEquipped ? (
+                        <div className="badge-skin-equipped">
+                          <Check size={14} />
+                          <span>Sedang Dipakai</span>
+                        </div>
                       ) : (
-                        <>
-                          {isEquipped ? (
-                            <div className="badge-equipped-tag">
-                              <Check size={12} />
-                              <span>Aktif</span>
-                            </div>
-                          ) : (
-                            <button
-                              className="btn-clean-equip"
-                              onClick={() => handleSelectPart(activeSlot, part.id)}
-                            >
-                              Pasang
-                            </button>
-                          )}
-
-                          {/* TOMBOL UPGRADE DENGAN KOIN & HARGA JELAS */}
-                          {curLvl < 5 && (
-                            <button
-                              className={`btn-clean-upgrade ${canUpgrade ? 'active' : 'disabled'}`}
-                              onClick={() => handleUpgradePart(part.id)}
-                              disabled={!canUpgrade}
-                              title={canUpgrade ? `Upgrade ke Lv.${curLvl + 1} seharga ${upgradeReq.coins} Koin` : `Butuh ${upgradeReq.coins} Koin`}
-                            >
-                              <ArrowUpCircle size={11} />
-                              <span>Up 🪙{upgradeReq.coins}</span>
-                            </button>
-                          )}
-                        </>
+                        <button
+                          className="btn-skin-equip"
+                          onClick={() => handleSelectSkinWeapon(skin.id)}
+                        >
+                          Pakai Senjata Ini
+                        </button>
                       )}
                     </div>
                   </div>
@@ -685,27 +483,30 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
         )}
 
         {/* ════════════════════════════════════════════════════════════════ */}
-        {/* TAB 2: KARAKTER & TOPI (COLORFUL & RAMAH ANAK) */}
+        {/* TAB 2: SKIN MASKOT & TOPI (CLEAN & COMPACT)                     */}
         {/* ════════════════════════════════════════════════════════════════ */}
         {activeTab === 'character' && (
           <div className="custom-character-body">
-            {/* STAGE MASKOT DENGAN LATAR CERAH */}
+            {/* STAGE MASKOT DENGAN LATAR CERAH & PROPORSI PAS */}
             <div className="character-hero-card">
               <div className="character-mascot-view">
                 <AnimatedMascot
-                  size={190}
+                  size={135}
                   state={mascotAnimState}
                   direction="right"
                   skinColor={selectedSkin}
                   hat={selectedHat}
                   weapon="blaster"
+                  weaponSkin={activeSkinId}
+                  weaponSkinAsset={activeSkinDef.assetPng}
+                  muzzleFlashAsset={activeSkinDef.bullets.muzzleFrames[0]}
                   weaponColorFilter={activeColorDef.filter}
                   showShadow={true}
                   walkSpeed={0.55}
                 />
               </div>
 
-              {/* Kontrol Aksi Gerak Maskot */}
+              {/* Kontrol Aksi Gerak Maskot (Compact Chips) */}
               <div className="mascot-action-pills">
                 <button
                   className={`action-pill ${mascotAnimState === 'idle' ? 'active' : ''}`}
@@ -728,53 +529,56 @@ export const CustomizationModal: React.FC<CustomizationModalProps> = ({
               </div>
             </div>
 
-            {/* PILIHAN WARNA KULIT MASKOT */}
+            {/* PALET WARNA KARAKTER (1 BARIS BERSIH & RAPI) */}
             <div className="character-sub-section">
-              <span className="custom-sub-label">WARNA KARAKTER:</span>
+              <div className="character-sub-header">
+                <span className="custom-sub-label">WARNA KARAKTER:</span>
+                <span className="active-color-name">
+                  {CHARACTER_SKINS.find((s) => s.id === selectedSkin)?.name || 'Kuning Klasik'}
+                </span>
+              </div>
               <div className="skin-dots-flex">
                 {CHARACTER_SKINS.map((skin) => (
                   <button
                     key={skin.id}
-                    className={`skin-dot-btn ${selectedSkin === skin.id ? 'active' : ''}`}
+                    className={`skin-dot-circle-btn ${selectedSkin === skin.id ? 'active' : ''}`}
                     onClick={() => handleSelectSkin(skin.id)}
                     title={skin.name}
+                    aria-label={skin.name}
                   >
                     <span
-                      className="skin-circle"
+                      className="skin-circle-fill"
                       style={{ backgroundColor: skin.hex }}
                     />
-                    <span className="skin-label-text">{skin.name}</span>
-                    {selectedSkin === skin.id && <Check size={14} color="#f59e0b" />}
+                    {selectedSkin === skin.id && (
+                      <span className="skin-circle-check">✓</span>
+                    )}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* PILIHAN TOPI & AKSESORI */}
+            {/* PILIHAN TOPI & AKSESORI (GRID 3 KOLOM KOMPAK) */}
             <div className="character-sub-section">
               <span className="custom-sub-label">TOPI & AKSESORI KEPALA:</span>
               <div className="clean-hats-grid">
-                {CHARACTER_HATS.map((hatItem) => (
-                  <div
-                    key={hatItem.id}
-                    className={`clean-hat-card ${selectedHat === hatItem.id ? 'active' : ''}`}
-                    onClick={() => handleSelectHat(hatItem.id)}
-                  >
-                    <span className="clean-hat-emoji">{hatItem.icon}</span>
-                    <div className="clean-hat-info">
-                      <span className="clean-hat-title">{hatItem.name}</span>
-                      <p className="clean-hat-desc">{hatItem.description}</p>
-                    </div>
-                    {selectedHat === hatItem.id ? (
-                      <div className="clean-hat-badge active">
-                        <Check size={14} />
-                        <span>Dipakai</span>
-                      </div>
-                    ) : (
-                      <button className="btn-clean-hat-use">Pakai</button>
-                    )}
-                  </div>
-                ))}
+                {CHARACTER_HATS.map((hatItem) => {
+                  const isEquipped = selectedHat === hatItem.id;
+                  return (
+                    <button
+                      key={hatItem.id}
+                      className={`clean-hat-tile ${isEquipped ? 'active' : ''}`}
+                      onClick={() => handleSelectHat(hatItem.id)}
+                      title={hatItem.description}
+                    >
+                      <span className="hat-tile-emoji">{hatItem.icon}</span>
+                      <span className="hat-tile-title">{hatItem.name}</span>
+                      <span className={`hat-tile-status ${isEquipped ? 'equipped' : ''}`}>
+                        {isEquipped ? '✓ Dipakai' : 'Pakai'}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>

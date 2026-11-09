@@ -15,8 +15,11 @@ export interface AnimatedMascotProps {
   skinColor?: string;
   hat?: string;
   weapon?: 'blaster' | 'none';
+  weaponSkin?: string; // e.g. 'blaster_klasik', 'blaster_api', 'blaster_galaksi', dll.
+  weaponSkinAsset?: string; // Path langsung ke gambar skin blaster
   weaponColorFilter?: string;
   isShooting?: boolean;
+  muzzleFlashAsset?: string;
   className?: string;
   style?: React.CSSProperties;
   onClick?: () => void;
@@ -38,8 +41,11 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = React.memo(({
   skinColor = 'default',
   hat = 'none',
   weapon = 'none',
+  weaponSkin = 'blaster_klasik',
+  weaponSkinAsset,
   weaponColorFilter,
   isShooting = false,
+  muzzleFlashAsset,
   className = '',
   style,
   onClick,
@@ -110,13 +116,13 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = React.memo(({
                 <g className="mascot-weapon-in-hand">
                   {/* Sprite Senjata Blaster Ukuran Jumbo Mantap & Pas di Tangan */}
                   <image
-                    href="/assets/png/attack/blaster.png"
+                    href={weaponSkinAsset || `/weapons/png/${weaponSkin || 'blaster_klasik'}.png`}
                     x="677"
                     y="235"
                     width="500"
                     height="300"
                     style={{
-                      filter: `${weaponColorFilter ? weaponColorFilter + ' ' : ''}drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5))`,
+                      filter: `${weaponColorFilter && weaponColorFilter !== 'none' ? weaponColorFilter + ' ' : ''}drop-shadow(0 8px 14px rgba(0, 0, 0, 0.5))`,
                     }}
                   />
 
@@ -131,7 +137,7 @@ export const AnimatedMascot: React.FC<AnimatedMascotProps> = React.memo(({
                   {/* Muzzle Flash Animasi Saat Menembak Tepat di Ujung Laras */}
                   {isShooting && (
                     <image
-                      href="/assets/png/attack/muzzle_flash.png"
+                      href={muzzleFlashAsset || `/weapons/Bullet/${weaponSkin || 'blaster_klasik'}/muzzle_f1.png`}
                       x="1025"
                       y="260"
                       width="185"

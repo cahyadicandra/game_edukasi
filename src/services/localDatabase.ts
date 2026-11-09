@@ -245,11 +245,18 @@ class LocalDatabaseService {
                 ? parsed.equipment.unlockedParts
                 : fallback.equipment?.unlockedParts || [
                     'blaster_std',
+                    'core_skin_native',
                     'core_orb',
                     'barrel_std',
                     'grip_std',
                     'charm_none',
                   ],
+            unlockedSkins:
+              parsed.equipment?.unlockedSkins && parsed.equipment.unlockedSkins.length > 0
+                ? parsed.equipment.unlockedSkins
+                : ['blaster_klasik'],
+            blasterSkin: parsed.equipment?.blasterSkin || 'blaster_klasik',
+            blasterCore: parsed.equipment?.blasterCore || 'bullet_skin',
           },
         };
       }

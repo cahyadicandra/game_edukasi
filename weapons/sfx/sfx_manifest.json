@@ -1,0 +1,172 @@
+{
+ "version": 1,
+ "sample_rate": 44100,
+ "format": [
+  "wav",
+  "ogg"
+ ],
+ "note": "Mono, 44.1kHz. shoot_1 dan shoot_2 = variasi agar tidak monoton; mainkan acak dengan playbackRate 0.92-1.08.",
+ "weapons": [
+  {
+   "weapon_id": "blaster_klasik",
+   "name": "Klasik",
+   "folder": "blaster_klasik/",
+   "durations_s": {
+    "shoot_1": 0.2,
+    "shoot_2": 0.2,
+    "hit": 0.22,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.8
+  },
+  {
+   "weapon_id": "blaster_api",
+   "name": "Api",
+   "folder": "blaster_api/",
+   "durations_s": {
+    "shoot_1": 0.4,
+    "shoot_2": 0.4,
+    "hit": 0.55,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.9
+  },
+  {
+   "weapon_id": "blaster_es",
+   "name": "Es Kristal",
+   "folder": "blaster_es/",
+   "durations_s": {
+    "shoot_1": 0.35,
+    "shoot_2": 0.35,
+    "hit": 0.55,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.7
+  },
+  {
+   "weapon_id": "blaster_kamuflase",
+   "name": "Kamuflase",
+   "folder": "blaster_kamuflase/",
+   "durations_s": {
+    "shoot_1": 0.3,
+    "shoot_2": 0.3,
+    "hit": 0.3,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.9
+  },
+  {
+   "weapon_id": "blaster_permen",
+   "name": "Permen",
+   "folder": "blaster_permen/",
+   "durations_s": {
+    "shoot_1": 0.28,
+    "shoot_2": 0.28,
+    "hit": 0.4,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.8
+  },
+  {
+   "weapon_id": "blaster_raja_emas",
+   "name": "Raja Emas",
+   "folder": "blaster_raja_emas/",
+   "durations_s": {
+    "shoot_1": 0.45,
+    "shoot_2": 0.45,
+    "hit": 0.6,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.8
+  },
+  {
+   "weapon_id": "blaster_cyber",
+   "name": "Cyber Neon",
+   "folder": "blaster_cyber/",
+   "durations_s": {
+    "shoot_1": 0.25,
+    "shoot_2": 0.25,
+    "hit": 0.3,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.75
+  },
+  {
+   "weapon_id": "blaster_galaksi",
+   "name": "Galaksi",
+   "folder": "blaster_galaksi/",
+   "durations_s": {
+    "shoot_1": 0.77,
+    "shoot_2": 0.77,
+    "hit": 1.0,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.75
+  },
+  {
+   "weapon_id": "blaster_retro_kayu",
+   "name": "Retro Kayu",
+   "folder": "blaster_retro_kayu/",
+   "durations_s": {
+    "shoot_1": 0.35,
+    "shoot_2": 0.35,
+    "hit": 0.3,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.9
+  },
+  {
+   "weapon_id": "blaster_pramuka",
+   "name": "Pramuka",
+   "folder": "blaster_pramuka/",
+   "durations_s": {
+    "shoot_1": 0.32,
+    "shoot_2": 0.32,
+    "hit": 0.35,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.8
+  },
+  {
+   "weapon_id": "blaster_pelangi",
+   "name": "Pelangi",
+   "folder": "blaster_pelangi/",
+   "durations_s": {
+    "shoot_1": 0.5,
+    "shoot_2": 0.5,
+    "hit": 0.5,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.8
+  },
+  {
+   "weapon_id": "blaster_petir",
+   "name": "Petir",
+   "folder": "blaster_petir/",
+   "durations_s": {
+    "shoot_1": 0.3,
+    "shoot_2": 0.3,
+    "hit": 0.7,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.85
+  },
+  {
+   "weapon_id": "blaster_lava",
+   "name": "Lava",
+   "folder": "blaster_lava/",
+   "durations_s": {
+    "shoot_1": 0.5,
+    "shoot_2": 0.5,
+    "hit": 0.7,
+    "equip": 0.3
+   },
+   "suggested_volume": 0.9
+  }
+ ],
+ "common": {
+  "kosong_klik": "Amunisi habis / tidak bisa menembak",
+  "isi_ulang_amunisi": "Ambil ammo pack",
+  "power_up": "Ambil power cell"
+ }
+}

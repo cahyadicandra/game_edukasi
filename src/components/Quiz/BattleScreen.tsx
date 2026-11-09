@@ -4,93 +4,9 @@ import type { QuizQuestion } from '../../data/questions';
 import type { PlayerProfile } from '../../types/game';
 import type { GeometryMonster } from '../../data/monsters';
 import { AvatarRenderer } from '../Common/AvatarRenderer';
+import { QuestionVisual } from './QuestionVisual';
 import './Battle.css';
 import './Quiz.css';
-
-/** Ilustrasi visual soal bangun datar (rumah, pizza, pintu, jam, buku) */
-const QuestionVisual: React.FC<{ type: QuizQuestion['visual'] }> = ({ type }) => {
-  return (
-    <div
-      className={`quiz-visual quiz-visual-${type}`}
-      style={{ transform: 'scale(0.75)', margin: '-6px auto 2px auto' }}
-      aria-hidden="true"
-    >
-      {type === 'house' && (
-        <>
-          <div className="qv-roof" />
-          <div className="qv-body">
-            <div className="qv-window" />
-            <div className="qv-door" />
-          </div>
-        </>
-      )}
-      {type === 'pizza' && (
-        <div className="qv-pizza">
-          <span className="qv-pepperoni p1" />
-          <span className="qv-pepperoni p2" />
-          <span className="qv-pepperoni p3" />
-        </div>
-      )}
-      {type === 'door' && (
-        <div className="qv-door-frame">
-          <div className="qv-door-leaf">
-            <span className="qv-door-knob" />
-          </div>
-        </div>
-      )}
-      {type === 'clock' && (
-        <div className="qv-clock">
-          <span className="qv-clock-hand hour" />
-          <span className="qv-clock-hand minute" />
-          <span className="qv-clock-dot" />
-        </div>
-      )}
-      {type === 'book' && (
-        <div className="qv-book">
-          <div className="qv-book-lines" />
-          <div className="qv-book-lines short" />
-        </div>
-      )}
-      {type === 'shape_triangle' && (
-        <svg width="45" height="40" viewBox="0 0 100 80">
-          <polygon points="50,10 90,75 10,75" fill="#facc15" stroke="#ca8a04" strokeWidth="6" />
-        </svg>
-      )}
-      {type === 'shape_square' && (
-        <svg width="40" height="40" viewBox="0 0 100 100">
-          <rect x="15" y="15" width="70" height="70" rx="8" fill="#38bdf8" stroke="#0284c7" strokeWidth="6" />
-        </svg>
-      )}
-      {type === 'shape_rectangle' && (
-        <svg width="50" height="32" viewBox="0 0 100 65">
-          <rect x="10" y="10" width="80" height="45" rx="6" fill="#4ade80" stroke="#16a34a" strokeWidth="6" />
-        </svg>
-      )}
-      {type === 'shape_circle' && (
-        <svg width="40" height="40" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="35" fill="#f472b6" stroke="#db2777" strokeWidth="6" />
-          <circle cx="50" cy="50" r="4" fill="#ffffff" />
-          <line x1="50" y1="50" x2="85" y2="50" stroke="#ffffff" strokeWidth="4" strokeDasharray="3 3" />
-        </svg>
-      )}
-      {type === 'shape_trapezoid' && (
-        <svg width="50" height="35" viewBox="0 0 100 70">
-          <polygon points="25,15 75,15 95,55 5,55" fill="#c084fc" stroke="#9333ea" strokeWidth="6" />
-        </svg>
-      )}
-      {type === 'shape_rhombus' && (
-        <svg width="40" height="40" viewBox="0 0 100 100">
-          <polygon points="50,10 90,50 50,90 10,50" fill="#fb923c" stroke="#ea580c" strokeWidth="6" />
-        </svg>
-      )}
-      {type === 'shape_parallelogram' && (
-        <svg width="50" height="35" viewBox="0 0 100 70">
-          <polygon points="30,15 95,15 70,55 5,55" fill="#2dd4bf" stroke="#0d9488" strokeWidth="6" />
-        </svg>
-      )}
-    </div>
-  );
-};
 
 interface BattleScreenProps {
   monster: GeometryMonster;
@@ -667,7 +583,7 @@ export const BattleScreen: React.FC<BattleScreenProps> = ({
                 </div>
               </div>
 
-              <QuestionVisual type={currentQ.visual} />
+              <QuestionVisual type={currentQ.visual} prompt={currentQ.prompt} />
 
               <h4 className="battle-prompt-text">{currentQ.prompt}</h4>
 

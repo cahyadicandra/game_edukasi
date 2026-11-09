@@ -13,10 +13,10 @@
 
 .level-detail-card {
   width: 100%;
-  max-width: 320px;
+  max-width: 330px;
   background: linear-gradient(180deg, #fffdf5 0%, #fef9e7 100%);
   border-radius: 26px;
-  padding: 30px 18px 18px;
+  padding: 28px 18px 18px;
   position: relative;
   text-align: center;
   box-shadow: 0 18px 40px rgba(10, 30, 70, 0.45);
@@ -31,20 +31,20 @@
 
 .level-detail-banner {
   position: absolute;
-  top: -22px;
+  top: -20px;
   left: 50%;
   transform: translateX(-50%);
   background: linear-gradient(180deg, #b45309, #8a3c06);
   border: 3px solid #d97706;
   border-radius: 999px;
-  padding: 8px 26px;
+  padding: 6px 24px;
   box-shadow: 0 5px 10px rgba(90, 40, 0, 0.4);
 }
 
 .level-detail-banner-title {
   font-family: var(--font-game-title);
   font-weight: 700;
-  font-size: 17px;
+  font-size: 16px;
   color: #ffffff;
   text-shadow: 0 2px 0 rgba(0, 0, 0, 0.3);
   white-space: nowrap;
@@ -55,71 +55,149 @@
   background: linear-gradient(180deg, #2563eb, #1d4ed8);
   color: #ffffff;
   font-family: var(--font-game-title);
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 700;
   border-radius: 999px;
-  padding: 4px 14px;
-  margin-top: 6px;
-  box-shadow: 0 3px 6px rgba(29, 78, 216, 0.35);
+  padding: 3px 12px;
+  margin-top: 4px;
+  box-shadow: 0 3px 6px rgba(29, 78, 216, 0.3);
 }
 
 .level-detail-body {
-  margin-top: 12px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.level-detail-goal {
-  font-size: 12.5px;
-  color: #475569;
-  line-height: 1.5;
+.level-detail-topic-title {
+  font-family: var(--font-game-title);
+  font-size: 14.5px;
+  font-weight: 800;
+  color: #0f2942;
   margin: 0;
+  line-height: 1.3;
+}
+
+.level-detail-type-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 3px 12px;
+  border-radius: 9999px;
+  font-size: 10.5px;
+  font-family: var(--font-game-title);
+  font-weight: 800;
+  color: #ffffff;
+  align-self: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.level-detail-type-badge.boss-type {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border: 1px solid #fde68a;
+}
+
+.level-detail-type-badge.regular-type {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  border: 1px solid #7dd3fc;
+}
+
+/* Kotak Briefing Pembelajaran */
+.level-briefing-box {
+  background: #ffffff;
+  border: 1.5px solid #e0f2fe;
+  border-radius: 14px;
+  padding: 10px 12px;
+  text-align: left;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.03);
+}
+
+.briefing-box-header {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-game-title);
+  font-size: 11px;
+  font-weight: 800;
+  color: #0284c7;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.briefing-goal-text {
+  font-size: 11.5px;
+  color: #334155;
+  line-height: 1.45;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Baris Misi Koleksi */
+.briefing-mission-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
+.briefing-mission-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-family: var(--font-game-title);
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 9999px;
+}
+
+.briefing-mission-chip.coin-chip {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+}
+
+.briefing-mission-chip.shape-chip {
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
 }
 
 .level-detail-stars {
   display: flex;
   justify-content: center;
-  gap: 10px;
-}
-
-.level-detail-info-row {
-  display: flex;
-  justify-content: center;
   gap: 8px;
 }
 
-.level-detail-info-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  background: #eff6ff;
-  border: 1.5px solid #bfdbfe;
-  color: #1e40af;
+.level-detail-end-hint {
   font-size: 11px;
-  font-weight: 800;
-  padding: 4px 10px;
-  border-radius: 999px;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.35;
 }
 
 .level-detail-start-btn {
-  margin-top: 4px;
+  margin-top: 2px;
   align-self: center;
-  min-width: 160px;
+  min-width: 170px;
   background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
   border: none;
   border-bottom: 4px solid #b45309;
   border-radius: 999px;
   color: #ffffff;
   font-family: var(--font-game-title);
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   letter-spacing: 0.5px;
-  padding: 10px 30px;
+  padding: 9px 24px;
   cursor: pointer;
   text-shadow: 0 1.5px 0 rgba(146, 64, 14, 0.6);
   box-shadow: 0 6px 14px rgba(245, 158, 11, 0.45);
   transition: transform 0.12s ease, filter 0.12s ease;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .level-detail-start-btn:hover { filter: brightness(1.05); transform: translateY(-1px); }
